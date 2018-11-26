@@ -18,15 +18,14 @@ public class Map {
     private final List<Delivery> deliveries;
 
     public Map() {
-        this.nodes = new HashMap();
-        this.deliveries = new ArrayList();
+        this(null, null);
     }
     
     public Map(Node warehouse, LocalTime startingHour) {
-        this.nodes = new HashMap();
+        this.nodes = new HashMap<>();
         this.warehouse = warehouse;
         this.startingHour = startingHour;
-        this.deliveries = new ArrayList();
+        this.deliveries = new ArrayList<>();
     }
     
     public Node getNode(long id) {

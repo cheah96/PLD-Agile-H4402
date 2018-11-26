@@ -169,7 +169,7 @@ public class Window {
 
         String list[] = {"Monday", "Tuesday", "Wednesday",
                 "Thursday", "Friday", "Saturday", "Sunday"};
-        pan.add(new JList(list));
+        pan.add(new JList<>(list));
         return pan;
     }
 }

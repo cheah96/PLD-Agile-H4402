@@ -12,7 +12,7 @@ public class Round {
     private List<Passage> itinerary;
 
     public Round() {
-        this.itinerary = new ArrayList();
+        this.itinerary = new ArrayList<>();
     }
 
     public List<Passage> getItinerary() {

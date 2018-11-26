@@ -16,7 +16,7 @@ public class DeliveryMan {
     public DeliveryMan(int id, Round round) {
         this.id = id;
         this.round = round;
-        this.deliveries = new ArrayList();
+        this.deliveries = new ArrayList<>();
     }
 
     public int getId() {

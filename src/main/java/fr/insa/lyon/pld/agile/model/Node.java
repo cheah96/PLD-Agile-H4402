@@ -19,7 +19,7 @@ public class Node {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.outgoingSections = new ArrayList();
+        this.outgoingSections = new ArrayList<>();
     }
 
     public long getId() {
