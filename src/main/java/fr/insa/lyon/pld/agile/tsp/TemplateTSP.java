@@ -40,6 +40,9 @@ public abstract class TemplateTSP implements TSP {
 	vus.add(0); // le premier sommet visite est 0
 	branchAndBound(0, nonVus, vus, 0, cout, duree,
 		System.currentTimeMillis(), tpsLimite);
+	
+	long duration = System.currentTimeMillis()-tpStart;
+	//System.out.println("durr="+duration);
     }
 
     public Integer getMeilleureSolution(int i) {

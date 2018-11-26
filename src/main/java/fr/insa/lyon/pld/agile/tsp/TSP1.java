@@ -14,27 +14,26 @@ public class TSP1 extends TemplateTSP {
     protected int bound(Integer sommetCourant, ArrayList<Integer> nonVus, int[][] cout, int[] duree) {
 	int value=0;
 	
-	int som=Integer.MAX_VALUE;
+	int minimumIncomingBranch=Integer.MAX_VALUE;
 	for(int i=0;i<nonVus.size();++i){
-	    if(cout[sommetCourant][nonVus.get(i)]<som){
-		som=cout[sommetCourant][nonVus.get(i)];
+	    if(cout[sommetCourant][nonVus.get(i)]<minimumIncomingBranch){
+		minimumIncomingBranch=cout[sommetCourant][nonVus.get(i)];
 	    }
 	}
-	value+=som;
+	value+=minimumIncomingBranch;
 	
 	for(int i=0;i<nonVus.size();++i){
-	    int min=cout[nonVus.get(i)][0];
+	    int minimumOutGoingBranch=cout[nonVus.get(i)][0];
 	    for(int j=0;j<nonVus.size();++j){
 		if(i!=j){
-		    if(cout[nonVus.get(i)][nonVus.get(j)]<min){
-			min=cout[nonVus.get(i)][nonVus.get(j)];
+		    if(cout[nonVus.get(i)][nonVus.get(j)]<minimumOutGoingBranch){
+			minimumOutGoingBranch=cout[nonVus.get(i)][nonVus.get(j)];
 		    }
 		}
 	    }
 	    value+=duree[nonVus.get(i)];
-	    value+=min;
+	    value+=minimumOutGoingBranch;
 	}
-	System.out.println(value);
 	return value;
     }
 }
