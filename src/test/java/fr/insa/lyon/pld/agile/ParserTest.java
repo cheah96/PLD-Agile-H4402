@@ -1,6 +1,5 @@
 package fr.insa.lyon.pld.agile;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,31 +16,26 @@ import org.junit.jupiter.api.Test;
 
 public class ParserTest {
     @Test
-    public void testLoad(){
-        String pathString = "fichiersXML2018/testUnitairePlan.xml";
+    public void testLoad() throws IOException, SAXException, ParserConfigurationException{
+        String pathString = "src/test/res/testUnitairePlan.xml";
         Path path = Paths.get(pathString);
-    Map map;
-        try {
-            map = XMLParser.loadMap(path);
-            assertEquals(false,map.getNodes().isEmpty());
-            assertEquals(3,map.getNodes().size());
-            Long idNode1  = new Long(25175791);
-            double latNode1 = 45.75406;
-            double epsilon = 0.0001;
-            double longNode1 = 4.857418;
-            assertTrue(map.getNodes().get(idNode1)!=null);
-            assertEquals(latNode1,map.getNodes().get(idNode1).getLatitude(), epsilon);
-            assertEquals(longNode1,map.getNodes().get(idNode1).getLongitude(), epsilon);
-            assertEquals(2, map.getNodes().get(idNode1).getOutgoingSections().size());
-            assertEquals("Rue Danton", map.getNodes().get(idNode1).getOutgoingSections().get(0).getName());
-            assertEquals(69.979805, map.getNodes().get(idNode1).getOutgoingSections().get(0).getLength(), epsilon);
-            assertEquals(new Long(2129259178L), new Long(map.getNodes().get(idNode1).getOutgoingSections().get(0).getDestination().getId()));
-            assertEquals("Rue de l'Abondance", map.getNodes().get(idNode1).getOutgoingSections().get(1).getName());
-            assertEquals(136.00636, map.getNodes().get(idNode1).getOutgoingSections().get(1).getLength(), epsilon);
-            assertEquals(new Long(26086130L), new Long(map.getNodes().get(idNode1).getOutgoingSections().get(1).getDestination().getId()));
-
-        } catch (IOException | SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
-        }
+        Map map;
+        map = XMLParser.loadMap(path);
+        assertEquals(false,map.getNodes().isEmpty());
+        assertEquals(3,map.getNodes().size());
+        Long idNode1  = new Long(25175791);
+        double latNode1 = 45.75406;
+        double epsilon = 0.0001;
+        double longNode1 = 4.857418;
+        assertTrue(map.getNodes().get(idNode1)!=null);
+        assertEquals(latNode1,map.getNodes().get(idNode1).getLatitude(), epsilon);
+        assertEquals(longNode1,map.getNodes().get(idNode1).getLongitude(), epsilon);
+        assertEquals(2, map.getNodes().get(idNode1).getOutgoingSections().size());
+        assertEquals("Rue Danton", map.getNodes().get(idNode1).getOutgoingSections().get(0).getName());
+        assertEquals(69.979805, map.getNodes().get(idNode1).getOutgoingSections().get(0).getLength(), epsilon);
+        assertEquals(new Long(2129259178L), new Long(map.getNodes().get(idNode1).getOutgoingSections().get(0).getDestination().getId()));
+        assertEquals("Rue de l'Abondance", map.getNodes().get(idNode1).getOutgoingSections().get(1).getName());
+        assertEquals(136.00636, map.getNodes().get(idNode1).getOutgoingSections().get(1).getLength(), epsilon);
+        assertEquals(new Long(26086130L), new Long(map.getNodes().get(idNode1).getOutgoingSections().get(1).getDestination().getId()));
     }
 }

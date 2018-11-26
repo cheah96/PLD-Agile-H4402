@@ -8,7 +8,7 @@
   <name>H4402</name>
   <url>https://github.com/PLD-Agile-H4402/PLD-Agile-H4402</url>
   <build>
-    <sourceDirectory>src/main</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <resources>
       <resource>
         <directory>res</directory>
