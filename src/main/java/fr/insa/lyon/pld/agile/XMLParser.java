@@ -1,5 +1,6 @@
 package fr.insa.lyon.pld.agile;
 
+import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.Section;
@@ -8,6 +9,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -60,15 +65,13 @@ public class XMLParser {
                     double length = Double.parseDouble(attributes.getValue("longueur"));
                     String name = attributes.getValue("nomRue");
                     
-                    Node origin = map.getNodes().get(originId);
+                    Node origin = map.getNode(originId);
                     if (origin != null) {
-                        Node destination = map.getNodes().get(destinationId);
-                        if (destination != null)
-                        {
+                        Node destination = map.getNode(destinationId);
+                        if (destination != null) {
                             Section section = new Section(name, length, destination);
                             origin.addOutgoingSection(section);
-                        }
-                        else
+                        } else
                             throw new RuntimeException("Destination node doesn't exist"); //TODO : Better error handling
                     }
                     else
@@ -78,11 +81,62 @@ public class XMLParser {
         }
     }
     
-    public static void main(String args[]) throws IOException, SAXException, ParserConfigurationException
-    {
-        Path path = Paths.get("grandPlan.xml");
+    static public List<Delivery> loadDeliveries(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
+        return loadDeliveries(map, Files.newInputStream(path));
+    }
+    
+    static public List<Delivery> loadDeliveries(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
+        List<Delivery> deliveries = new ArrayList<>();
         
-        Map map = XMLParser.loadMap(path);
+        SAXParser saxParser = spf.newSAXParser();
+        saxParser.parse(stream, new DeliveriesHandler(map));
+        
+        return deliveries;
+    }
+
+    private static class DeliveriesHandler extends DefaultHandler {
+        private final Map map;
+        
+        public DeliveriesHandler(Map map) {
+            this.map = map;
+        }
+        
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            //TODO : handing missing attributes
+            switch (qName)
+            {
+                case "entrepot":
+                    long warehouseId = Long.parseLong(attributes.getValue("adresse"));
+                    if (map.getWarehouse() != null)
+                        throw new RuntimeException("Warehouse already set"); //TODO : Better error handling
+                    
+                    if (!map.setWarehouse(warehouseId))
+                        throw new RuntimeException("Warehouse node not found"); //TODO : Better error handling
+                    
+                    String startingHourString = attributes.getValue("heureDepart");
+                    map.setStartingHour(LocalTime.parse(startingHourString, DateTimeFormatter.ofPattern("H:m:s")));
+                    break;
+                case "livraison":
+                    long addressId = Long.parseLong(attributes.getValue("adresse"));
+                    int duration = Integer.parseInt(attributes.getValue("duree"));
+                    
+                    Node address = map.getNode(addressId);
+                    if (address == null)
+                        throw new RuntimeException("Address node not found"); //TODO : Better error handling
+                    
+                    map.addDelivery(new Delivery(address, duration, null));
+                    break;
+            }
+        }
+    }
+    
+    public static void main(String args[]) throws IOException, SAXException, ParserConfigurationException {
+        Path mapPath = Paths.get("grandPlan.xml");
+        Path deliveriesPath = Paths.get("dl-grand-12.xml");
+        
+        Map map = XMLParser.loadMap(mapPath);
+        XMLParser.loadDeliveries(map, deliveriesPath);
         System.out.println(map);
     }
 }

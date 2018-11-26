@@ -12,10 +12,10 @@ import java.util.StringJoiner;
  * @author scheah
  */
 public class Map {
-    private java.util.Map<Long, Node> nodes;
+    private final java.util.Map<Long, Node> nodes;
     private Node warehouse;
     private LocalTime startingHour;
-    private List<Delivery> deliveries;
+    private final List<Delivery> deliveries;
 
     public Map() {
         this.nodes = new HashMap();
@@ -27,6 +27,10 @@ public class Map {
         this.warehouse = warehouse;
         this.startingHour = startingHour;
         this.deliveries = new ArrayList();
+    }
+    
+    public Node getNode(long id) {
+        return nodes.get(id);
     }
 
     public java.util.Map<Long, Node> getNodes() {
@@ -50,13 +54,50 @@ public class Map {
         return nodes.putIfAbsent(node.getId(), node) == null;
     }
 
+    public void addDelivery(Delivery delivery) {
+        deliveries.add(delivery);
+    }
+    
+    public boolean setWarehouse(long id) {
+        Node newWarehouse = this.nodes.get(id);
+        if (newWarehouse != null) {
+            this.warehouse = newWarehouse;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void setStartingHour(LocalTime startingHour) {
+        this.startingHour = startingHour;
+    }
+    
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner("\n");
+        StringBuilder builder = new StringBuilder();
+        builder.append("Map {\n");
+        builder.append("  nodes: [\n    ");
+        StringJoiner joiner = new StringJoiner(",\n    ");
         for (Node node : getNodes().values()) {
             joiner.add(node.toString());
         }
+        builder.append(joiner);
+        builder.append("\n  ],\n");
+        builder.append("  warehouse: ");
+        builder.append(warehouse != null ? warehouse.getId() : "null");
+        builder.append(",\n");
+        builder.append("  startingHour: ");
+        builder.append(startingHour);
+        builder.append(",\n");
+        builder.append("  deliveries: [\n    ");
+        joiner = new StringJoiner(",\n    ");
+        for (Delivery delivery : getDeliveries()) {
+            joiner.add(delivery.toString());
+        }
+        builder.append(joiner);
+        builder.append("\n  ]\n");
+        builder.append("}");
         
-        return joiner.toString();
+        return builder.toString();
     }
 }

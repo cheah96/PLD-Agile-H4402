@@ -9,9 +9,9 @@ import java.util.List;
  * @author scheah
  */
 public class DeliveryMan {
-    private int id;
-    private Round round;
-    private List<Delivery> deliveries;
+    private final int id;
+    private final Round round;
+    private final List<Delivery> deliveries;
 
     public DeliveryMan(int id, Round round) {
         this.id = id;
