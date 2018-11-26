@@ -26,5 +26,9 @@ public class Section {
     public Node getDestination() {
         return destination;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Section{name: " + getName() + ", length: " + getLength() + ", destination: " + getDestination().getId() +"}";
+    }
 }
