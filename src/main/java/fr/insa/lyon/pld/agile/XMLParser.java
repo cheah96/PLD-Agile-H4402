@@ -25,15 +25,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author paul
  */
 public class XMLParser {
-    static private SAXParserFactory spf = SAXParserFactory.newInstance();
+    private static final SAXParserFactory spf = SAXParserFactory.newInstance();
     
-    static public Map loadMap(Path path) throws IOException, SAXException, ParserConfigurationException {
-        return loadMap(Files.newInputStream(path));
+    static public Map loadNodes(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
+        return loadMap(map, Files.newInputStream(path));
     }
     
-    static public Map loadMap(InputStream stream) throws IOException, SAXException, ParserConfigurationException {
-        Map map = new Map();
-        
+    static public Map loadMap(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
         SAXParser saxParser = spf.newSAXParser();
         saxParser.parse(stream, new MapHandler(map));
         
@@ -125,7 +123,7 @@ public class XMLParser {
                     if (address == null)
                         throw new RuntimeException("Address node not found"); //TODO : Better error handling
                     
-                    map.addDelivery(new Delivery(address, duration, null));
+                    map.addDelivery(new Delivery(address, duration));
                     break;
             }
         }
@@ -135,7 +133,8 @@ public class XMLParser {
         Path mapPath = Paths.get("grandPlan.xml");
         Path deliveriesPath = Paths.get("dl-grand-12.xml");
         
-        Map map = XMLParser.loadMap(mapPath);
+        Map map = new Map();
+        XMLParser.loadNodes(map, mapPath);
         XMLParser.loadDeliveries(map, deliveriesPath);
         System.out.println(map);
     }

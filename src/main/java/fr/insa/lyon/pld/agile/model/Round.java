@@ -9,7 +9,7 @@ import java.util.List;
  * @author scheah
  */
 public class Round {
-    private List<Passage> itinerary;
+    private final List<Passage> itinerary;
 
     public Round() {
         this.itinerary = new ArrayList<>();

@@ -37,7 +37,9 @@ public class Window {
     
     List<MapView> mapViews = new ArrayList<>();
     
-    public Window() {
+    public Window(Map map) {
+        this.map = map;
+        
         // CREATING COMPONENTS
 
         // Window
@@ -140,9 +142,10 @@ public class Window {
                     File selectedFile = fileChooser.getSelectedFile();
                     System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                     try {
-                        Map newmap = XMLParser.loadMap(selectedFile.toPath());
+                        map.clear();
                         
-                        map = newmap;
+                        XMLParser.loadNodes(map, selectedFile.toPath());
+
                         deliveries = null;
                         for (MapView mv : mapViews) {
                             mv.setDeliveries(deliveries);

@@ -13,9 +13,9 @@ public class DeliveryMan {
     private final Round round;
     private final List<Delivery> deliveries;
 
-    public DeliveryMan(int id, Round round) {
+    public DeliveryMan(int id) {
         this.id = id;
-        this.round = round;
+        this.round = new Round();
         this.deliveries = new ArrayList<>();
     }
 
@@ -31,5 +31,11 @@ public class DeliveryMan {
         return Collections.unmodifiableList(deliveries);
     }
     
+    void addDelivery(Delivery delivery) {
+        if (deliveries.contains(delivery))
+            throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
+        deliveries.add(delivery);
+        //TODO : compute round
+    }
     
 }
