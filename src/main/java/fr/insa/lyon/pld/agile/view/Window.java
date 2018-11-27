@@ -1,16 +1,19 @@
 package fr.insa.lyon.pld.agile.view;
 
-import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.XMLParser;
+import fr.insa.lyon.pld.agile.model.*;
 
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,10 +21,22 @@ import java.io.File;
  */
 public class Window {
     JFrame frame;
+    
     JButton btnOpenMap;
     JButton btnOpenLoc;
-    Map map;
+    
+    JSpinner numDeliveries;
+    JButton btnGenerate;
 
+    JButton btnListAdd;
+    JButton btnListMove;
+    JButton btnListRemove;
+
+    Map map = null;
+    List<Delivery> deliveries = null;
+    
+    List<MapView> mapViews = new ArrayList<>();
+    
     public Window() {
         // CREATING COMPONENTS
 
@@ -39,31 +54,28 @@ public class Window {
         btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
 
         // Centered map
-        JCanvas panMap = new JCanvas();
+        MapViewGraphical mapViewGraphical = new MapViewGraphical();
+        mapViews.add(mapViewGraphical);
         
         // Left panel
         JPanel panTools = new JPanel();
 
         // > Top settings
         JPanel panDeliveries = new JPanel();
-        SpinnerModel model = new SpinnerNumberModel(3, 1, 6, 1);     
-        JSpinner spinner = new JSpinner(model);
-        ((DefaultEditor) spinner.getEditor()).getTextField().setEditable(false);
+        SpinnerModel model = new SpinnerNumberModel(3, 1, 6, 1);
+        numDeliveries = new JSpinner(model);
+        ((DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
-        JButton btnGenerate = new JButton("Générer");
+        btnGenerate = new JButton("Générer");
 
         // > Main lists
         JPanel panLists = new JPanel();
-        JTabbedPane tabbedPane = new JTabbedPane();
-        for (int count=0; count<3; count++) {
-            String livreurName = "Livreur " + (count+1);
-            JPanel panLivreur = makeListPanel(livreurName);
-            tabbedPane.addTab(livreurName, null, panLivreur, livreurName);
-        }
+        MapViewTextual mapViewTextual = new MapViewTextual();
+        mapViews.add(mapViewTextual);
         // > and their buttons
-        JButton btnListAdd = new JButton(new ImageIcon("res/icons/add.png"));
-        JButton btnListMove = new JButton(new ImageIcon("res/icons/move.png"));
-        JButton btnListRemove = new JButton(new ImageIcon("res/icons/delete.png"));
+        btnListAdd = new JButton(new ImageIcon("res/icons/add.png"));
+        btnListMove = new JButton(new ImageIcon("res/icons/move.png"));
+        btnListRemove = new JButton(new ImageIcon("res/icons/delete.png"));
 
 
         // CREATING DISPLAY
@@ -77,7 +89,7 @@ public class Window {
 
         // - Top settings
         panDeliveries.setBorder(spacer);
-        panDeliveries.add(spinner);
+        panDeliveries.add(numDeliveries);
         panDeliveries.add(lblDeliveries);
         panDeliveries.add(btnGenerate);
 
@@ -91,7 +103,7 @@ public class Window {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 3;
-        panLists.add(tabbedPane, c);
+        panLists.add(mapViewTextual, c);
         c.weighty = 0;
         c.gridwidth = 1;
         c.gridy = 1;
@@ -109,17 +121,15 @@ public class Window {
         panTools.add(panLists, BorderLayout.CENTER);
 
         // Window
-        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMap);
+        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, mapViewGraphical);
         frame.add(tlbTop, BorderLayout.NORTH);
         frame.add(panSplit, BorderLayout.CENTER);
-        // frame.add(panTools, BorderLayout.WEST);
-        // frame.add(panMap, BorderLayout.CENTER);
-
+        
         
         // EVENTS HANDLING
-                
+        
         // File opening
-                
+        
         btnOpenMap.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,16 +140,25 @@ public class Window {
                     File selectedFile = fileChooser.getSelectedFile();
                     System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                     try {
-                        map = XMLParser.loadMap(selectedFile.toPath());
+                        Map newmap = XMLParser.loadMap(selectedFile.toPath());
+                        
+                        map = newmap;
+                        deliveries = null;
+                        for (MapView mv : mapViews) {
+                            mv.setDeliveries(deliveries);
+                            mv.setMap(map);
+                        }
+                        
+                        stateRefresh();
+                        
                     } catch (Exception err) {
                         // TODO Auto-generated catch block
                         err.printStackTrace();
                     }
-                    panMap.setmap(map);
                 } 
             }
         });
-                
+        
         btnOpenLoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,27 +168,51 @@ public class Window {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                    try {
+                        
+                        List<Delivery> newdeliveries = XMLParser.loadDeliveries(map, selectedFile.toPath());
+                        
+                        deliveries = newdeliveries;
+                        for (MapView mv : mapViews) {
+                            mv.setDeliveries(deliveries);
+                        }
+                        
+                        stateRefresh();
+                        
+                    } catch (Exception err) {
+                        // TODO Auto-generated catch block
+                        err.printStackTrace();
+                    }
                 } 
             }
         });
 
+        
+        // INITIAL STATE
+        
+        stateRefresh();
+        
+        
         // READY
 
         frame.pack();
         frame.setVisible(true);
     }
-
-    protected static JPanel makeListPanel(String text) {
-        JPanel pan = new JPanel();
-        pan.setLayout(new GridLayout(1, 1));
-
-        // JLabel filler = new JLabel(text);
-        // filler.setHorizontalAlignment(JLabel.CENTER);
-        // pan.add(filler);
-
-        String list[] = {"Monday", "Tuesday", "Wednesday",
-                "Thursday", "Friday", "Saturday", "Sunday"};
-        pan.add(new JList<>(list));
-        return pan;
+    
+    protected void stateRefresh()
+    {
+        Boolean hasMap = (map != null);
+        Boolean hasLoc = (deliveries != null);
+        
+        btnOpenMap.setEnabled(true);
+        btnOpenLoc.setEnabled(hasMap);
+        
+        numDeliveries.setEnabled(true);
+        btnGenerate.setEnabled(hasLoc);
+        
+        btnListAdd.setEnabled(hasLoc);
+        btnListMove.setEnabled(hasLoc);
+        btnListRemove.setEnabled(hasLoc);
     }
+    
 }
