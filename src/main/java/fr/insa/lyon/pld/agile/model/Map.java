@@ -95,6 +95,10 @@ public class Map {
         for (int i = 0; i < clusters.length; i++) {
             assignDelivery(deliveries.get(i), deliveryMen.get(clusters[i]));
         }
+
+        for (DeliveryMan deliveryMan : deliveryMen) {
+            deliveryMan.addNode(warehouse, this);
+        }
     }
     
     public void shortenDeliveries() {
@@ -123,6 +127,8 @@ public class Map {
             deliveryMan.clear();
             for (Delivery d : best)
                 deliveryMan.addDelivery(d, this);
+            
+            deliveryMan.addNode(warehouse, this);
         }
     }
     

@@ -54,6 +54,20 @@ public class DeliveryMan {
         deliveries.add(delivery);
     }
     
+    void addNode(Node node, Map map) { // TODO : refactorer
+        Node origin = null;
+        if (round.getItinerary().isEmpty())
+            origin = map.getWarehouse();
+        else
+            origin = round.getItinerary().get(round.getItinerary().size()-1).getSection().getDestination();
+        
+        List<Section> sections = Dijkstra.getPath(map.getNodes(), origin, node);
+        for (Section section : sections)
+        {
+            round.addPassage(section, 0);
+        }
+    }
+    
     void clear() {
         round.clear();
         deliveries.clear();
