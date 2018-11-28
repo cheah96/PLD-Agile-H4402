@@ -45,14 +45,20 @@ public class MapViewTextual extends JTabbedPane implements MapView
         this.removeAll();
         
         Vector<String> locs = new Vector();
-
+        
         if (map != null) {
             for (Delivery d : map.getDeliveries()) {
                 locs.add("Point " + d.getNode().getId());
             }
-            
-            newTab("Tous", locs);
-            
+        } else {
+            for (int i=0; i<14; i++) {
+                locs.add(" ");
+            }
+        }
+        
+        newTab("Tous", locs);
+        
+        if (map != null) {
             for (DeliveryMan deliveryMan : map.getDeliveryMen())
             {
                 Vector<String> vect = new Vector<>();
@@ -61,7 +67,7 @@ public class MapViewTextual extends JTabbedPane implements MapView
                 }
 
                 List<Passage> itinary = deliveryMan.getRound().getItinerary();
-                newTab("Livreur " + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
+                newTab("n°" + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
             }
         }
     }
