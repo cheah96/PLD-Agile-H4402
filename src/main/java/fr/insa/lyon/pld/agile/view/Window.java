@@ -27,11 +27,11 @@ public class Window {
     
     JSpinner numDeliveries;
     JButton btnGenerate;
-
+    
     JButton btnListAdd;
     JButton btnListMove;
     JButton btnListRemove;
-
+    
     Map map = null;
     List<Delivery> deliveries = null;
     
@@ -41,27 +41,27 @@ public class Window {
         this.map = map;
         
         // CREATING COMPONENTS
-
+        
         // Window
         frame = new JFrame();
         frame.setTitle("PLD Livraison à Domicile");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-
+        
         // Top tool-bar
         JToolBar tlbTop = new JToolBar();
         tlbTop.setFloatable(false);
         // and its buttons
         btnOpenMap = new JButton(new ImageIcon("res/icons/map.png"));
         btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
-
+        
         // Centered map
         MapViewGraphical mapViewGraphical = new MapViewGraphical();
         mapViews.add(mapViewGraphical);
         
         // Left panel
         JPanel panTools = new JPanel();
-
+        
         // > Top settings
         JPanel panDeliveries = new JPanel();
         SpinnerModel model = new SpinnerNumberModel(3, 1, 6, 1);
@@ -69,7 +69,7 @@ public class Window {
         ((DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
         btnGenerate = new JButton("Générer");
-
+        
         // > Main lists
         JPanel panLists = new JPanel();
         MapViewTextual mapViewTextual = new MapViewTextual();
@@ -78,23 +78,23 @@ public class Window {
         btnListAdd = new JButton(new ImageIcon("res/icons/add.png"));
         btnListMove = new JButton(new ImageIcon("res/icons/move.png"));
         btnListRemove = new JButton(new ImageIcon("res/icons/delete.png"));
-
-
+        
+        
         // CREATING DISPLAY
-
+        
         EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
-
+        
         // Top tool-bar
         tlbTop.setBorder(spacer);
         tlbTop.add(btnOpenMap);
         tlbTop.add(btnOpenLoc);
-
+        
         // - Top settings
         panDeliveries.setBorder(spacer);
         panDeliveries.add(numDeliveries);
         panDeliveries.add(lblDeliveries);
         panDeliveries.add(btnGenerate);
-
+        
         // - Main lists
         panLists.setBorder(spacer);
         panLists.setLayout(new GridBagLayout());
@@ -115,13 +115,13 @@ public class Window {
         panLists.add(btnListMove, c);
         c.gridx = 2;
         panLists.add(btnListRemove, c);
-
+        
         // Left panel
         panTools.setBorder(spacer);
         panTools.setLayout(new BorderLayout());
         panTools.add(panDeliveries, BorderLayout.NORTH);
         panTools.add(panLists, BorderLayout.CENTER);
-
+        
         // Window
         JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, mapViewGraphical);
         frame.add(tlbTop, BorderLayout.NORTH);
@@ -151,6 +151,7 @@ public class Window {
                             mv.setDeliveries(deliveries);
                             mv.setMap(map);
                         }
+                        frame.pack();
                         
                         stateRefresh();
                         
@@ -189,7 +190,19 @@ public class Window {
                 } 
             }
         });
-
+        
+        // Generation
+        
+        btnGenerate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int nbDeliveryMen = numDeliveries.getValue();
+                
+                // TODO
+                System.out.print("Génération avec " + nbDeliveryMen + " livreurs.");
+            }
+        });
+        
         
         // INITIAL STATE
         
@@ -197,7 +210,7 @@ public class Window {
         
         
         // READY
-
+        
         frame.pack();
         frame.setVisible(true);
     }

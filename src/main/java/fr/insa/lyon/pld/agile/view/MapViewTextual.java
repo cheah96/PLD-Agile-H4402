@@ -3,79 +3,80 @@ package fr.insa.lyon.pld.agile.view;
 import fr.insa.lyon.pld.agile.model.*;
 
 import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+
 import javax.swing.*;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
  * @author nmesnard
  */
-public class MapViewTextual extends JPanel implements MapView, MouseListener
+public class MapViewTextual extends JTabbedPane implements MapView
 {
-
+    Map map = null;
+    List<Delivery> deliveries = null;
+    
+    List<JList> lists = null;
+    
     public MapViewTextual()
     {
-        JTabbedPane tabbedPane = new JTabbedPane();
-        for (int count=0; count<3; count++) {
-            String livreurName = "Livreur " + (count+1);
-            JPanel panLivreur = makeListPanel(livreurName);
-            tabbedPane.addTab(livreurName, null, panLivreur, livreurName);
-        }
-        
-        this.setLayout(new GridLayout(1, 1));
-        this.add(tabbedPane);
-    }
-    
-    protected static JPanel makeListPanel(String text) {
-        JPanel pan = new JPanel();
-        pan.setLayout(new GridLayout(1, 1));
-        
-        String list[] = {"Monday", "Tuesday", "Wednesday",
-                         "Thursday", "Friday", "Saturday", "Sunday"};
-        pan.add(new JList<>(list));
-        return pan;
+        recreate();
     }
     
     @Override
     public void setMap(Map newMap)
     {
+        map = newMap;
+        deliveries = null;
         
+        recreate();
     }
     
     @Override
     public void setDeliveries(List<Delivery> newDeliveries)
     {
+        deliveries = newDeliveries;
         
+        recreate();
     }
     
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
+    protected void recreate() {
+        lists = new ArrayList<>();
+        
+        this.removeAll();
+        
+        Vector<String> locs = new Vector();
+        
+        if (deliveries != null) {
+            for (Delivery d : deliveries) {
+                locs.add("Point " + d.getNode().getId());
+            }
+        }
+        
+        newTab("Tous", locs);
+        
+        
+        for (int count=1; count<=3; count++) {
+            Vector<String> vect = new Vector<>();
+            for (int k=1; k<=count*3; k++) {
+                vect.addElement("Point " + k);
+            }
+            
+            newTab("Livreur " + count, vect);
+        }
     }
     
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
+    protected void newTab(String tabName, Vector<String> tabList) {
+        JList<String> lstList = new JList<>(tabList);
+        lists.add(lstList);
+        
+        JPanel panLivreur = new JPanel();
+        panLivreur.setLayout(new GridLayout(1, 1));
+        panLivreur.add(lstList);
+        this.addTab(tabName, panLivreur); //, null, panLivreur, livreurName);
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    // ... other MouseListener methods ... //
-
+    
 }
