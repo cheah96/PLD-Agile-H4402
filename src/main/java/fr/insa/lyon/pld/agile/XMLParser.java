@@ -27,15 +27,13 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLParser {
     private static final SAXParserFactory spf = SAXParserFactory.newInstance();
     
-    static public Map loadNodes(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
-        return loadMap(map, Files.newInputStream(path));
+    static public void loadNodes(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
+        loadMap(map, Files.newInputStream(path));
     }
     
-    static public Map loadMap(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
+    static public void loadMap(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
         SAXParser saxParser = spf.newSAXParser();
         saxParser.parse(stream, new MapHandler(map));
-        
-        return map;
     }
 
     private static class MapHandler extends DefaultHandler {
@@ -79,17 +77,13 @@ public class XMLParser {
         }
     }
     
-    static public List<Delivery> loadDeliveries(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
-        return loadDeliveries(map, Files.newInputStream(path));
+    static public void loadDeliveries(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
+        loadDeliveries(map, Files.newInputStream(path));
     }
     
-    static public List<Delivery> loadDeliveries(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
-        List<Delivery> deliveries = new ArrayList<>();
-        
+    static public void loadDeliveries(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
         SAXParser saxParser = spf.newSAXParser();
         saxParser.parse(stream, new DeliveriesHandler(map));
-        
-        return deliveries;
     }
 
     private static class DeliveriesHandler extends DefaultHandler {
@@ -106,8 +100,8 @@ public class XMLParser {
             {
                 case "entrepot":
                     long warehouseId = Long.parseLong(attributes.getValue("adresse"));
-                    if (map.getWarehouse() != null)
-                        throw new RuntimeException("Warehouse already set"); //TODO : Better error handling
+                    //if (map.getWarehouse() != null)
+                    //    throw new RuntimeException("Warehouse already set"); //TODO : Better error handling
                     
                     if (!map.setWarehouse(warehouseId))
                         throw new RuntimeException("Warehouse node not found"); //TODO : Better error handling

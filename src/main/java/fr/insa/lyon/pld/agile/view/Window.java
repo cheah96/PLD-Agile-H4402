@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -27,13 +29,13 @@ public class Window {
     
     JSpinner numDeliveries;
     JButton btnGenerate;
+    JButton btnOptimize;
     
     JButton btnListAdd;
     JButton btnListMove;
     JButton btnListRemove;
     
     Map map = null;
-    List<Delivery> deliveries = null;
     
     List<MapView> mapViews = new ArrayList<>();
     
@@ -64,11 +66,12 @@ public class Window {
         
         // > Top settings
         JPanel panDeliveries = new JPanel();
-        SpinnerModel model = new SpinnerNumberModel(3, 1, 6, 1);
+        SpinnerModel model = new SpinnerNumberModel(3, 1, 12, 1);
         numDeliveries = new JSpinner(model);
         ((DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
         btnGenerate = new JButton("Générer");
+        btnOptimize = new JButton("Optimiser");
         
         // > Main lists
         JPanel panLists = new JPanel();
@@ -94,6 +97,7 @@ public class Window {
         panDeliveries.add(numDeliveries);
         panDeliveries.add(lblDeliveries);
         panDeliveries.add(btnGenerate);
+        panDeliveries.add(btnOptimize);
         
         // - Main lists
         panLists.setBorder(spacer);
@@ -146,9 +150,8 @@ public class Window {
                         
                         XMLParser.loadNodes(map, selectedFile.toPath());
 
-                        deliveries = null;
                         for (MapView mv : mapViews) {
-                            mv.setDeliveries(deliveries);
+                            mv.setDeliveries(map.getDeliveries());
                             mv.setMap(map);
                         }
                         frame.pack();
@@ -174,11 +177,10 @@ public class Window {
                     System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                     try {
                         
-                        List<Delivery> newdeliveries = XMLParser.loadDeliveries(map, selectedFile.toPath());
-                        
-                        deliveries = newdeliveries;
+                        XMLParser.loadDeliveries(map, selectedFile.toPath());
+
                         for (MapView mv : mapViews) {
-                            mv.setDeliveries(deliveries);
+                            mv.setDeliveries(map.getDeliveries());
                         }
                         
                         stateRefresh();
@@ -196,10 +198,42 @@ public class Window {
         btnGenerate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int nbDeliveryMen = numDeliveries.getValue();
+                int nbDeliveryMen = (int) numDeliveries.getValue();
                 
-                // TODO
-                System.out.print("Génération avec " + nbDeliveryMen + " livreurs.");
+                System.out.println("Génération avec " + nbDeliveryMen + " livreurs.");
+                map.setDeliveryManCount(nbDeliveryMen);
+                System.out.println("Distribution des livraisons...");
+                map.distributeDeliveries();
+                
+                for (MapView mv : mapViews) {
+                    mv.setDeliveries(map.getDeliveries()); //TODO : TO FIX !!!
+                }
+                
+                stateRefresh();
+            }
+        });
+        
+        btnOptimize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Raccourcissement des livraisons...");
+                map.shortenDeliveries();
+                
+                int actualTab = mapViewTextual.getSelectedIndex();
+                for (MapView mv : mapViews) {
+                    mv.setDeliveries(map.getDeliveries()); //TODO : TO FIX !!!
+                }
+                
+                mapViewTextual.setSelectedIndex(actualTab);
+                
+                stateRefresh();
+            }
+        });
+        
+        mapViewTextual.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                mapViewGraphical.showRound(mapViewTextual.getSelectedIndex()-1);
             }
         });
         
@@ -218,13 +252,14 @@ public class Window {
     protected void stateRefresh()
     {
         Boolean hasMap = (map != null);
-        Boolean hasLoc = (deliveries != null);
+        Boolean hasLoc = (!map.getDeliveries().isEmpty());
         
         btnOpenMap.setEnabled(true);
         btnOpenLoc.setEnabled(hasMap);
         
         numDeliveries.setEnabled(true);
         btnGenerate.setEnabled(hasLoc);
+        btnOptimize.setEnabled(!map.getDeliveryMen().isEmpty());
         
         btnListAdd.setEnabled(hasLoc);
         btnListMove.setEnabled(hasLoc);

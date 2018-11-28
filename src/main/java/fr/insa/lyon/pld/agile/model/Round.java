@@ -18,4 +18,18 @@ public class Round {
     public List<Passage> getItinerary() {
         return Collections.unmodifiableList(itinerary);
     }
+    
+    void addPassage(Section section, double deliveryDuration) {
+        double arrivalTime = section.getLength()/1000./15.*60.*60.;
+        if (!itinerary.isEmpty()) {
+            Passage last = itinerary.get(itinerary.size()-1);
+            arrivalTime += last.getArrivalTime() + last.getDeliveryDuration();
+        }
+        Passage passage = new Passage(section, arrivalTime, deliveryDuration);
+        itinerary.add(passage);
+    }
+    
+    void clear() {
+        itinerary.clear();
+    }
 }

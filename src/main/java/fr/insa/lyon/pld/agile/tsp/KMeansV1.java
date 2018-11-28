@@ -4,9 +4,7 @@ package fr.insa.lyon.pld.agile.tsp;
 import fr.insa.lyon.pld.agile.model.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 // ideas : begin assigning randomly
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 public class KMeansV1 {
     
     public static List<Node> generateNodes(int nodesNb, int spaceHeight, int spaceWidth) {
-        List<Node> nodes = new ArrayList();
+        List<Node> nodes = new ArrayList<>();
         for(int i=0; i<nodesNb; ++i) {
             double lon = ( (Math.random()-0.5) * spaceWidth ) ;
             double lat = ( (Math.random()-0.5) * spaceHeight ) ;
@@ -34,10 +32,10 @@ public class KMeansV1 {
         
     // todo : corriger le problème 10pts, 3clusters
     // todo : initialiser correctement la 1ère assignation de cluster
-    public static List<Integer> kMeans(List<Node> nodes, int clustersNb) {
+    public static int[] kMeans(List<Node> nodes, int clustersNb) {
         Point2D[] clustersCenters = new Point2D[clustersNb];    // the centers of the clusters
         int[] clusters = new int[nodes.size()];   // the clusters to which the points belong
-        int[] clustersDeliveriesNumber = new int[clustersNb];    // the number of points in the clusters
+        int[] clustersNodesNumber = new int[clustersNb];    // the number of points in the clusters
         
         for(int i=0; i<clustersNb; ++i) {
             int randomIndex = (int)(Math.random() * nodes.size());
@@ -51,13 +49,13 @@ public class KMeansV1 {
             
             //! init the number of deliveries in each cluster
             for(int k=0; k<clustersNb; ++k) {
-                clustersDeliveriesNumber[k] = 0;
+                clustersNodesNumber[k] = 0;
             }
                         
             //! assign the deliveries to the clusters
             for(int i=0; i<nodes.size(); ++i) {
                 int cluster = 0;
-                while( clustersDeliveriesNumber[cluster] >= Math.ceil(nodes.size()/clustersNb) ) {
+                while( clustersNodesNumber[cluster] >= Math.ceil(nodes.size()/clustersNb) ) {
                     cluster++;
                 }
                 
@@ -65,18 +63,18 @@ public class KMeansV1 {
                     double deliveryLon = nodes.get(i).getLongitude();
                     double deliveryLat = nodes.get(i).getLatitude();
                     if(clustersCenters[k].distance(deliveryLon, deliveryLat) < clustersCenters[cluster].distance(deliveryLon, deliveryLat)
-                            && clustersDeliveriesNumber[k] < Math.ceil(nodes.size()/clustersNb)) {
+                            && clustersNodesNumber[k] < Math.ceil(nodes.size()/clustersNb)) {
                         cluster = k;
                     }
                 }
                 clusters[i] = cluster;
-                clustersDeliveriesNumber[cluster]++;
+                clustersNodesNumber[cluster]++;
             }
             
             //! reevaluate the clusters centers
             for(int k=0; k<clustersNb; ++k) {
-                int LonSum = 0; // Coordinate X
-                int LatSum = 0; // Coordinate Y
+                double LonSum = 0; // Coordinate X
+                double LatSum = 0; // Coordinate Y
                 for(int i=0; i<nodes.size(); ++i) {
                     if(clusters[i] == k) {
                         LonSum += nodes.get(i).getLongitude();
@@ -84,9 +82,9 @@ public class KMeansV1 {
                     }
                 }
                 
-                if(clustersDeliveriesNumber[k] != 0) {
-                    clustersCenters[k].setLocation(LonSum / clustersDeliveriesNumber[k], 
-                                                   LatSum / clustersDeliveriesNumber[k]);
+                if(clustersNodesNumber[k] != 0) {
+                    clustersCenters[k].setLocation(LonSum / clustersNodesNumber[k], 
+                                                   LatSum / clustersNodesNumber[k]);
                 } else {
                     int randomIndex = (int)(Math.random() * nodes.size());
                     double lon = nodes.get(randomIndex).getLongitude();  // coord x
@@ -96,14 +94,14 @@ public class KMeansV1 {
             }
         }
         
-        return Arrays.stream(clusters).boxed().collect(Collectors.toList());
+        return clusters;
     }
     
     public static void test() {
         List<Node> nodes = generateNodes(100, 40, 40);
-        List<Integer> clusters = kMeans(nodes, 5);
-        for(int i=0; i<clusters.size(); ++i) {
-            System.out.print(clusters.get(i) + " ; " ); 
+        int[] clusters = kMeans(nodes, 5);
+        for(int i=0; i<clusters.length; ++i) {
+            System.out.print(clusters[i] + " ; " ); 
             System.out.println(nodes.get(i).getLongitude() + " ; " +
                                nodes.get(i).getLatitude());
         }

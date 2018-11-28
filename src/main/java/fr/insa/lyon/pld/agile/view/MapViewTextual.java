@@ -17,7 +17,6 @@ import java.util.Vector;
 public class MapViewTextual extends JTabbedPane implements MapView
 {
     Map map = null;
-    List<Delivery> deliveries = null;
     
     List<JList> lists = null;
     
@@ -30,7 +29,6 @@ public class MapViewTextual extends JTabbedPane implements MapView
     public void setMap(Map newMap)
     {
         map = newMap;
-        deliveries = null;
         
         recreate();
     }
@@ -38,8 +36,6 @@ public class MapViewTextual extends JTabbedPane implements MapView
     @Override
     public void setDeliveries(List<Delivery> newDeliveries)
     {
-        deliveries = newDeliveries;
-        
         recreate();
     }
     
@@ -48,24 +44,26 @@ public class MapViewTextual extends JTabbedPane implements MapView
         
         this.removeAll();
         
+        if (map == null)
+            return;
+        
         Vector<String> locs = new Vector();
         
-        if (deliveries != null) {
-            for (Delivery d : deliveries) {
-                locs.add("Point " + d.getNode().getId());
-            }
+        for (Delivery d : map.getDeliveries()) {
+            locs.add("Point " + d.getNode().getId());
         }
         
         newTab("Tous", locs);
         
-        
-        for (int count=1; count<=3; count++) {
+        for (DeliveryMan deliveryMan : map.getDeliveryMen())
+        {
             Vector<String> vect = new Vector<>();
-            for (int k=1; k<=count*3; k++) {
-                vect.addElement("Point " + k);
+            for (Delivery d : deliveryMan.getDeliveries()) {
+                vect.addElement("Point " + d.getNode().getId());
             }
             
-            newTab("Livreur " + count, vect);
+            List<Passage> itinary = deliveryMan.getRound().getItinerary();
+            newTab("Livreur " + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
         }
     }
     

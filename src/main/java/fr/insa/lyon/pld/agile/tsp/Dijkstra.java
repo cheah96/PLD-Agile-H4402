@@ -1,0 +1,195 @@
+package fr.insa.lyon.pld.agile.tsp;
+
+import fr.insa.lyon.pld.agile.model.Node;
+import fr.insa.lyon.pld.agile.model.Section;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * @author challal
+ */
+public class Dijkstra {
+    private static class NodeInfo {
+        public Node node;
+        public int state;
+        public double dist;
+        public long parent;
+        public int parentSection;
+
+        public NodeInfo(Node node, int state, double dist, long parent, int parentSection) {
+            this.node = node;
+            this.state = state;
+            this.dist = dist;
+            this.parent = parent;
+            this.parentSection = parentSection;
+        }
+    }
+    
+    public static List<Section> dijkstra(Map<Long, Node> nodes, Node origin, Node destination){
+        int WHITE = 0;
+        int GRAY = 1;
+        int BLACK = 2;
+        
+        Map<Long, NodeInfo> nodeInfos = new HashMap<>();
+        
+        for (Node node : nodes.values()) {
+            nodeInfos.put(node.getId(), new NodeInfo(node, WHITE, 100000000., -1, -1));
+        }
+        
+        LinkedList<NodeInfo> queue = new LinkedList();
+        queue.add(nodeInfos.get(origin.getId()));
+        nodeInfos.get(origin.getId()).dist = 0;
+        while(!queue.isEmpty()){
+            //TODO : PriorityQueue please
+            NodeInfo mini = queue.get(0);
+            for(int i=1; i<queue.size(); ++i){
+                if(mini.dist > queue.get(i).dist) {
+                    mini = queue.get(i);
+                }
+            }
+            
+            NodeInfo head = mini;
+            queue.remove(head);
+            
+            head.state = GRAY;
+            for(int i=0; i<head.node.getOutgoingSections().size(); ++i){
+                Section section = head.node.getOutgoingSections().get(i);
+                NodeInfo sectionDest = nodeInfos.get(section.getDestination().getId());
+                if(sectionDest.state != BLACK){
+                    if(sectionDest.state == WHITE){
+                        queue.add(sectionDest);
+                        sectionDest.state = GRAY;
+                    }
+                    if(sectionDest.dist > head.dist + section.getLength()){
+                        sectionDest.dist = head.dist + section.getLength();
+                        sectionDest.parent = head.node.getId();
+                        sectionDest.parentSection = i;
+                    }
+                }
+            }
+            
+            head.state = BLACK;
+        }
+        
+        List path = new ArrayList();
+        NodeInfo node = nodeInfos.get(destination.getId());
+        while(node.node != origin){
+            NodeInfo parentNode = nodeInfos.get( node.parent );
+            path.add( parentNode.node.getOutgoingSections().get( node.parentSection ) );
+            node = parentNode;
+        }
+        Collections.reverse(path);
+        
+        return path;
+    }
+    
+    public static double dijkstraLength(Map<Long, Node> nodes, Node origin, Node destination){
+        int WHITE = 0;
+        int GRAY = 1;
+        int BLACK = 2;
+        
+        Map<Long, NodeInfo> nodeInfos = new HashMap<>();
+        
+        for (Node node : nodes.values()) {
+            nodeInfos.put(node.getId(), new NodeInfo(node, WHITE, 100000000., -1, -1));
+        }
+        
+        LinkedList<NodeInfo> queue = new LinkedList();
+        queue.add(nodeInfos.get(origin.getId()));
+        nodeInfos.get(origin.getId()).dist = 0;
+        while(!queue.isEmpty()){
+            //TODO : PriorityQueue please
+            NodeInfo mini = queue.get(0);
+            for(int i=1; i<queue.size(); ++i){
+                if(mini.dist > queue.get(i).dist) {
+                    mini = queue.get(i);
+                }
+            }
+            
+            NodeInfo head = mini;
+            queue.remove(head);
+            
+            head.state = GRAY;
+            for(int i=0; i<head.node.getOutgoingSections().size(); ++i){
+                Section section = head.node.getOutgoingSections().get(i);
+                NodeInfo sectionDest = nodeInfos.get(section.getDestination().getId());
+                if(sectionDest.state != BLACK){
+                    if(sectionDest.state == WHITE){
+                        queue.add(sectionDest);
+                        sectionDest.state = GRAY;
+                    }
+                    if(sectionDest.dist > head.dist + section.getLength()){
+                        sectionDest.dist = head.dist + section.getLength();
+                        sectionDest.parent = head.node.getId();
+                        sectionDest.parentSection = i;
+                    }
+                }
+            }
+            
+            head.state = BLACK;
+        }
+
+        NodeInfo node = nodeInfos.get(destination.getId());
+        
+        return node.dist;
+    }
+    
+    public static void test(){
+        Map<Long, Node> nodes = new HashMap();
+        Node n0 = new Node(0,1,1);
+        Node n1 = new Node(1,1,1);
+        Node n2 = new Node(2,1,1);
+        Node n3 = new Node(3,1,1);
+        Node n4 = new Node(4,1,1);
+        Node n5 = new Node(5,1,1);
+        
+        n0.addOutgoingSection(new Section(" 0 -> 1 ", 7, n1));
+        n0.addOutgoingSection(new Section(" 0 -> 2 ", 14, n2));
+        n0.addOutgoingSection(new Section(" 0 -> 3 ", 9, n3));
+        
+        n1.addOutgoingSection(new Section(" 1 -> 0 ", 7, n0));
+        n1.addOutgoingSection(new Section(" 1 -> 3 ", 10, n3));
+        n1.addOutgoingSection(new Section(" 1 -> 4 ", 15, n4));
+        
+        n2.addOutgoingSection(new Section(" 2 -> 0 ", 14, n0));
+        n2.addOutgoingSection(new Section(" 2 -> 3 ", 2, n3));
+        n2.addOutgoingSection(new Section(" 2 -> 5 ", 9, n5));
+        
+        n3.addOutgoingSection(new Section(" 3 -> 0 ", 9, n0));
+        n3.addOutgoingSection(new Section(" 3 -> 1 ", 10, n1));
+        n3.addOutgoingSection(new Section(" 3 -> 2 ", 2, n2));
+        n3.addOutgoingSection(new Section(" 3 -> 4 ", 11, n4));
+        
+        n4.addOutgoingSection(new Section(" 4 -> 1 ", 15, n1));
+        n4.addOutgoingSection(new Section(" 4 -> 3 ", 11, n3));
+        n4.addOutgoingSection(new Section(" 4 -> 5 ", 6, n5));
+        
+        n5.addOutgoingSection(new Section(" 5 -> 2 ", 9, n2));
+        n5.addOutgoingSection(new Section(" 5 -> 4 ", 6, n4));
+        
+        
+        nodes.put(0L, n0);
+        nodes.put(1L, n1);
+        nodes.put(2L, n2);
+        nodes.put(3L, n3);
+        nodes.put(4L, n4);
+        nodes.put(5L, n5);
+        
+        List path = dijkstra(nodes, n5, n0);
+        
+        for(int i=0; i<path.size(); ++i){
+            System.out.println(((Section)path.get(i)).getName());
+        }
+        
+    }
+    
+    public static void main(String[] args){
+        test();
+    }
+    
+}

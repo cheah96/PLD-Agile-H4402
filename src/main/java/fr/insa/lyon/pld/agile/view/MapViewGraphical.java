@@ -23,7 +23,6 @@ import java.util.ArrayList;
 public class MapViewGraphical extends JPanel implements MapView
 {
     Map map;
-    List<Delivery> deliveries;
     
     Boolean hasScale = false;
     Boolean hasData = false;
@@ -43,6 +42,8 @@ public class MapViewGraphical extends JPanel implements MapView
     Double deltaY;
     
     Node sel = null;
+    
+    int deliveryManIndex = -1;
     
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
@@ -96,8 +97,12 @@ public class MapViewGraphical extends JPanel implements MapView
     {
         sel = null;
         
-        deliveries = newDeliveries;
-        
+        this.repaint();
+    }
+    
+    public void showRound(int deliveryManIndex)
+    {
+        this.deliveryManIndex = deliveryManIndex;
         this.repaint();
     }
     
@@ -168,13 +173,11 @@ public class MapViewGraphical extends JPanel implements MapView
             }
         }
         
-        if (deliveries != null) {
-            for (Delivery d : deliveries) {
-                Node n = d.getNode();
-                Point coordsd = getCoordsToPixel(n.getLongitude(), n.getLatitude());
-                
-                drawNode(g, coordsd, 9);
-            }
+        for (Delivery d : map.getDeliveries()) {
+            Node n = d.getNode();
+            Point coordsd = getCoordsToPixel(n.getLongitude(), n.getLatitude());
+
+            drawNode(g, coordsd, 9);
         }
         
         g.setColor(Color.blue);
@@ -184,6 +187,21 @@ public class MapViewGraphical extends JPanel implements MapView
             drawNode(g, coordssel, 9);
         }
         
+        if (deliveryManIndex >= 0) {
+            g.setColor(Color.green);
+
+            Node prev = map.getWarehouse();
+            for (Passage p : map.getDeliveryMen().get(deliveryManIndex).getRound().getItinerary()) {
+                Node cur = p.getSection().getDestination();
+                
+                Point coordsn1 = getCoordsToPixel(prev.getLongitude(), prev.getLatitude());
+                Point coordsn2 = getCoordsToPixel(cur.getLongitude(),cur.getLatitude());
+               
+                drawSection(g, coordsn1, coordsn2);
+                
+                prev = cur;
+            }
+        }
     }
     
     protected static void drawSection(Graphics g, Point p1, Point p2) {

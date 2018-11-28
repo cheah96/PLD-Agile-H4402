@@ -7,10 +7,12 @@ package fr.insa.lyon.pld.agile.model;
 public class Passage {
     private final Section section;
     private double arrivalTime;
+    private double deliveryDuration;
 
-    public Passage(Section section, double arrivalTime) {
+    public Passage(Section section, double arrivalTime, double deliveryDuration) {
         this.section = section;
         this.arrivalTime = arrivalTime;
+        this.deliveryDuration = deliveryDuration;
     }
 
     public Section getSection() {
@@ -19,6 +21,10 @@ public class Passage {
 
     public double getArrivalTime() {
         return arrivalTime;
+    }
+
+    public double getDeliveryDuration() {
+        return deliveryDuration;
     }
 
     public void setArrivalTime(double arrivalTime) {
