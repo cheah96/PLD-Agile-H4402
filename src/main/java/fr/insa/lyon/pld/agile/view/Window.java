@@ -178,7 +178,7 @@ public class Window {
                     try {
                         
                         XMLParser.loadDeliveries(map, selectedFile.toPath());
-
+                        
                         for (MapView mv : mapViews) {
                             mv.setDeliveries(map.getDeliveries());
                         }

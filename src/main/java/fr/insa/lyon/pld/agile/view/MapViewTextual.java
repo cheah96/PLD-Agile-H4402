@@ -44,26 +44,25 @@ public class MapViewTextual extends JTabbedPane implements MapView
         
         this.removeAll();
         
-        if (map == null)
-            return;
-        
         Vector<String> locs = new Vector();
-        
-        for (Delivery d : map.getDeliveries()) {
-            locs.add("Point " + d.getNode().getId());
-        }
-        
-        newTab("Tous", locs);
-        
-        for (DeliveryMan deliveryMan : map.getDeliveryMen())
-        {
-            Vector<String> vect = new Vector<>();
-            for (Delivery d : deliveryMan.getDeliveries()) {
-                vect.addElement("Point " + d.getNode().getId());
+
+        if (map != null) {
+            for (Delivery d : map.getDeliveries()) {
+                locs.add("Point " + d.getNode().getId());
             }
             
-            List<Passage> itinary = deliveryMan.getRound().getItinerary();
-            newTab("Livreur " + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
+            newTab("Tous", locs);
+            
+            for (DeliveryMan deliveryMan : map.getDeliveryMen())
+            {
+                Vector<String> vect = new Vector<>();
+                for (Delivery d : deliveryMan.getDeliveries()) {
+                    vect.addElement("Point " + d.getNode().getId());
+                }
+
+                List<Passage> itinary = deliveryMan.getRound().getItinerary();
+                newTab("Livreur " + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
+            }
         }
     }
     
