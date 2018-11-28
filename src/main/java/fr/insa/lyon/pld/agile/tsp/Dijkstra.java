@@ -5,6 +5,7 @@ import fr.insa.lyon.pld.agile.model.Section;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,15 @@ public class Dijkstra {
         }
     }
     
-    public static List<Section> dijkstra(Map<Long, Node> nodes, Node origin, Node destination){
+    
+    public static Map<Long, NodeInfo> dijkstra(Map<Long, Node> nodes, Node origin){
         int WHITE = 0;
         int GRAY = 1;
         int BLACK = 2;
         
         Map<Long, NodeInfo> nodeInfos = new HashMap<>();
         
-        for (Node node : nodes.values()) {
+        for(Node node : nodes.values()) {
             nodeInfos.put(node.getId(), new NodeInfo(node, WHITE, 100000000., -1, -1));
         }
         
@@ -75,6 +77,13 @@ public class Dijkstra {
             
             head.state = BLACK;
         }
+        
+        return nodeInfos;
+    }
+    
+    
+    public static List<Section> getPath(Map<Long, Node> nodes, Node origin, Node destination){
+        Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
         
         List path = new ArrayList();
         NodeInfo node = nodeInfos.get(destination.getId());
@@ -88,55 +97,16 @@ public class Dijkstra {
         return path;
     }
     
-    public static double dijkstraLength(Map<Long, Node> nodes, Node origin, Node destination){
-        int WHITE = 0;
-        int GRAY = 1;
-        int BLACK = 2;
+    
+    public static Map<Long, Double> getDistances(Map<Long, Node> nodes, Node origin){
+        Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
+        Map<Long, Double> distances = new HashMap<>();
         
-        Map<Long, NodeInfo> nodeInfos = new HashMap<>();
-        
-        for (Node node : nodes.values()) {
-            nodeInfos.put(node.getId(), new NodeInfo(node, WHITE, 100000000., -1, -1));
+        for(Map.Entry<Long, NodeInfo> pair : nodeInfos.entrySet()){
+            distances.put((Long)pair.getKey(), ((NodeInfo)pair.getValue()).dist );
         }
         
-        LinkedList<NodeInfo> queue = new LinkedList();
-        queue.add(nodeInfos.get(origin.getId()));
-        nodeInfos.get(origin.getId()).dist = 0;
-        while(!queue.isEmpty()){
-            //TODO : PriorityQueue please
-            NodeInfo mini = queue.get(0);
-            for(int i=1; i<queue.size(); ++i){
-                if(mini.dist > queue.get(i).dist) {
-                    mini = queue.get(i);
-                }
-            }
-            
-            NodeInfo head = mini;
-            queue.remove(head);
-            
-            head.state = GRAY;
-            for(int i=0; i<head.node.getOutgoingSections().size(); ++i){
-                Section section = head.node.getOutgoingSections().get(i);
-                NodeInfo sectionDest = nodeInfos.get(section.getDestination().getId());
-                if(sectionDest.state != BLACK){
-                    if(sectionDest.state == WHITE){
-                        queue.add(sectionDest);
-                        sectionDest.state = GRAY;
-                    }
-                    if(sectionDest.dist > head.dist + section.getLength()){
-                        sectionDest.dist = head.dist + section.getLength();
-                        sectionDest.parent = head.node.getId();
-                        sectionDest.parentSection = i;
-                    }
-                }
-            }
-            
-            head.state = BLACK;
-        }
-
-        NodeInfo node = nodeInfos.get(destination.getId());
-        
-        return node.dist;
+        return distances;
     }
     
     public static void test(){
@@ -180,10 +150,16 @@ public class Dijkstra {
         nodes.put(4L, n4);
         nodes.put(5L, n5);
         
-        List path = dijkstra(nodes, n5, n0);
-        
+        List path = getPath(nodes, n5, n0);
         for(int i=0; i<path.size(); ++i){
             System.out.println(((Section)path.get(i)).getName());
+        }
+        
+        Map<Long, Double> dists = getDistances(nodes, n0);
+        Iterator it = dists.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getValue());
         }
         
     }

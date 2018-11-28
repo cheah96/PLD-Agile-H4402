@@ -105,8 +105,9 @@ public class Map {
             int[] nodesCost = new int[deliveries.size()];
             
             for (int i = 0; i < deliveries.size(); i++) {
+                java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, deliveries.get(i).getNode());
                 for (int j = 0; j < deliveries.size(); j++) {
-                    edgesCosts[i][j] = (int) (Dijkstra.dijkstraLength(nodes, deliveries.get(i).getNode(), deliveries.get(j).getNode())/1000./15.*60.*60.);
+                    edgesCosts[i][j] = (int) (distances.get(deliveries.get(j).getNode().getId())/1000./15.*60.*60.);
                 }
                 
                 nodesCost[i] = deliveries.get(i).getDuration();

@@ -42,7 +42,7 @@ public class DeliveryMan {
         else
             origin = deliveries.get(deliveries.size()-1).getNode();
         
-        List<Section> sections = Dijkstra.dijkstra(map.getNodes(), origin, delivery.getNode());
+        List<Section> sections = Dijkstra.getPath(map.getNodes(), origin, delivery.getNode());
         for (Section section : sections)
         {
             if (section.getDestination() != delivery.getNode())
