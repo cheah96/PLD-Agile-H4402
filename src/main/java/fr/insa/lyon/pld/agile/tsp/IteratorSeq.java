@@ -5,30 +5,30 @@ import java.util.Iterator;
 
 public class IteratorSeq implements Iterator<Integer> {
 
-    private Integer[] candidats;
-    private int nbCandidats;
+    private Integer[] nodes;
+    private int numberOfNodes;
 
     /**
-     * Cree un iterateur pour iterer sur l'ensemble des sommets de nonVus
-     * @param nonVus
-     * @param sommetCrt
+     * Creates an iterator to iterate over a set of unexplored nodes.
+     * 
+     * @param unexploredNodes the set of unexplored nodes
      */
-    public IteratorSeq(Collection<Integer> nonVus, int sommetCrt){
-	this.candidats = new Integer[nonVus.size()];
-	nbCandidats = 0;
-	for (Integer s : nonVus){
-	    candidats[nbCandidats++] = s;
-	}
+    public IteratorSeq(Collection<Integer> unexploredNodes) {
+        nodes = new Integer[unexploredNodes.size()];
+        numberOfNodes = 0;
+        for (Integer s : unexploredNodes){
+            nodes[numberOfNodes++] = s;
+        }
     }
 
     @Override
     public boolean hasNext() {
-	return nbCandidats > 0;
+        return numberOfNodes > 0;
     }
 
     @Override
     public Integer next() {
-	return candidats[--nbCandidats];
+        return nodes[--numberOfNodes];
     }
 
     @Override
