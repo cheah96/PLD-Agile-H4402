@@ -55,8 +55,8 @@ public class KMeansV1 {
             //! assign the deliveries to the clusters
             for(int i=0; i<nodes.size(); ++i) {
                 int cluster = 0;
-                while( clustersNodesNumber[cluster] >= Math.ceil(nodes.size()/clustersNb) ) {
-                    cluster++;
+                while( clustersNodesNumber[cluster] >= Math.ceil(1.0*nodes.size()/clustersNb) ) {
+                    ++cluster;
                 }
                 
                 for(int k=1; k<clustersNb; ++k) {
@@ -98,7 +98,7 @@ public class KMeansV1 {
     }
     
     public static void test() {
-        List<Node> nodes = generateNodes(100, 40, 40);
+        List<Node> nodes = generateNodes(12, 40, 40);
         int[] clusters = kMeans(nodes, 5);
         for(int i=0; i<clusters.length; ++i) {
             System.out.print(clusters[i] + " ; " ); 
