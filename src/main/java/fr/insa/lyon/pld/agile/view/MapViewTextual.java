@@ -1,85 +1,116 @@
 package fr.insa.lyon.pld.agile.view;
 
+import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
+import java.awt.BorderLayout;
 
 import java.awt.GridLayout;
-
 import javax.swing.*;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Vector;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author nmesnard
  */
-public class MapViewTextual extends JTabbedPane implements MapView
+public class MapViewTextual extends MapView
 {
-    Map map = null;
+    final Map map;
+    final MainController controller;
     
-    List<JList> lists = null;
+    private JTabbedPane jTabbedPane;
     
-    public MapViewTextual()
-    {
+    private List<JList> lists = null;
+    
+    public MapViewTextual(Map map, MainController controller) {
+        this.map = map;
+        this.controller = controller;
+        this.jTabbedPane = new JTabbedPane();
+        setLayout(new BorderLayout());
+        add(jTabbedPane, BorderLayout.CENTER);
         recreate();
-    }
-    
-    @Override
-    public void setMap(Map newMap)
-    {
-        map = newMap;
         
-        recreate();
+        this.jTabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                controller.showDeliveryManRound(jTabbedPane.getSelectedIndex()-1);
+            }
+        });
+    }
+    
+    public int getActiveDeliveryManIndex() {
+        return jTabbedPane.getSelectedIndex()-1;
     }
     
     @Override
-    public void setDeliveries(List<Delivery> newDeliveries)
-    {
-        recreate();
+    public void showDeliveryManRound(int deliveryManIndex) {
+        jTabbedPane.setSelectedIndex(deliveryManIndex+1);
     }
     
     protected void recreate() {
         lists = new ArrayList<>();
         
-        this.removeAll();
+        jTabbedPane.removeAll();
         
-        Vector<String> locs = new Vector();
+        DefaultListModel<String> locs = new DefaultListModel<>();
         
-        if (map != null) {
-            for (Delivery d : map.getDeliveries()) {
-                locs.add("Point " + d.getNode().getId());
-            }
-        } else {
-            for (int i=0; i<14; i++) {
-                locs.add(" ");
-            }
+        for (Delivery d : map.getDeliveries()) {
+            locs.addElement("Point " + d.getNode().getId());
         }
         
         newTab("Tous", locs);
         
-        if (map != null) {
-            for (DeliveryMan deliveryMan : map.getDeliveryMen())
-            {
-                Vector<String> vect = new Vector<>();
-                for (Delivery d : deliveryMan.getDeliveries()) {
-                    vect.addElement("Point " + d.getNode().getId());
-                }
-
-                List<Passage> itinary = deliveryMan.getRound().getItinerary();
-                newTab("n°" + deliveryMan.getId() + " (" + (int)itinary.get(itinary.size()-1).getArrivalTime() + ")", vect);
+        for (DeliveryMan deliveryMan : map.getDeliveryMen())
+        {
+            DefaultListModel<String> vect = new DefaultListModel<>();
+            for (Delivery d : deliveryMan.getDeliveries()) {
+                vect.addElement("Point " + d.getNode().getId());
             }
+
+            List<Passage> itinary = deliveryMan.getRound().getItinerary();
+            int arrivalTime = 0;
+            if (!itinary.isEmpty())
+                arrivalTime = (int)itinary.get(itinary.size()-1).getArrivalTime();
+            
+            newTab("n°" + deliveryMan.getId() + " (" + arrivalTime + ")", vect);
         }
     }
     
-    protected void newTab(String tabName, Vector<String> tabList) {
+    protected void newTab(String tabName, DefaultListModel<String> tabList) {
         JList<String> lstList = new JList<>(tabList);
         lists.add(lstList);
         
         JPanel panLivreur = new JPanel();
         panLivreur.setLayout(new GridLayout(1, 1));
         panLivreur.add(lstList);
-        this.addTab(tabName, panLivreur); //, null, panLivreur, livreurName);
+        jTabbedPane.addTab(tabName, panLivreur); //, null, panLivreur, livreurName);
+    }
+
+    @Override
+    public void updateNodes() {
+        
     }
     
+    @Override
+    public void updateDeliveries() {
+        recreate();
+    }
+    
+    @Override
+    public void updateDeliveryMen() {
+        recreate();
+    }
+
+    @Override
+    public void updateStartingHour() {
+        
+    }
+
+    @Override
+    public void updateWarehouse() {
+        
+    }
 }

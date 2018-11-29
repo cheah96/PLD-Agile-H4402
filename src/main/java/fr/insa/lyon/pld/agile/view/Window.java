@@ -1,6 +1,6 @@
 package fr.insa.lyon.pld.agile.view;
 
-import fr.insa.lyon.pld.agile.XMLParser;
+import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
 
 import javax.swing.*;
@@ -22,25 +22,58 @@ import javax.swing.event.ChangeListener;
  * @author nmesnard, tzhang
  */
 public class Window {
-    JFrame frame;
+    private JFrame frame;
     
-    JButton btnOpenMap;
-    JButton btnOpenLoc;
+    private JButton btnOpenMap;
+    private JButton btnOpenLoc;
     
-    JSpinner numDeliveries;
-    JButton btnGenerate;
-    JButton btnOptimize;
+    private JSpinner numDeliveries;
+    private JButton btnGenerate;
+    private JButton btnOptimize;
     
-    JButton btnListAdd;
-    JButton btnListMove;
-    JButton btnListRemove;
+    private JButton btnListAdd;
+    private JButton btnListMove;
+    private JButton btnListRemove;
     
-    Map map = null;
+    private Map map = null;
+    private final MainController controller;
     
     List<MapView> mapViews = new ArrayList<>();
     
-    public Window(Map map) {
+    private class ButtonListener implements ActionListener{
+        private final MainController controller;
+        public ButtonListener(MainController controller) {
+            this.controller = controller;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == btnOpenMap)
+            {
+                try 
+                {
+                    controller.loadNodesFile();
+                    stateRefresh();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            else if (e.getSource() == btnOpenLoc)
+            {
+                try 
+                {
+                    controller.loadDeliveriesFile();
+                    stateRefresh();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    public Window(Map map, MainController controller) {
         this.map = map;
+        this.controller = controller;
         
         // CREATING COMPONENTS
         
@@ -58,8 +91,9 @@ public class Window {
         btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
         
         // Centered map
-        MapViewGraphical mapViewGraphical = new MapViewGraphical();
+        MapViewGraphical mapViewGraphical = new MapViewGraphical(map, controller);
         mapViews.add(mapViewGraphical);
+        map.addPropertyChangeListener(mapViewGraphical);
         
         // Left panel
         JPanel panTools = new JPanel();
@@ -75,8 +109,9 @@ public class Window {
         
         // > Main lists
         JPanel panLists = new JPanel();
-        MapViewTextual mapViewTextual = new MapViewTextual();
+        MapViewTextual mapViewTextual = new MapViewTextual(map, controller);
         mapViews.add(mapViewTextual);
+        map.addPropertyChangeListener(mapViewTextual);
         // > and their buttons
         btnListAdd = new JButton(new ImageIcon("res/icons/add.png"));
         btnListMove = new JButton(new ImageIcon("res/icons/move.png"));
@@ -135,108 +170,44 @@ public class Window {
         // EVENTS HANDLING
         
         // File opening
+        ButtonListener btnListener = new ButtonListener(controller);
+        btnOpenMap.addActionListener(e -> {
+            try {
+                controller.loadNodesFile();
+                stateRefresh();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         
-        btnOpenMap.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                // fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                int result = fileChooser.showOpenDialog(frame);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                    try {
-                        map.clear();
-                        
-                        XMLParser.loadNodes(map, selectedFile.toPath());
+        btnOpenLoc.addActionListener(e -> {
+            try {
+                controller.loadDeliveriesFile();
+                stateRefresh();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
-                        for (MapView mv : mapViews) {
-                            mv.setDeliveries(map.getDeliveries());
-                            mv.setMap(map);
-                        }
-                        frame.pack();
-                        
-                        stateRefresh();
-                        
-                    } catch (Exception err) {
-                        // TODO Auto-generated catch block
-                        err.printStackTrace();
-                    }
-                } 
-            }
+        btnGenerate.addActionListener(e -> {
+            int nbDeliveryMen = (int) numDeliveries.getValue();
+                
+            System.out.println("Génération avec " + nbDeliveryMen + " livreurs.");
+            map.setDeliveryManCount(nbDeliveryMen);
+            System.out.println("Distribution des livraisons...");
+            map.distributeDeliveries();
+
+            stateRefresh();
         });
         
-        btnOpenLoc.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                // fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                int result = fileChooser.showOpenDialog(frame);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                    try {
-                        
-                        XMLParser.loadDeliveries(map, selectedFile.toPath());
-                        
-                        for (MapView mv : mapViews) {
-                            mv.setDeliveries(map.getDeliveries());
-                        }
-                        
-                        stateRefresh();
-                        
-                    } catch (Exception err) {
-                        // TODO Auto-generated catch block
-                        err.printStackTrace();
-                    }
-                } 
-            }
+        btnOptimize.addActionListener(e -> {
+            System.out.println("Raccourcissement des livraisons...");
+            int index = mapViewTextual.getActiveDeliveryManIndex(); // TODO : Hack
+            map.shortenDeliveries();
+            controller.showDeliveryManRound(index);
+
+            stateRefresh();
         });
-        
-        // Generation
-        
-        btnGenerate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int nbDeliveryMen = (int) numDeliveries.getValue();
-                
-                System.out.println("Génération avec " + nbDeliveryMen + " livreurs.");
-                map.setDeliveryManCount(nbDeliveryMen);
-                System.out.println("Distribution des livraisons...");
-                map.distributeDeliveries();
-                
-                for (MapView mv : mapViews) {
-                    mv.setDeliveries(map.getDeliveries()); //TODO : TO FIX !!!
-                }
-                
-                stateRefresh();
-            }
-        });
-        
-        btnOptimize.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Raccourcissement des livraisons...");
-                map.shortenDeliveries();
-                
-                int actualTab = mapViewTextual.getSelectedIndex();
-                for (MapView mv : mapViews) {
-                    mv.setDeliveries(map.getDeliveries()); //TODO : TO FIX !!!
-                }
-                
-                mapViewTextual.setSelectedIndex(actualTab);
-                
-                stateRefresh();
-            }
-        });
-        
-        mapViewTextual.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent ce) {
-                mapViewGraphical.showRound(mapViewTextual.getSelectedIndex()-1);
-            }
-        });
-        
         
         // INITIAL STATE
         
@@ -248,7 +219,7 @@ public class Window {
         frame.pack();
         frame.setVisible(true);
     }
-    
+
     protected void stateRefresh()
     {
         Boolean hasMap = (map != null);
@@ -266,4 +237,20 @@ public class Window {
         btnListRemove.setEnabled(hasLoc);
     }
     
+    public File askFile(String title){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(title);
+        // fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            return selectedFile;
+        }
+        return null;
+    }
+    
+    public void showDeliveryManRound(int deliveryManIndex) {
+        for (MapView view : mapViews)
+            view.showDeliveryManRound(deliveryManIndex);
+    }
 }

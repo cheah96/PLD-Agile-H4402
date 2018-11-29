@@ -1,5 +1,6 @@
 package fr.insa.lyon.pld.agile.view;
 
+import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
 
 import java.awt.Color;
@@ -8,8 +9,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-
-import javax.swing.JPanel;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +19,9 @@ import java.util.ArrayList;
  * @author nmesnard, tzhang
  */
 
-public class MapViewGraphical extends JPanel implements MapView
-{
-    Map map;
+public class MapViewGraphical extends MapView
+{  
+    final Map map;
     
     Boolean hasScale = false;
     Boolean hasData = false;
@@ -44,11 +43,32 @@ public class MapViewGraphical extends JPanel implements MapView
     Node sel = null;
     
     int deliveryManIndex = -1;
-    
-    private MouseListener mouseListener = new MouseAdapter() {
+
+    private final MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            eventClicked(e);
+            if (!(hasData && hasScale)) return;
+
+            Point2D coord = getPixelToPoint(e.getX(), e.getY());
+
+            double closestdistance = -1;
+            Node closest = null;
+            for (Node n : map.getNodes().values()) {
+                double distance = Math.pow((coord.getX() - n.getLongitude()), 2)
+                                + Math.pow((coord.getY() - n.getLatitude()), 2);
+                if (closestdistance < 0 || distance < closestdistance) {
+                    closestdistance = distance;
+                    closest = n;
+                }
+            }
+
+            if (closestdistance > 15.0) {
+                closest = null;
+            }
+
+            sel = closest;
+
+            repaint();
         }
     };
     
@@ -59,19 +79,16 @@ public class MapViewGraphical extends JPanel implements MapView
         }
     };
     
-    public MapViewGraphical()
+    public MapViewGraphical(Map map, MainController controller)
     {
+        this.map = map;
         this.addComponentListener(resizeListener);
         this.addMouseListener(mouseListener);
     }
     
     @Override
-    public void setMap(Map newMap)
+    public void updateNodes()
     {
-        map = newMap;
-        
-        deliveryManIndex = 0;
-        
         hasData = (map != null) && (map.getNodes() != null) && (!map.getNodes().isEmpty());
         
         if (hasData) {
@@ -95,20 +112,30 @@ public class MapViewGraphical extends JPanel implements MapView
     }
     
     @Override
-    public void setDeliveries(List<Delivery> newDeliveries)
+    public void updateDeliveries()
     {
         sel = null;
-        
-        deliveryManIndex = 0;
         
         this.repaint();
     }
     
-    public void showRound(int deliveryManIndex)
+    public void showDeliveryManRound(int deliveryManIndex)
     {
         this.deliveryManIndex = deliveryManIndex;
         
         this.repaint();
+    }
+    
+    @Override
+    public void updateDeliveryMen() {
+    }
+
+    @Override
+    public void updateStartingHour() {
+    }
+
+    @Override
+    public void updateWarehouse() {
     }
     
     public void calcScale()
@@ -130,32 +157,6 @@ public class MapViewGraphical extends JPanel implements MapView
 
             hasScale = true;
         }
-        
-        this.repaint();
-    }
-    
-    public void eventClicked(MouseEvent e)
-    {
-        if (!(hasData && hasScale)) return;
-        
-        Point2D coord = getPixelToPoint(e.getX(), e.getY());
-        
-        double closestdistance = -1;
-        Node closest = new Node(0, e.getX(), e.getY());
-        for (Node n : map.getNodes().values()) {
-            double distance = Math.pow((coord.getX() - n.getLongitude()), 2)
-                            + Math.pow((coord.getY() - n.getLatitude()), 2);
-            if (closestdistance < 0 || distance < closestdistance) {
-                closestdistance = distance;
-                closest = n;
-            }
-        }
-        
-        if (closestdistance > 15.0) {
-            closest = null;
-        }
-        
-        sel = closest;
         
         this.repaint();
     }
