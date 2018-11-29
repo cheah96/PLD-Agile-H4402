@@ -4,11 +4,12 @@ import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.Section;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -27,12 +28,17 @@ public class Dijkstra {
             this.state = state;
             this.dist = dist;
             this.parent = parent;
-            this.parentSection = parentSection;
+            this.parentSection = parentSection;            
         }
+        
+        public double getDistance(){
+            return (this.dist);
+        }
+        
     }
     
-    
-    public static Map<Long, NodeInfo> dijkstra(Map<Long, Node> nodes, Node origin){
+    //! the core of the algorithm
+    private static Map<Long, NodeInfo> dijkstra(Map<Long, Node> nodes, Node origin){
         int WHITE = 0;
         int GRAY = 1;
         int BLACK = 2;
@@ -43,28 +49,22 @@ public class Dijkstra {
             nodeInfos.put(node.getId(), new NodeInfo(node, WHITE, 100000000., -1, -1));
         }
         
-        LinkedList<NodeInfo> queue = new LinkedList();
-        queue.add(nodeInfos.get(origin.getId()));
+        
+        Comparator<NodeInfo> nodeInfoComparator = Comparator.comparingDouble(NodeInfo::getDistance);
+        PriorityQueue<NodeInfo> priorityQueue = new PriorityQueue<>(nodeInfoComparator);
+        priorityQueue.add(nodeInfos.get(origin.getId()));
         nodeInfos.get(origin.getId()).dist = 0;
-        while(!queue.isEmpty()){
-            //TODO : PriorityQueue please
-            NodeInfo mini = queue.get(0);
-            for(int i=1; i<queue.size(); ++i){
-                if(mini.dist > queue.get(i).dist) {
-                    mini = queue.get(i);
-                }
-            }
-            
-            NodeInfo head = mini;
-            queue.remove(head);
-            
-            head.state = GRAY;
+        nodeInfos.get(origin.getId()).state = GRAY;
+        
+        while(!priorityQueue.isEmpty()){
+            NodeInfo head = priorityQueue.remove();
+                        
             for(int i=0; i<head.node.getOutgoingSections().size(); ++i){
                 Section section = head.node.getOutgoingSections().get(i);
                 NodeInfo sectionDest = nodeInfos.get(section.getDestination().getId());
                 if(sectionDest.state != BLACK){
                     if(sectionDest.state == WHITE){
-                        queue.add(sectionDest);
+                        priorityQueue.add(sectionDest);
                         sectionDest.state = GRAY;
                     }
                     if(sectionDest.dist > head.dist + section.getLength()){
