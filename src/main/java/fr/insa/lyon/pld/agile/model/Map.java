@@ -3,6 +3,7 @@ package fr.insa.lyon.pld.agile.model;
 import fr.insa.lyon.pld.agile.tsp.Dijkstra;
 import fr.insa.lyon.pld.agile.tsp.KMeansV1;
 import fr.insa.lyon.pld.agile.tsp.TSPSolver;
+import fr.insa.lyon.pld.agile.tsp.TSPSolverFactory;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverImplementation2;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -125,8 +126,8 @@ public class Map {
     
     public void shortenDeliveries() {
         for (DeliveryMan deliveryMan : deliveryMen) {
-            TSPSolver tspSolver = new TSPSolverImplementation2();
             List<Delivery> deliveries = deliveryMan.getDeliveries();
+            TSPSolver tspSolver = TSPSolverFactory.getSolver(deliveries.size());
             int[][] edgesCosts = new int[deliveries.size()][deliveries.size()];
             int[] nodesCost = new int[deliveries.size()];
             
