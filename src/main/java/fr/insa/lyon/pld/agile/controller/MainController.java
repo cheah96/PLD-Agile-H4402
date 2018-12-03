@@ -4,6 +4,9 @@ import fr.insa.lyon.pld.agile.XMLParser;
 import fr.insa.lyon.pld.agile.model.*;
 import fr.insa.lyon.pld.agile.view.Window;
 import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -18,7 +21,7 @@ public class MainController {
         this.view = new Window(map, this);
     }
 
-    public void loadNodesFile() throws Exception {
+    public void loadNodesFile() throws IOException, SAXException, ParserConfigurationException {
         File selectedFile = view.askFile("Chargement d'un plan");
         if (selectedFile != null)
         {
@@ -27,7 +30,7 @@ public class MainController {
         }
     }
     
-    public void loadDeliveriesFile() throws Exception {
+    public void loadDeliveriesFile() throws IOException, SAXException, ParserConfigurationException {
         File selectedFile = view.askFile("Chargement de demandes de livraison");
         if (selectedFile != null)
         {
@@ -46,4 +49,12 @@ public class MainController {
         view.selectDeliveryMan(deliveryManIndex);
     }
     
+    public void generateDeliveryMen(int deliveryMenCount) {
+        System.err.println("Génération avec " + deliveryMenCount + " livreurs.");
+        map.setDeliveryManCount(deliveryMenCount);
+        System.err.println("Distribution des livraisons...");
+        map.distributeDeliveries();
+        System.err.println("Raccourcissement des livraisons...");
+        map.shortenDeliveries();
+    }
 }

@@ -195,14 +195,7 @@ public class Window
         
         btnGenerate.addActionListener(e -> {
             int nbDeliveryMen = (int) numDeliveries.getValue();
-            
-            System.out.println("Génération avec " + nbDeliveryMen + " livreurs.");
-            map.setDeliveryManCount(nbDeliveryMen);
-            System.out.println("Distribution des livraisons...");
-            map.distributeDeliveries();
-            System.out.println("Raccourcissement des livraisons...");
-            map.shortenDeliveries();
-            
+            controller.generateDeliveryMen(nbDeliveryMen);
             stateRefresh();
         });
         
