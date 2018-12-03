@@ -4,7 +4,7 @@ import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
 
 import javax.swing.*;
-import javax.swing.JSpinner.DefaultEditor;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
@@ -40,7 +40,7 @@ public class Window
     
     List<MapView> mapViews = new ArrayList<>();
     
-    public Window(Map map, MainController controller) {
+    public Window(Map map, final MainController controller) {
         this.map = map;
         this.controller = controller;
         
@@ -51,6 +51,15 @@ public class Window
         frame.setTitle("PLD Livraison à Domicile");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+        frame.setSize(200,200); //initialize status bar
+        
+        // Bottom status bar
+        JPanel panStatus = new JPanel();
+        panStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        panStatus.setPreferredSize(new Dimension(frame.getWidth(), 16));
+        panStatus.setLayout(new BoxLayout(panStatus, BoxLayout.X_AXIS));
+        JLabel lblStatus = new JLabel("Barre d'état");
+        lblStatus.setHorizontalAlignment(SwingConstants.LEFT);
         
         // Top tool-bar
         JToolBar tlbTop = new JToolBar();
@@ -80,7 +89,7 @@ public class Window
         JPanel panDeliveries = new JPanel();
         SpinnerModel model = new SpinnerNumberModel(3, 1, 12, 1);
         numDeliveries = new JSpinner(model);
-        ((DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
+        // ((JSpinner.DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
         btnGenerate = new JButton("Générer");
         
@@ -98,6 +107,10 @@ public class Window
         // CREATING DISPLAY
         
         EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
+        
+        // Bottom status bar
+        lblStatus.setBorder(spacer);
+        panStatus.add(lblStatus);
         
         // Top tool-bar
         tlbTop.add(btnOpenMap);
@@ -150,7 +163,10 @@ public class Window
         panTools.add(panLists, BorderLayout.CENTER);
         
         // Window
-        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, mapViewGraphical);
+        JPanel panMain = new JPanel (new BorderLayout());
+        panMain.add(panStatus, BorderLayout.SOUTH);
+        panMain.add(mapViewGraphical,BorderLayout.CENTER);
+        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMain);
         frame.add(tlbTop, BorderLayout.NORTH);
         frame.add(panSplit, BorderLayout.CENTER);
         
@@ -164,7 +180,7 @@ public class Window
                 controller.loadNodesFile();
                 stateRefresh();
             } catch (Exception ex) {
-                // ex.printStackTrace();
+                ex.printStackTrace();
             }
         });
         
@@ -173,7 +189,7 @@ public class Window
                 controller.loadDeliveriesFile();
                 stateRefresh();
             } catch (Exception ex) {
-                // ex.printStackTrace();
+                ex.printStackTrace();
             }
         });
         
@@ -255,5 +271,6 @@ public class Window
             view.selectDeliveryMan(deliveryManIndex);
         }
     }
+   
     
 }

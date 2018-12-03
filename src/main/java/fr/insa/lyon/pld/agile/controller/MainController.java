@@ -32,6 +32,7 @@ public class MainController {
         if (selectedFile != null)
         {
             map.clearDeliveries();
+            map.setDeliveryManCount(0);
             XMLParser.loadDeliveries(map, selectedFile.toPath());
         }
     }
