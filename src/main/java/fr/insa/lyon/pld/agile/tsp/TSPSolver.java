@@ -5,10 +5,10 @@ public interface TSPSolver {
     /**
      * Computes the shortest possible path such that every node of index i in the range [0, nodes-1] is visited exactly once.
      * 
-     * @param timeLimit maximum execution time limit for the solve method (in milliseconds)
+     * @param maximumTimeLimit maximum execution time limit for the solve method (in milliseconds)
      * @param nodes number of nodes in the TSP graph
      * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param nodesCost nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
      */
     public void solve(int maximumTimeLimit, int nodes, int[][] edgesCosts, int[] nodesCost);
     

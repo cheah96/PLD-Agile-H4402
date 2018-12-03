@@ -11,6 +11,5 @@ public class App
         
         Map map = new Map();
         MainController controller = new MainController(map);
-        // window.main();
     }
 }

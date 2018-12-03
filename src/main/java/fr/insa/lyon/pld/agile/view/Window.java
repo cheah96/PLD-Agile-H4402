@@ -8,68 +8,37 @@ import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author nmesnard, tzhang
  */
-public class Window {
-    private JFrame frame;
-    
-    private JButton btnOpenMap;
-    private JButton btnOpenLoc;
-    
-    private JSpinner numDeliveries;
-    private JButton btnGenerate;
-    private JButton btnOptimize;
-    
-    private JButton btnListAdd;
-    private JButton btnListMove;
-    private JButton btnListRemove;
-    
-    private Map map = null;
+public class Window
+{
     private final MainController controller;
+    private Map map = null;
+    
+    private final JFrame frame;
+    
+    private final JButton btnOpenMap;
+    private final JButton btnOpenLoc;
+    private final JButton btnUndo;
+    private final JButton btnRedo;
+    private final JCheckBox cckLegend;
+    private final JCheckBox cckDirection;
+    
+    private final JSpinner numDeliveries;
+    private final JButton btnGenerate;
+    
+    private final JButton btnListAdd;
+    private final JButton btnListMove;
+    private final JButton btnListRemove;
     
     List<MapView> mapViews = new ArrayList<>();
-    
-    private class ButtonListener implements ActionListener{
-        private final MainController controller;
-        public ButtonListener(MainController controller) {
-            this.controller = controller;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == btnOpenMap)
-            {
-                try 
-                {
-                    controller.loadNodesFile();
-                    stateRefresh();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            else if (e.getSource() == btnOpenLoc)
-            {
-                try 
-                {
-                    controller.loadDeliveriesFile();
-                    stateRefresh();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
     
     public Window(Map map, MainController controller) {
         this.map = map;
@@ -88,10 +57,19 @@ public class Window {
         tlbTop.setFloatable(false);
         // and its buttons
         btnOpenMap = new JButton(new ImageIcon("res/icons/map.png"));
+        btnOpenMap.setToolTipText("Ouvrir une carte");
         btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
+        btnOpenLoc.setToolTipText("Ouvrir des points de livraison");
+        btnUndo = new JButton(new ImageIcon("res/icons/undo.png"));
+        btnUndo.setToolTipText("Annuler");
+        btnRedo = new JButton(new ImageIcon("res/icons/redo.png"));
+        btnRedo.setToolTipText("Refaire");
+        cckLegend = new JCheckBox("Légende");
+        cckDirection = new JCheckBox("Sens de parcours");
         
         // Centered map
         MapViewGraphical mapViewGraphical = new MapViewGraphical(map, controller);
+        mapViewGraphical.setPreferredSize(new Dimension(480, 480));
         mapViews.add(mapViewGraphical);
         map.addPropertyChangeListener(mapViewGraphical);
         
@@ -105,7 +83,6 @@ public class Window {
         ((DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
         btnGenerate = new JButton("Générer");
-        btnOptimize = new JButton("Optimiser");
         
         // > Main lists
         JPanel panLists = new JPanel();
@@ -123,16 +100,27 @@ public class Window {
         EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
         
         // Top tool-bar
-        tlbTop.setBorder(spacer);
         tlbTop.add(btnOpenMap);
         tlbTop.add(btnOpenLoc);
+        // tlbTop.add(btnUndo);
+        // tlbTop.add(btnRedo);
+        JPanel panSeparator = new JPanel();
+        panSeparator.setOpaque(false);
+        tlbTop.add(panSeparator);
+        JPanel panDisplay = new JPanel();
+        panDisplay.setLayout(new BoxLayout(panDisplay, BoxLayout.Y_AXIS));
+        panDisplay.setOpaque(false);
+        cckLegend.setOpaque(false);
+        cckDirection.setOpaque(false);
+        panDisplay.add(cckLegend);
+        panDisplay.add(cckDirection);
+        tlbTop.add(panDisplay);
         
         // - Top settings
         panDeliveries.setBorder(spacer);
         panDeliveries.add(numDeliveries);
         panDeliveries.add(lblDeliveries);
         panDeliveries.add(btnGenerate);
-        panDeliveries.add(btnOptimize);
         
         // - Main lists
         panLists.setBorder(spacer);
@@ -170,13 +158,13 @@ public class Window {
         // EVENTS HANDLING
         
         // File opening
-        ButtonListener btnListener = new ButtonListener(controller);
+        
         btnOpenMap.addActionListener(e -> {
             try {
                 controller.loadNodesFile();
                 stateRefresh();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                // ex.printStackTrace();
             }
         });
         
@@ -185,29 +173,33 @@ public class Window {
                 controller.loadDeliveriesFile();
                 stateRefresh();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                // ex.printStackTrace();
             }
         });
-
+        
         btnGenerate.addActionListener(e -> {
             int nbDeliveryMen = (int) numDeliveries.getValue();
-                
+            
             System.out.println("Génération avec " + nbDeliveryMen + " livreurs.");
             map.setDeliveryManCount(nbDeliveryMen);
             System.out.println("Distribution des livraisons...");
             map.distributeDeliveries();
-
+            System.out.println("Raccourcissement des livraisons...");
+            map.shortenDeliveries();
+            
             stateRefresh();
         });
         
-        btnOptimize.addActionListener(e -> {
-            System.out.println("Raccourcissement des livraisons...");
-            int index = mapViewTextual.getActiveDeliveryManIndex(); // TODO : Hack
-            map.shortenDeliveries();
-            controller.showDeliveryManRound(index);
-
-            stateRefresh();
+        cckDirection.addItemListener(e -> {
+            boolean checked = cckDirection.getModel().isSelected();
+            mapViewGraphical.showDirection(checked);
         });
+
+        cckLegend.addItemListener(e -> {
+            boolean checked = cckLegend.getModel().isSelected();
+            mapViewGraphical.showLegend(checked);
+        });
+        
         
         // INITIAL STATE
         
@@ -219,18 +211,20 @@ public class Window {
         frame.pack();
         frame.setVisible(true);
     }
-
-    protected void stateRefresh()
+    
+    protected final void stateRefresh()
     {
-        Boolean hasMap = (map != null);
-        Boolean hasLoc = (!map.getDeliveries().isEmpty());
+        Boolean hasMap = (map != null && !map.getNodes().isEmpty());
+        Boolean hasLoc = (hasMap && !map.getDeliveries().isEmpty());
         
         btnOpenMap.setEnabled(true);
         btnOpenLoc.setEnabled(hasMap);
         
+        btnUndo.setEnabled(false);
+        btnRedo.setEnabled(false);
+        
         numDeliveries.setEnabled(true);
         btnGenerate.setEnabled(hasLoc);
-        btnOptimize.setEnabled(!map.getDeliveryMen().isEmpty());
         
         btnListAdd.setEnabled(hasLoc);
         btnListMove.setEnabled(hasLoc);
@@ -239,18 +233,27 @@ public class Window {
     
     public File askFile(String title){
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("res/xml"));
         fileChooser.setDialogTitle(title);
-        // fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
+                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
             return selectedFile;
         }
         return null;
     }
     
-    public void showDeliveryManRound(int deliveryManIndex) {
-        for (MapView view : mapViews)
-            view.showDeliveryManRound(deliveryManIndex);
+    public void selectNode(Node node) {
+        for (MapView view : mapViews) {
+            view.selectNode(node);
+        }
     }
+    
+    public void selectDeliveryMan(int deliveryManIndex) {
+        for (MapView view : mapViews) {
+            view.selectDeliveryMan(deliveryManIndex);
+        }
+    }
+    
 }

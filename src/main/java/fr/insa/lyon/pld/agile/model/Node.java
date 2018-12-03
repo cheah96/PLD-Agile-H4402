@@ -53,8 +53,7 @@ public class Node {
         builder.append(getLongitude());
         builder.append(", outgoingSections: [");
         StringJoiner sectionJoiner = new StringJoiner(",");
-        for (Section section : outgoingSections)
-        {
+        for (Section section : outgoingSections) {
             sectionJoiner.add("\n    " + section);
         }
         builder.append(sectionJoiner);

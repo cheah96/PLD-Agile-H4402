@@ -41,7 +41,7 @@ public class TSPSolverImplementation1 extends TSPSolverTemplate {
             // Update the sets of explored and unexplored nodes
             currentNode = nextNode;
             exploredNodes.add(nextNode);
-            candidateNodes.remove((Integer)nextNode);
+            candidateNodes.remove(nextNode);
         }
         
         lowerBound += edgesCosts[currentNode][0];

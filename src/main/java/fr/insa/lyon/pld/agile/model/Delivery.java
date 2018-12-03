@@ -35,6 +35,7 @@ public class Delivery {
         this.deliveryMan = deliveryMan;
     }
     
+    @Override
     public String toString() {
         return "Delivery{address: " + (node != null ? node.getId() : "null")
                 + ", duration: " + duration

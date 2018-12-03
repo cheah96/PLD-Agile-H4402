@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -85,7 +84,7 @@ public class Dijkstra {
     public static List<Section> getPath(Map<Long, Node> nodes, Node origin, Node destination){
         Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
         
-        List path = new ArrayList();
+        List<Section> path = new ArrayList();
         NodeInfo node = nodeInfos.get(destination.getId());
         while(node.node != origin){
             NodeInfo parentNode = nodeInfos.get( node.parent );
@@ -103,14 +102,14 @@ public class Dijkstra {
         Map<Long, Double> distances = new HashMap<>();
         
         for(Map.Entry<Long, NodeInfo> pair : nodeInfos.entrySet()){
-            distances.put((Long)pair.getKey(), ((NodeInfo)pair.getValue()).dist );
+            distances.put( pair.getKey(), ((NodeInfo)pair.getValue()).dist );
         }
         
         return distances;
     }
     
     public static void test(){
-        Map<Long, Node> nodes = new HashMap();
+        Map<Long, Node> nodes = new HashMap<>();
         Node n0 = new Node(0,1,1);
         Node n1 = new Node(1,1,1);
         Node n2 = new Node(2,1,1);
@@ -156,9 +155,7 @@ public class Dijkstra {
         }
         
         Map<Long, Double> dists = getDistances(nodes, n0);
-        Iterator it = dists.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+        for (Map.Entry pair : dists.entrySet()) {
             System.out.println(pair.getValue());
         }
         

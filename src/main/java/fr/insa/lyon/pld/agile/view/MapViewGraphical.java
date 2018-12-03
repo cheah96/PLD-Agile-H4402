@@ -18,72 +18,61 @@ import java.util.ArrayList;
  *
  * @author nmesnard, tzhang
  */
-
 public class MapViewGraphical extends MapView
-{  
-    final Map map;
+{
+    private final MainController controller;
+    private final Map map;
     
-    Boolean hasScale = false;
-    Boolean hasData = false;
+    private boolean hasScale = false;
+    private boolean hasData = false;
     
-    Dimension preferred = null;
+    private Dimension preferred = null;
     
-    Double latitudeMin;
-    Double latitudeMax;
-    Double longitudeMin;
-    Double longitudeMax;
+    private double latitudeMin;
+    private double latitudeMax;
+    private double longitudeMin;
+    private double longitudeMax;
     
-    Double ratioX;
-    Double ratioY;
-    Double ratio;
+    private double ratioX;
+    private double ratioY;
+    private double ratio;
     
-    Double deltaX;
-    Double deltaY;
+    private double deltaX;
+    private double deltaY;
     
-    Node sel = null;
-    
-    int deliveryManIndex = -1;
+    Node selNode = null;
+    int selDeliveryMan = -1;
 
+    private boolean isDirection = false;
+    private boolean isLegend = false;
+    private final MapViewGraphicalLegend legend;
+    
     private final MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (!(hasData && hasScale)) return;
-
-            Point2D coord = getPixelToPoint(e.getX(), e.getY());
-
-            double closestdistance = -1;
-            Node closest = null;
-            for (Node n : map.getNodes().values()) {
-                double distance = Math.pow((coord.getX() - n.getLongitude()), 2)
-                                + Math.pow((coord.getY() - n.getLatitude()), 2);
-                if (closestdistance < 0 || distance < closestdistance) {
-                    closestdistance = distance;
-                    closest = n;
-                }
-            }
-
-            if (closestdistance > 15.0) {
-                closest = null;
-            }
-
-            sel = closest;
-
-            repaint();
+            eventClicked(e);
         }
     };
     
-    private ComponentListener resizeListener = new ComponentAdapter() {
+    private final ComponentListener resizeListener = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
             calcScale();
+            repaint();
         }
     };
     
     public MapViewGraphical(Map map, MainController controller)
     {
         this.map = map;
+        this.controller = controller;
         this.addComponentListener(resizeListener);
         this.addMouseListener(mouseListener);
+        
+        legend = new MapViewGraphicalLegend();
+        legend.setVisible(false);
+        this.setLayout(null);
+        this.add(legend);
     }
     
     @Override
@@ -114,20 +103,47 @@ public class MapViewGraphical extends MapView
     @Override
     public void updateDeliveries()
     {
-        sel = null;
-        
-        this.repaint();
-    }
-    
-    public void showDeliveryManRound(int deliveryManIndex)
-    {
-        this.deliveryManIndex = deliveryManIndex;
+        selNode = null;
+        selDeliveryMan = -1;
         
         this.repaint();
     }
     
     @Override
+    public void selectNode(Node node) {
+        if (selNode != node) {
+            selNode = node;
+            this.repaint();
+        }
+    }
+    
+    @Override
+    public void selectDeliveryMan(int deliveryManIndex)
+    {
+        if (selDeliveryMan != deliveryManIndex) {
+            selDeliveryMan = deliveryManIndex;
+            this.repaint();
+        }
+    }
+    
+    public void showLegend(boolean visibility) {
+        if (isLegend != visibility) {
+            isLegend = visibility;
+            if (visibility) legend.setLocation(12, 12);
+            legend.setVisible(visibility);
+        }
+    }
+    
+    public void showDirection(boolean visibility) {
+        if (isDirection != visibility) {
+            isDirection = visibility;
+            this.repaint();
+        }
+    }
+    
+    @Override
     public void updateDeliveryMen() {
+        updateDeliveries();
     }
 
     @Override
@@ -136,6 +152,7 @@ public class MapViewGraphical extends MapView
 
     @Override
     public void updateWarehouse() {
+        updateNodes();
     }
     
     public void calcScale()
@@ -157,8 +174,32 @@ public class MapViewGraphical extends MapView
 
             hasScale = true;
         }
-        
-        this.repaint();
+    }
+    
+    public void eventClicked(MouseEvent e) {
+        if (!(hasData && hasScale)) return;
+
+        Point2D coord = getPixelToPoint(e.getX(), e.getY());
+
+        double closestdistance = -1;
+        Node closest = null;
+        for (Node n : map.getNodes().values()) {
+            double distance = Math.pow((coord.getX() - n.getLongitude()), 2)
+                            + Math.pow((coord.getY() - n.getLatitude()), 2);
+            if (closestdistance < 0 || distance < closestdistance) {
+                closestdistance = distance;
+                closest = n;
+            }
+        }
+
+        if (closestdistance > 15.0) {
+            closest = null;
+        }
+
+        if (selNode != closest) {
+            selectNode(closest);
+            controller.selectedNode(closest);
+        }
     }
     
     @Override
@@ -168,73 +209,71 @@ public class MapViewGraphical extends MapView
         
         if (!(hasData && hasScale)) return;
         
-        g.setColor(Color.black);
-        
-        for (Node n : map.getNodes().values()) {
-            Point coordsn1 = getCoordsToPixel(n.getLongitude(), n.getLatitude());
+
+        g.setColor(Color.gray);
+        for (Node n1 : map.getNodes().values()) {
+            Point coordsn1 = getCoordsToPixel(n1);
             
-            for (Section s : n.getOutgoingSections()) {
+            for (Section s : n1.getOutgoingSections()) {
                 Node n2 = s.getDestination();
-                Point coordsn2 = getCoordsToPixel(n2.getLongitude(),n2.getLatitude());
+                Point coordsn2 = getCoordsToPixel(n2);
                 
-                drawSection(g, coordsn1, coordsn2);
+                Drawing.drawLine(g, coordsn1, coordsn2);
             }
         }
         
-        if (deliveryManIndex >= 0) {
-            g.setColor(Color.blue);
-            
-            Node prev = map.getWarehouse();
-            for (Passage p : map.getDeliveryMen().get(deliveryManIndex).getRound().getItinerary()) {
-                Node cur = p.getSection().getDestination();
+        List<DeliveryMan> deliveryMen = map.getDeliveryMen();
+        if (!deliveryMen.isEmpty()) {
+            int indexMan = 0;
+            for (DeliveryMan deliveryMan : deliveryMen) {
+                g.setColor(Drawing.getColor(indexMan, deliveryMen.size()));
                 
-                Point coordsn1 = getCoordsToPixel(prev.getLongitude(), prev.getLatitude());
-                Point coordsn2 = getCoordsToPixel(cur.getLongitude(),cur.getLatitude());
-               
-                drawSectionThick(g, coordsn1, coordsn2);
+                Node n1 = map.getWarehouse();
+                Point coordsn1 = getCoordsToPixel(n1);
                 
-                prev = cur;
+                if (selDeliveryMan < 0 || selDeliveryMan == indexMan) {
+                    float position = 0f;
+                    for (Passage p : deliveryMan.getRound().getItinerary()) {
+                        Node n2 = p.getSection().getDestination();
+                        Point coordsn2 = getCoordsToPixel(n2);
+                        
+                        Drawing.drawLineThick(g, coordsn1, coordsn2);
+                        if (isDirection) position = Drawing.drawLineArrows(g, coordsn1, coordsn2, position);
+                        
+                        coordsn1 = coordsn2;
+                    }
+                }
+                indexMan++;
             }
-            
-            g.setColor(Color.black);
         }
         
         for (Delivery d : map.getDeliveries()) {
             Node n = d.getNode();
-            Point coordsd = getCoordsToPixel(n.getLongitude(), n.getLatitude());
-
-            drawNode(g, coordsd, 9);
+            Point coords = getCoordsToPixel(d.getNode());
+            Color color = getNodeColor(n, Color.gray);
+            Drawing.drawDelivery(g, coords, color);
         }
         
         Node wh = map.getWarehouse();
         if (wh != null) {
-            Point coordwh = getCoordsToPixel(wh.getLongitude(), wh.getLatitude());
-            g.setColor(Color.red);
-            drawNode(g, coordwh, 9);
+            Drawing.drawWarehouse(g, getCoordsToPixel(wh));
         }
         
-        g.setColor(Color.blue);
-        
-        if (sel != null) {
-            Point coordssel = getCoordsToPixel(sel.getLongitude(), sel.getLatitude());
-            drawNode(g, coordssel, 9);
+        if (selNode != null) {
+            Point coords = getCoordsToPixel(selNode);
+            Color color = getNodeColor(selNode, Color.gray);
+            Drawing.drawSelectedNode(g, coords, color);
         }
     }
     
-    protected static void drawSectionThick(Graphics g, Point p1, Point p2) {
-        for (int dx=-1; dx<=1; dx++) {
-            for (int dy=-1; dy<=1; dy++) {
-                g.drawLine(p1.x+dx, p1.y+dy, p2.x+dx, p2.y+dy);
-            }
-        }
+    protected void drawNode(Graphics g, Node n, int diameter) {
+        Drawing.drawDot(g, getCoordsToPixel(n), diameter);
     }
     
-    protected static void drawSection(Graphics g, Point p1, Point p2) {
-        g.drawLine(p1.x, p1.y, p2.x, p2.y);
-    }
-    
-    protected static void drawNode(Graphics g, Point coords, int diameter) {
-        g.fillOval((int) coords.getX()-diameter/2, (int) coords.getY()-diameter/2, diameter, diameter);
+    private Color getNodeColor(Node n, Color normal) {
+        int deliveryManIndex = map.getNodeDeliveryManIndex(n);
+        if (deliveryManIndex < 0) return normal;
+        return Drawing.getColor(deliveryManIndex, map.getDeliveryMen().size());
     }
     
     protected static double getNodesDistance(Node n1, Node n2) {
@@ -243,6 +282,9 @@ public class MapViewGraphical extends MapView
         return Math.sqrt((distlong*distlong) + (distlat*distlat));
     }
     
+    public Point getCoordsToPixel(Node n) {
+        return getCoordsToPixel(n.getLongitude(), n.getLatitude());
+    }
     public Point getCoordsToPixel(double longitude, double latitude) {
         return new Point(
             (int) ((longitude - longitudeMin) / ratio + deltaX),

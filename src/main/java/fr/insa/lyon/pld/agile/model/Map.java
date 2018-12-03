@@ -4,7 +4,6 @@ import fr.insa.lyon.pld.agile.tsp.Dijkstra;
 import fr.insa.lyon.pld.agile.tsp.KMeansV1;
 import fr.insa.lyon.pld.agile.tsp.TSPSolver;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverFactory;
-import fr.insa.lyon.pld.agile.tsp.TSPSolverImplementation2;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.time.LocalTime;
@@ -73,12 +72,12 @@ public class Map {
     }
     
     public boolean addNode(Node node) {
-        // putIfAbsent return null if the key was absent
-        Node n = nodes.putIfAbsent(node.getId(), node);
-        this.pcs.firePropertyChange("nodes", null, nodes);
-        return n == null;
+        // putIfAbsent returns null if the key was absent
+        boolean added = (nodes.putIfAbsent(node.getId(), node) == null);
+        if (added) this.pcs.firePropertyChange("nodes", null, nodes);
+        return added;
     }
-
+    
     public void addDelivery(Delivery delivery) {
         deliveries.add(delivery);
         this.pcs.firePropertyChange("deliveries", null, deliveries);
@@ -148,8 +147,9 @@ public class Map {
             }
             
             deliveryMan.clear();
-            for (Delivery d : best)
+            for (Delivery d : best) {
                 deliveryMan.addDelivery(d, this);
+            }
             
             deliveryMan.addNode(warehouse, this);
         }
@@ -160,6 +160,8 @@ public class Map {
     public void assignDelivery(Delivery delivery, DeliveryMan deliveryMan) {
         delivery.setDeliveryMan(deliveryMan);
         deliveryMan.addDelivery(delivery, this);
+        
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
     public void clear() {
@@ -175,6 +177,15 @@ public class Map {
         this.pcs.firePropertyChange("startingHour", oldStartingHour, startingHour);
         this.pcs.firePropertyChange("deliveries", null, deliveries);
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+    }
+    public void clearDeliveries() {
+        for (DeliveryMan deliveryMan : deliveryMen) {
+            deliveryMan.clear();
+        }
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+        
+        deliveries.clear();
+        this.pcs.firePropertyChange("deliveries", null, deliveries);
     }
     
     @Override
@@ -205,4 +216,21 @@ public class Map {
         
         return builder.toString();
     }
+    
+    public int getNodeDeliveryManIndex(Node node) {
+        if (node != getWarehouse()) {
+            for (Delivery d : getDeliveries()) {
+                if (d.getNode() == node) {
+                    DeliveryMan deliveryMan = d.getDeliveryMan();
+                    if (deliveryMan != null)
+                        return d.getDeliveryMan().getId();
+                    else
+                        return -1;
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
 }
