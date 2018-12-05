@@ -1,6 +1,7 @@
 package fr.insa.lyon.pld.agile.model;
 
 import fr.insa.lyon.pld.agile.tsp.Dijkstra;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,40 +33,23 @@ public class DeliveryMan {
         return Collections.unmodifiableList(deliveries);
     }
     
+    void addDelivery(int index, Delivery delivery, Map map) {
+        if (deliveries.contains(delivery))
+            throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
+        
+        round.addDelivery(index, delivery.getNode(), map);
+        deliveries.add(delivery);
+    }
+    
     void addDelivery(Delivery delivery, Map map) {
         if (deliveries.contains(delivery))
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
         
-        Node origin = null;
-        if (deliveries.isEmpty())
-            origin = map.getWarehouse();
+        if (!round.getItinerary().isEmpty())
+            round.addDelivery(round.getItinerary().size()-1, delivery.getNode(), map);
         else
-            origin = deliveries.get(deliveries.size()-1).getNode();
-        
-        List<Section> sections = Dijkstra.getPath(map.getNodes(), origin, delivery.getNode());
-        for (Section section : sections)
-        {
-            if (section.getDestination() != delivery.getNode())
-                round.addPassage(section, 0);
-            else
-                round.addPassage(section, delivery.getDuration());
-        }
-        
+            round.addDelivery(0, delivery.getNode(), map);
         deliveries.add(delivery);
-    }
-    
-    void addNode(Node node, Map map) { // TODO : refactorer
-        Node origin = null;
-        if (round.getItinerary().isEmpty())
-            origin = map.getWarehouse();
-        else
-            origin = round.getItinerary().get(round.getItinerary().size()-1).getSection().getDestination();
-        
-        List<Section> sections = Dijkstra.getPath(map.getNodes(), origin, node);
-        for (Section section : sections)
-        {
-            round.addPassage(section, 0);
-        }
     }
     
     void clear() {

@@ -1,5 +1,7 @@
 package fr.insa.lyon.pld.agile.model;
 
+import fr.insa.lyon.pld.agile.tsp.Dijkstra;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,24 +11,58 @@ import java.util.List;
  * @author scheah
  */
 public class Round {
-    private final List<Passage> itinerary;
+    private final List<Route> itinerary;
 
     public Round() {
         this.itinerary = new ArrayList<>();
     }
 
-    public List<Passage> getItinerary() {
+    public List<Route> getItinerary() {
         return Collections.unmodifiableList(itinerary);
     }
+  
+    void addDelivery(int index, Node node, Map map) {
+        addNode(index, node, true, map);
+    }
     
-    void addPassage(Section section, double deliveryDuration) {
-        double arrivalTime = section.getLength()/1000./15.*60.*60.;
+    private void addNode(int index, Node node, boolean delivering, Map map) {
+        Route before = null;
+        Route after = null;
         if (!itinerary.isEmpty()) {
-            Passage last = itinerary.get(itinerary.size()-1);
-            arrivalTime += last.getArrivalTime() + last.getDeliveryDuration();
+            if (itinerary.size() == 1)
+                throw new RuntimeException("Round has only one passage");
+            before = itinerary.get(index-1);
+            after = itinerary.get(index);
         }
-        Passage passage = new Passage(section, arrivalTime, deliveryDuration);
-        itinerary.add(passage);
+        
+        Node startingNode;
+        Node destinationNode;
+        LocalTime departureTime;
+        boolean afterDelivering;
+        if (before != null && after != null) {
+            startingNode = before.getDestination();
+            destinationNode = after.getDestination();
+            departureTime = before.getArrivalTime();
+            afterDelivering = true;
+            if (before.isDelivering()) {
+                Delivery delivery = map.getDeliveries().get(before.getDestination().getId());
+                departureTime.plusSeconds(delivery.getDuration());
+            }
+        } else {
+            startingNode = map.getWarehouse();
+            destinationNode = startingNode;
+            departureTime = map.getStartingHour();
+            afterDelivering = false;
+            itinerary.add(null); //For itinary.set to work
+        }
+        
+        Route route = new Route(departureTime, delivering);
+        route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, node));
+        itinerary.add(index, route);
+        
+        route = new Route(route.getArrivalTime(), afterDelivering);
+        route.addPassages(Dijkstra.getPath(map.getNodes(), node, destinationNode));
+        itinerary.set(index+1, route); //The old route index became index+1 due to the add
     }
     
     void clear() {

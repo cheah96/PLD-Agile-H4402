@@ -22,7 +22,7 @@ public class Map {
     private final java.util.Map<Long, Node> nodes;
     private Node warehouse;
     private LocalTime startingHour;
-    private final List<Delivery> deliveries;
+    private final java.util.Map<Long,Delivery> deliveries;
     private final List<DeliveryMan> deliveryMen;
     
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -35,7 +35,7 @@ public class Map {
         this.nodes = new HashMap<>();
         this.warehouse = warehouse;
         this.startingHour = startingHour;
-        this.deliveries = new ArrayList<>();
+        this.deliveries = new HashMap<>();
         this.deliveryMen = new ArrayList<>();
     }
     
@@ -63,8 +63,8 @@ public class Map {
         return startingHour;
     }
 
-    public List<Delivery> getDeliveries() {
-        return Collections.unmodifiableList(deliveries);
+    public java.util.Map<Long,Delivery> getDeliveries() {
+        return Collections.unmodifiableMap(deliveries);
     }
     
     public List<DeliveryMan> getDeliveryMen() {
@@ -79,8 +79,8 @@ public class Map {
     }
     
     public void addDelivery(Delivery delivery) {
-        deliveries.add(delivery);
-        this.pcs.firePropertyChange("deliveries", null, deliveries);
+	boolean added = (deliveries.putIfAbsent(delivery.getNode().getId(), delivery) == null);
+	if (added) this.pcs.firePropertyChange("deliveries", null, deliveries);
     }
     
     public boolean setWarehouse(long id) {
@@ -109,15 +109,11 @@ public class Map {
     }
     
     public void distributeDeliveries() {
-        List<Node> deliveryNodes = deliveries.stream().map(Delivery::getNode).collect(Collectors.toList());
+        List<Node> deliveryNodes = deliveries.values().stream().map(Delivery::getNode).collect(Collectors.toList());
         int[] clusters = KMeansV1.kMeans(deliveryNodes, deliveryMen.size());
         
         for (int i = 0; i < clusters.length; i++) {
-            assignDelivery(deliveries.get(i), deliveryMen.get(clusters[i]));
-        }
-
-        for (DeliveryMan deliveryMan : deliveryMen) {
-            deliveryMan.addNode(warehouse, this);
+            assignDelivery(deliveries.get(deliveryNodes.get(i).getId()), deliveryMen.get(clusters[i]));
         }
         
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
@@ -150,8 +146,6 @@ public class Map {
             for (Delivery d : best) {
                 deliveryMan.addDelivery(d, this);
             }
-            
-            deliveryMan.addNode(warehouse, this);
         }
         
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
@@ -207,7 +201,7 @@ public class Map {
         builder.append(",\n");
         builder.append("  deliveries: [\n    ");
         joiner = new StringJoiner(",\n    ");
-        for (Delivery delivery : getDeliveries()) {
+        for (Delivery delivery : getDeliveries().values()) {
             joiner.add(delivery.toString());
         }
         builder.append(joiner);
@@ -219,14 +213,9 @@ public class Map {
     
     public int getNodeDeliveryManIndex(Node node) {
         if (node != getWarehouse()) {
-            for (Delivery d : getDeliveries()) {
-                if (d.getNode() == node) {
-                    DeliveryMan deliveryMan = d.getDeliveryMan();
-                    if (deliveryMan != null)
-                        return d.getDeliveryMan().getId();
-                    else
-                        return -1;
-                }
+            Delivery d = deliveries.get(node.getId());
+            if(d != null && d.getDeliveryMan() != null) {
+                return d.getDeliveryMan().getId();
             }
         }
         

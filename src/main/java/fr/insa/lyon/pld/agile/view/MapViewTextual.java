@@ -149,27 +149,19 @@ public class MapViewTextual extends MapView
                 
                 indexNode = 0;
                 
-                for (Passage p : deliveryMan.getRound().getItinerary()) {
-                    for (Delivery d : deliveryMan.getDeliveries()) {
-                	if(d.getNode().equals(p.getSection().getDestination())) {
-                	    indexNode++;
-                	    LocalTime lt = map.getStartingHour().plusSeconds((long) p.getArrivalTime());
-                	    itemsAll.addElement(new ListItem(d.getNode(), lt.format(dtf)+ " - " + p.getSection().getName()));
-                	}
-                    }
-                   
+                for (Route route : deliveryMan.getRound().getItinerary()) {
+                    indexNode++;
+                    List<Passage> passages = route.getPassages();
+                    itemsAll.addElement(new ListItem(route.getDestination(), route.getArrivalTime().format(dtf)
+                            + " - "
+                            + passages.get(passages.size()-1).getSection().getName()));
                 }
                 
-                /*for (Delivery d : deliveryMan.getDeliveries()) {
-                    indexNode++;
-                    
-                    itemsAll.addElement(new ListItem(d.getNode(), "Point L" + indexMan + "." + indexNode));
-                }*/
             }
             
             if (indexMan == 0) {
                 indexNode = 0;
-                for (Delivery d : map.getDeliveries()) {
+                for (Delivery d : map.getDeliveries().values()) {
                     indexNode++;
                     itemsAll.addElement(new ListItem(d.getNode(), "Point " + indexNode));
                 }
@@ -189,27 +181,20 @@ public class MapViewTextual extends MapView
                 DefaultListModel<ListItem> items = new DefaultListModel<>();
                 //deliveryMan.getRound().getItinerary()
                 
-                for (Passage p : deliveryMan.getRound().getItinerary()) {
-                    for (Delivery d : deliveryMan.getDeliveries()) {
-                	if(d.getNode().equals(p.getSection().getDestination())) {
-                	    indexNode++;
-                	    LocalTime lt = map.getStartingHour().plusSeconds((long) p.getArrivalTime());
-                            items.addElement(new ListItem(d.getNode(), lt.format(dtf)+ " - " + p.getSection().getName()));
-                	}
-                    }
-                   
+                //TODO : refactor this copy-paste !
+                for (Route route : deliveryMan.getRound().getItinerary()) {
+                    indexNode++;
+                    List<Passage> passages = route.getPassages();
+                    items.addElement(new ListItem(route.getDestination(), route.getArrivalTime().format(dtf)
+                            + " - "
+                            + passages.get(passages.size()-1).getSection().getName()));
                 }
                 
-                /*for (Delivery d : deliveryMan.getDeliveries()) {
-                    indexNode++;
-                    items.addElement(new ListItem(d.getNode(), "Point " + indexNode));
-                }*/
-                
-                List<Passage> itinary = deliveryMan.getRound().getItinerary();
+                List<Route> itinerary = deliveryMan.getRound().getItinerary();
                 String info = "Itinéraire vide !";
-                if(!itinary.isEmpty()) {
-                    LocalTime lt = map.getStartingHour().plusSeconds((long) itinary.get(itinary.size()-1).getArrivalTime());
-                    info = "Arrivée : " + lt.format(dtf);
+                if(!itinerary.isEmpty()) {
+                    LocalTime arrivalTime = itinerary.get(itinerary.size()-1).getArrivalTime();
+                    info = "Arrivée : " + arrivalTime.format(dtf);
                 }
                 
                 
