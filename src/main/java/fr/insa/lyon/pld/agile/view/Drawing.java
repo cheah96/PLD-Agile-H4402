@@ -45,12 +45,16 @@ public class Drawing {
         float uvx = (float) vx/vlen;
         float uvy = (float) vy/vlen;
         
+        int safety = 0;
         float total;
         float remaining = getPointsDistance(p1, p2);
         for (; (total = position+remaining) >= step;) {
+            if (safety++ > 1000) return position;
             
             p1.x += ((step-position)*vx)/vlen;
             p1.y += ((step-position)*vy)/vlen;
+            
+            if ((vx*(p2.x-p1.x) + vy*(p2.y-p1.y)) < 0) return position;
             
             drawLineThick(g,
                 new Point(p1.x+(int)((-uvy-uvx)*8), p1.y+(int)((uvx-uvy)*8)),
@@ -82,7 +86,7 @@ public class Drawing {
     protected static void drawDot(Graphics g, Point coords, int diameter) {
         g.fillOval((int) coords.getX()-diameter/2, (int) coords.getY()-diameter/2, diameter, diameter);
     }
-
+    
     protected static void drawWarehouse(Graphics g, Point coords) {
         g.setColor(Color.black);
         drawDot(g, coords, 11);

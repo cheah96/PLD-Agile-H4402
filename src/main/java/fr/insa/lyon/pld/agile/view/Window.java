@@ -56,10 +56,8 @@ public class Window
         // Bottom status bar
         JPanel panStatus = new JPanel();
         panStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        panStatus.setPreferredSize(new Dimension(frame.getWidth(), 16));
         panStatus.setLayout(new BoxLayout(panStatus, BoxLayout.X_AXIS));
         JLabel lblStatus = new JLabel("Barre d'état");
-        lblStatus.setHorizontalAlignment(SwingConstants.LEFT);
         
         // Top tool-bar
         JToolBar tlbTop = new JToolBar();
@@ -107,9 +105,10 @@ public class Window
         // CREATING DISPLAY
         
         EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
+        EmptyBorder semispacer = new EmptyBorder(2,2,2,2);
         
         // Bottom status bar
-        lblStatus.setBorder(spacer);
+        lblStatus.setBorder(semispacer);
         panStatus.add(lblStatus);
         
         // Top tool-bar
