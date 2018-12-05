@@ -2,13 +2,24 @@ package fr.insa.lyon.pld.agile.view;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author nmesnard
  */
 public class Drawing {
+    
+    // https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage
+    public static BufferedImage copyImage(BufferedImage image) {
+        BufferedImage copy = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        Graphics2D g = copy.createGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return copy;
+    }
     
     public static Color getColor(int index, int count) {
         return Color.getHSBColor((float) index / count, 1.0f, 1.0f);

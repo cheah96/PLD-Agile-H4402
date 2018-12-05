@@ -156,7 +156,6 @@ public class MapViewTextual extends MapView
                             + " - "
                             + passages.get(passages.size()-1).getSection().getName()));
                 }
-                
             }
             
             if (indexMan == 0) {

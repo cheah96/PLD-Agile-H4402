@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 public class MainController {
     Map map;
     Window view;
-
+    
     public MainController(Map map) {
         this.map = map;
         this.view = new Window(map, this);

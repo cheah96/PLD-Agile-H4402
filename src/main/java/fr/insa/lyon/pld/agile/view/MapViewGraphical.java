@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,26 +25,34 @@ public class MapViewGraphical extends MapView
     private final MainController controller;
     private final Map map;
     
-    private boolean hasScale = false;
-    private boolean hasData = false;
-    
-    private Dimension preferred = null;
-    
     private double latitudeMin;
     private double latitudeMax;
     private double longitudeMin;
     private double longitudeMax;
     
+    private Dimension preferred = null;
+    
+    private int width;
+    private int height;
+    private int deltaX;
+    private int deltaY;
+    
+    private boolean hasScale = false;
+    private boolean hasData = false;
+    
+    BufferedImage imageMap = null;
+    BufferedImage imageDeliveries = null;
+    BufferedImage imageSelection = null;
+    private int imageWidth;
+    private int imageHeight;
+    
     private double ratioX;
     private double ratioY;
     private double ratio;
     
-    private double deltaX;
-    private double deltaY;
-    
     Node selNode = null;
     int selDeliveryMan = -1;
-
+    
     private boolean isDirection = false;
     private boolean isLegend = false;
     private final MapViewGraphicalLegend legend;
@@ -98,6 +107,7 @@ public class MapViewGraphical extends MapView
         calcScale();
         calcPreferredSize();
         
+        imageMap = null;
         this.repaint();
     }
     
@@ -107,6 +117,7 @@ public class MapViewGraphical extends MapView
         selNode = null;
         selDeliveryMan = -1;
         
+        imageDeliveries = null;
         this.repaint();
     }
     
@@ -114,6 +125,8 @@ public class MapViewGraphical extends MapView
     public void selectNode(Node node) {
         if (selNode != node) {
             selNode = node;
+            
+            imageSelection = null;
             this.repaint();
         }
     }
@@ -123,6 +136,8 @@ public class MapViewGraphical extends MapView
     {
         if (selDeliveryMan != deliveryManIndex) {
             selDeliveryMan = deliveryManIndex;
+            
+            imageDeliveries = null;
             this.repaint();
         }
     }
@@ -138,6 +153,8 @@ public class MapViewGraphical extends MapView
     public void showDirection(boolean visibility) {
         if (isDirection != visibility) {
             isDirection = visibility;
+            
+            imageDeliveries = null;
             this.repaint();
         }
     }
@@ -146,11 +163,11 @@ public class MapViewGraphical extends MapView
     public void updateDeliveryMen() {
         updateDeliveries();
     }
-
+    
     @Override
     public void updateStartingHour() {
     }
-
+    
     @Override
     public void updateWarehouse() {
         updateNodes();
@@ -162,26 +179,28 @@ public class MapViewGraphical extends MapView
         
         if (!hasData) return;
         
-        double width = this.getWidth();
-        double height = this.getHeight();
+        imageWidth = this.getWidth();
+        imageHeight = this.getHeight();
         
-        ratioX = (longitudeMax - longitudeMin) / width;
-        ratioY = (latitudeMax - latitudeMin) / height;
-        ratio = (ratioX > ratioY ? ratioX : ratioY);
+        ratioX = imageWidth / (longitudeMax - longitudeMin);
+        ratioY = imageHeight / (latitudeMax - latitudeMin);
+        ratio = (ratioX < ratioY ? ratioX : ratioY);
         
         if (ratio > 0) {
-            deltaX = (width - (longitudeMax - longitudeMin) / ratio) / 2;
-            deltaY = (height - (latitudeMax - latitudeMin) / ratio) / 2;
-
+            imageWidth = (int) ((longitudeMax - longitudeMin) * ratio);
+            imageHeight = (int) ((latitudeMax - latitudeMin) * ratio);
+            
             hasScale = true;
         }
+        
+        imageMap = null;
     }
     
     public void eventClicked(MouseEvent e) {
         if (!(hasData && hasScale)) return;
-
-        Point2D coord = getPixelToPoint(e.getX(), e.getY());
-
+        
+        Point2D coord = getPixelToPoint(this.getWidth() - deltaX - e.getX(), this.getHeight() - deltaY - e.getY());
+        
         double closestdistance = -1;
         Node closest = null;
         for (Node n : map.getNodes().values()) {
@@ -192,11 +211,11 @@ public class MapViewGraphical extends MapView
                 closest = n;
             }
         }
-
+        
         if (closestdistance > 15.0) {
             closest = null;
         }
-
+        
         if (selNode != closest) {
             selectNode(closest);
             controller.selectedNode(closest);
@@ -207,13 +226,28 @@ public class MapViewGraphical extends MapView
     public void paintComponent(Graphics g0)
     {
         super.paintComponent(g0);
-        final Graphics2D g = (Graphics2D) g0.create();
-        
-        try {
-            
-        g.clearRect(0, 0, this.getWidth(), this.getHeight());
         
         if (!(hasData && hasScale)) return;
+        
+        if (imageMap == null) paintMap();
+        if (imageDeliveries == null) paintDeliveries();
+        if (imageSelection == null) paintSelection();
+        
+        width = this.getWidth();
+        height = this.getHeight();
+        deltaX = (width - imageWidth) / 2;
+        deltaY = (height - imageHeight) / 2;
+        
+        g0.clearRect(0, 0, width, height);
+        g0.drawImage(imageSelection, deltaX+imageWidth, deltaY+imageHeight, -imageWidth, -imageHeight, null);
+    }
+    
+    private void paintMap() {
+        imageMap = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = imageMap.createGraphics();
+        
+        g.setBackground(Color.white);
+        g.clearRect(0, 0, imageWidth, imageHeight);
         
         g.setColor(Color.gray);
         for (Node n1 : map.getNodes().values()) {
@@ -226,6 +260,16 @@ public class MapViewGraphical extends MapView
                 Drawing.drawLine(g, coordsn1, coordsn2);
             }
         }
+        
+        System.out.println("redraw map");
+        
+        g.dispose();
+        imageDeliveries = null;
+    }
+    
+    private void paintDeliveries() {
+        imageDeliveries = Drawing.copyImage(imageMap);
+        Graphics2D g = imageDeliveries.createGraphics();
         
         List<DeliveryMan> deliveryMen = map.getDeliveryMen();
         if (!deliveryMen.isEmpty()) {
@@ -262,6 +306,16 @@ public class MapViewGraphical extends MapView
             Drawing.drawDelivery(g, coords, color);
         }
         
+        System.out.println("redraw deliveries");
+        
+        g.dispose();
+        imageSelection = null;
+    }
+    
+    private void paintSelection() {
+        imageSelection = Drawing.copyImage(imageDeliveries);
+        Graphics2D g = imageSelection.createGraphics();
+        
         Node wh = map.getWarehouse();
         if (wh != null) {
             Drawing.drawWarehouse(g, getCoordsToPixel(wh));
@@ -271,11 +325,11 @@ public class MapViewGraphical extends MapView
             Point coords = getCoordsToPixel(selNode);
             Color color = getNodeColor(selNode, Color.gray);
             Drawing.drawSelectedNode(g, coords, color);
-            }
-            
-        } finally {
-            g.dispose();
         }
+        
+        System.out.println("redraw selection");
+        
+        g.dispose();
     }
     
     protected void drawNode(Graphics g, Node n, int diameter) {
@@ -299,15 +353,15 @@ public class MapViewGraphical extends MapView
     }
     public Point getCoordsToPixel(double longitude, double latitude) {
         return new Point(
-            (int) ((longitude - longitudeMin) / ratio + deltaX),
-            (int) ((latitude - latitudeMin) / ratio + deltaY)
+            (int) ((longitude - longitudeMin) * ratio),
+            (int) ((latitude - latitudeMin) * ratio)
         );
     }
     
     public Point2D getPixelToPoint (double x, double y) {
         return new Point2D.Double(
-            (x - deltaX) * ratio + longitudeMin,
-            (y - deltaY) * ratio + latitudeMin
+            x / ratio + longitudeMin,
+            y / ratio + latitudeMin
         );
     }
     
