@@ -21,7 +21,7 @@ public class ParserMapTest {
         String pathString = "src/test/res/map/mapSuccess.xml";
         Path path = Paths.get(pathString);
         Map map = new Map();
-        XMLParser.loadNodes(map, path);
+        XMLParser.loadMap(map, path);
         assertEquals(false,map.getNodes().isEmpty());
         assertEquals(3,map.getNodes().size());
         Long idNode1  = new Long(25175791);
@@ -47,27 +47,27 @@ public class ParserMapTest {
     public void testLoadMapFailFileNotFound() throws IOException, SAXException, ParserConfigurationException{
         String pathString = "src/test/res/map/mapFailFileNotFound.xml";
         Path path = Paths.get(pathString);
-        Assertions.assertThrows(IOException.class, () -> XMLParser.loadNodes(new Map(), path));
+        Assertions.assertThrows(IOException.class, () -> XMLParser.loadMap(new Map(), path));
     }
     
     @Test
     public void testLoadMapFailNodeSameID() throws IOException, SAXException, ParserConfigurationException{
         String pathString = "src/test/res/map/mapFailNodesSameID.xml";
         Path path = Paths.get(pathString);
-        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadNodes(new Map(), path));
+        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadMap(new Map(), path));
     }
     
     @Test
     public void testLoadMapFailDestinationNodeNotExist() throws IOException, SAXException, ParserConfigurationException{
         String pathString = "src/test/res/map/mapFailDestinationNodeNotExist.xml";
         Path path = Paths.get(pathString);
-        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadNodes(new Map(), path));
+        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadMap(new Map(), path));
     }
     
     @Test
     public void testLoadMapFailOriginNodeNotExist() throws IOException, SAXException, ParserConfigurationException{
         String pathString = "src/test/res/map/mapFailOriginNodeNotExist.xml";
         Path path = Paths.get(pathString);
-        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadNodes(new Map(), path));
+        Assertions.assertThrows(RuntimeException.class, () -> XMLParser.loadMap(new Map(), path));
     }
 }

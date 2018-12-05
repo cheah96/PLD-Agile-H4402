@@ -21,12 +21,12 @@ public class MainController {
         this.view = new Window(map, this);
     }
 
-    public void loadNodesFile() throws IOException, SAXException, ParserConfigurationException {
+    public void loadMapFile() throws IOException, SAXException, ParserConfigurationException {
         File selectedFile = view.askFile("Chargement d'un plan");
         if (selectedFile != null)
         {
             map.clear();
-            XMLParser.loadNodes(map, selectedFile.toPath());
+            XMLParser.loadMap(map, selectedFile.toPath());
         }
     }
     

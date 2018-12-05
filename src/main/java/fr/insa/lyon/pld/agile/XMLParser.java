@@ -25,63 +25,66 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLParser {
     private static final SAXParserFactory spf = SAXParserFactory.newInstance();
     
-    static public void loadNodes(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
-        loadMap(map, Files.newInputStream(path));
-    }
-    
-    static public void loadMap(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
+    static public void loadMap(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
         SAXParser saxParser = spf.newSAXParser();
-        saxParser.parse(stream, new MapHandler(map));
+        saxParser.parse(Files.newInputStream(path), new MapNodesHandler(map));
+        saxParser.parse(Files.newInputStream(path), new MapSectionsHandler(map));
     }
 
-    private static class MapHandler extends DefaultHandler {
+    private static class MapNodesHandler extends DefaultHandler {
         private final Map map;
         
-        public MapHandler(Map map) {
+        public MapNodesHandler(Map map) {
             this.map = map;
         }
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             //TODO : handing missing attributes
-            switch (qName)
-            {
-                case "noeud":
-                    long id = Long.parseLong(attributes.getValue("id"));
-                    double latitude = Double.parseDouble(attributes.getValue("latitude"));
-                    double longitude = Double.parseDouble(attributes.getValue("longitude"));
-                    if (!map.addNode(new Node(id, latitude, longitude)))
-                        throw new RuntimeException("Node already exists"); //TODO : Better error handling
-                    break;
-                case "troncon":
-                    long originId = Long.parseLong(attributes.getValue("origine"));
-                    long destinationId = Long.parseLong(attributes.getValue("destination"));
-                    double length = Double.parseDouble(attributes.getValue("longueur"));
-                    String name = attributes.getValue("nomRue");
-                    
-                    Node origin = map.getNode(originId);
-                    if (origin != null) {
-                        Node destination = map.getNode(destinationId);
-                        if (destination != null) {
-                            Section section = new Section(name, length, destination);
-                            origin.addOutgoingSection(section);
-                        } else
-                            throw new RuntimeException("Destination node doesn't exist"); //TODO : Better error handling
-                    }
-                    else
-                        throw new RuntimeException("Origin node doesn't exist"); //TODO : Better error handling
-                    break;
+            if(!"noeud".equals(qName)) return;
+            
+            long id = Long.parseLong(attributes.getValue("id"));
+            double latitude = Double.parseDouble(attributes.getValue("latitude"));
+            double longitude = Double.parseDouble(attributes.getValue("longitude"));
+            if (!map.addNode(new Node(id, latitude, longitude)))
+                throw new RuntimeException("Node already exists"); //TODO : Better error handling
+        }
+    }
+    
+    private static class MapSectionsHandler extends DefaultHandler {
+        private final Map map;
+        
+        public MapSectionsHandler(Map map) {
+            this.map = map;
+        }
+        
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            //TODO : handing missing attributes
+            if(!"troncon".equals(qName)) return;
+            
+            long originId = Long.parseLong(attributes.getValue("origine"));
+            long destinationId = Long.parseLong(attributes.getValue("destination"));
+            double length = Double.parseDouble(attributes.getValue("longueur"));
+            String name = attributes.getValue("nomRue");
+
+            Node origin = map.getNode(originId);
+            if (origin != null) {
+                Node destination = map.getNode(destinationId);
+                if (destination != null) {
+                    Section section = new Section(name, length, destination);
+                    origin.addOutgoingSection(section);
+                } else
+                    throw new RuntimeException("Destination node doesn't exist"); //TODO : Better error handling
             }
+            else
+                throw new RuntimeException("Origin node doesn't exist"); //TODO : Better error handling
         }
     }
     
     static public void loadDeliveries(Map map, Path path) throws IOException, SAXException, ParserConfigurationException {
-        loadDeliveries(map, Files.newInputStream(path));
-    }
-    
-    static public void loadDeliveries(Map map, InputStream stream) throws IOException, SAXException, ParserConfigurationException {
         SAXParser saxParser = spf.newSAXParser();
-        saxParser.parse(stream, new DeliveriesHandler(map));
+        saxParser.parse(Files.newInputStream(path), new DeliveriesHandler(map));
     }
 
     private static class DeliveriesHandler extends DefaultHandler {
@@ -126,7 +129,7 @@ public class XMLParser {
         Path deliveriesPath = Paths.get("dl-grand-12.xml");
         
         Map map = new Map();
-        XMLParser.loadNodes(map, mapPath);
+        XMLParser.loadMap(map, mapPath);
         XMLParser.loadDeliveries(map, deliveriesPath);
         System.out.println(map);
     }

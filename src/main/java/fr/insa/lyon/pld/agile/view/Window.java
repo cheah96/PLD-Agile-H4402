@@ -176,7 +176,7 @@ public class Window
         
         btnOpenMap.addActionListener(e -> {
             try {
-                controller.loadNodesFile();
+                controller.loadMapFile();
                 stateRefresh();
             } catch (Exception ex) {
                 ex.printStackTrace();
