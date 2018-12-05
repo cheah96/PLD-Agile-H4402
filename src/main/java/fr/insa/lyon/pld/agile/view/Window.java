@@ -11,7 +11,10 @@ import java.awt.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  *
@@ -37,6 +40,7 @@ public class Window
     private final JButton btnListAdd;
     private final JButton btnListMove;
     private final JButton btnListRemove;
+    private final JButton btnDeliveryRecords;
     
     List<MapView> mapViews = new ArrayList<>();
     
@@ -67,6 +71,8 @@ public class Window
         btnOpenMap.setToolTipText("Ouvrir une carte");
         btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
         btnOpenLoc.setToolTipText("Ouvrir des points de livraison");
+        btnDeliveryRecords = new JButton(new ImageIcon("res/icons/list.png"));
+        btnDeliveryRecords.setToolTipText("Générer la liste de livraisons");
         btnUndo = new JButton(new ImageIcon("res/icons/undo.png"));
         btnUndo.setToolTipText("Annuler");
         btnRedo = new JButton(new ImageIcon("res/icons/redo.png"));
@@ -114,6 +120,7 @@ public class Window
         // Top tool-bar
         tlbTop.add(btnOpenMap);
         tlbTop.add(btnOpenLoc);
+        tlbTop.add(btnDeliveryRecords);
         // tlbTop.add(btnUndo);
         // tlbTop.add(btnRedo);
         JPanel panSeparator = new JPanel();
@@ -191,6 +198,36 @@ public class Window
                 ex.printStackTrace();
             }
         });
+
+        btnDeliveryRecords.addActionListener(e -> {
+            try {
+                JFrame listDeliveries = new JFrame ("Plan de route");
+                listDeliveries.setVisible(true);
+
+                DefaultListModel<String> model2 = new DefaultListModel<>(); 
+                JList<String> list2 = new JList<>(model2);
+
+                for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary())
+                {
+                    Section lastsection = null;
+                    String lastsectionname = "";
+                    String currentsectionname = "";
+                    for (Passage location : route.getPassages()) {
+                        Section currentsection = location.getSection();
+                        currentsectionname = currentsection.getName();
+                            if(!currentsectionname.equals(lastsectionname)) 
+                            ((DefaultListModel<String>)list2.getModel()).addElement(currentsectionname);
+                        lastsection = currentsection;
+                        lastsectionname = currentsectionname;
+                    }
+                }
+                listDeliveries.add(list2);
+                listDeliveries.pack();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         
         btnGenerate.addActionListener(e -> {
             int nbDeliveryMen = (int) numDeliveries.getValue();
@@ -230,6 +267,7 @@ public class Window
         
         btnUndo.setEnabled(false);
         btnRedo.setEnabled(false);
+        btnDeliveryRecords.setEnabled(false);
         
         numDeliveries.setEnabled(true);
         btnGenerate.setEnabled(hasLoc);
@@ -237,6 +275,7 @@ public class Window
         btnListAdd.setEnabled(hasLoc);
         btnListMove.setEnabled(hasLoc);
         btnListRemove.setEnabled(hasLoc);
+        btnDeliveryRecords.setEnabled(hasLoc);
     }
     
     public File askFile(String title){
