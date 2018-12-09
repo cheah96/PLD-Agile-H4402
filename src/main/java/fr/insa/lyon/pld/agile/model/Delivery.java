@@ -31,7 +31,7 @@ public class Delivery {
         return deliveryMan;
     }
 
-    public void setDeliveryMan(DeliveryMan deliveryMan) {
+    void setDeliveryMan(DeliveryMan deliveryMan) {
         this.deliveryMan = deliveryMan;
     }
     

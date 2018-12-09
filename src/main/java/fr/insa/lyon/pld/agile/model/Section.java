@@ -5,7 +5,7 @@ package fr.insa.lyon.pld.agile.model;
  * @author scheah
  */
 public class Section {
-    public static double SPEED = 15.*1000./3600.; //15 km/h => 15.*1000./3600./s
+    public static final double SPEED = 15.*1000./3600.; //15 km/h => 15.*1000./3600./s
     
     private final String name;
     private final double length;
@@ -30,11 +30,15 @@ public class Section {
     }
     
     public long getDuration() {
-        return (long) Math.round(length/SPEED);
+        return computeDuration(length);
     }
 
     @Override
     public String toString() {
         return "Section{name: " + getName() + ", length: " + getLength() + ", destination: " + getDestination().getId() +"}";
+    }
+    
+    public static long computeDuration(double length) {
+        return (long) Math.round(length/SPEED);
     }
 }

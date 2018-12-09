@@ -84,7 +84,7 @@ public class Dijkstra {
     public static List<Section> getPath(Map<Long, Node> nodes, Node origin, Node destination){
         Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
         
-        List<Section> path = new ArrayList();
+        List<Section> path = new ArrayList<>();
         NodeInfo node = nodeInfos.get(destination.getId());
         while(node.node != origin){
             NodeInfo parentNode = nodeInfos.get( node.parent );

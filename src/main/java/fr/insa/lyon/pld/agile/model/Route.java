@@ -38,7 +38,7 @@ public class Route {
             return departureTime;
     }
 
-    public void setDepartureTime(LocalTime departureTime) {
+    void setDepartureTime(LocalTime departureTime) {
         this.departureTime = departureTime;
         LocalTime arrivalTime = departureTime;
         for (Passage passage : passages) {
@@ -47,7 +47,7 @@ public class Route {
         }
     }
     
-    public void addPassage(Section section) {
+    void addPassage(Section section) {
         LocalTime arrivalTime;
         if (!passages.isEmpty())
             arrivalTime = passages.get(passages.size()-1).getArrivalTime();
@@ -57,13 +57,13 @@ public class Route {
         passages.add(new Passage(section, arrivalTime));
     }
     
-    public void addPassages(List<Section> sections) {
+    void addPassages(List<Section> sections) {
         for (Section section : sections) {
             addPassage(section);
         }
     }
     
-    public void setDelivering(boolean delivering) {
+    void setDelivering(boolean delivering) {
 	this.delivering = delivering;
     }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -39,13 +40,13 @@ public class Map {
         this.deliveryMen = new ArrayList<>();
     }
     
-     public void addPropertyChangeListener(PropertyChangeListener listener) {
-         this.pcs.addPropertyChangeListener(listener);
-     }
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
 
-     public void removePropertyChangeListener(PropertyChangeListener listener) {
-         this.pcs.removePropertyChangeListener(listener);
-     }
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
     
     public Node getNode(long id) {
         return nodes.get(id);
@@ -99,12 +100,19 @@ public class Map {
         LocalTime oldStartingHour = startingHour;
         this.startingHour = startingHour;
         this.pcs.firePropertyChange("startingHour", oldStartingHour, startingHour);
+        
+        for (DeliveryMan deliveryMan : deliveryMen) {
+            deliveryMan.updateStartingHour(this);
+        }
+        
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
     public void setDeliveryManCount(int number) {
         deliveryMen.clear();
         for (int i = 0; i < number; i++)
             deliveryMen.add(new DeliveryMan(deliveryMen.size()));
+
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
@@ -112,8 +120,10 @@ public class Map {
         List<Node> deliveryNodes = deliveries.values().stream().map(Delivery::getNode).collect(Collectors.toList());
         int[] clusters = KMeansV1.kMeans(deliveryNodes, deliveryMen.size());
         
+        ListIterator<Node> nodeIterator = deliveryNodes.listIterator();
         for (int i = 0; i < clusters.length; i++) {
-            assignDelivery(deliveries.get(deliveryNodes.get(i).getId()), deliveryMen.get(clusters[i]));
+            Node deliveryNode = nodeIterator.next();
+            assignDelivery(deliveries.get(deliveryNode.getId()), deliveryMen.get(clusters[i]));
         }
         
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
@@ -126,13 +136,18 @@ public class Map {
             int[][] edgesCosts = new int[deliveries.size()][deliveries.size()];
             int[] nodesCost = new int[deliveries.size()];
             
+            ListIterator<Delivery> fromIterator = deliveries.listIterator();
             for (int i = 0; i < deliveries.size(); i++) {
-                java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, deliveries.get(i).getNode());
+                Delivery from = fromIterator.next();
+                java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, from.getNode());
+                
+                ListIterator<Delivery> toIterator = deliveries.listIterator();
                 for (int j = 0; j < deliveries.size(); j++) {
-                    edgesCosts[i][j] = (int) (distances.get(deliveries.get(j).getNode().getId())/1000./15.*60.*60.);
+                    Delivery to = toIterator.next();
+                    edgesCosts[i][j] = (int) Section.computeDuration(distances.get(to.getNode().getId()));
                 }
                 
-                nodesCost[i] = deliveries.get(i).getDuration();
+                nodesCost[i] = from.getDuration();
             }
 
             tspSolver.solve(1000, deliveries.size(), edgesCosts, nodesCost);
@@ -198,6 +213,7 @@ public class Map {
         this.pcs.firePropertyChange("deliveries", null, deliveries);
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
+    
     public void clearDeliveries() {
         for (DeliveryMan deliveryMan : deliveryMen) {
             deliveryMan.clear();

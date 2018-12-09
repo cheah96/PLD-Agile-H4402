@@ -40,21 +40,8 @@ public class DeliveryMan {
     }
     
     void addDelivery(Delivery delivery, Map map) {
-        if (deliveries.contains(delivery))
-            throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
-        
-        if (!round.getItinerary().isEmpty())
-            round.addNode(round.getItinerary().size()-1, delivery.getNode(), true, map);
-        else
-            round.addNode(0, delivery.getNode(), true, map);
-        deliveries.add(delivery);
-    }
-    
-    void removeDelivery(Delivery delivery, Map map) {
-        int index = deliveries.indexOf(delivery);
-        if (index == -1)
-            throw new RuntimeException("Delivery not found");
-        removeDelivery(index, map);
+        int index = !round.getItinerary().isEmpty() ? round.getItinerary().size()-1 : 0;
+        addDelivery(index, delivery, map);
     }
     
     void removeDelivery(int index, Map map) {
@@ -72,8 +59,19 @@ public class DeliveryMan {
         deliveries.remove(index);
     }
     
+    void removeDelivery(Delivery delivery, Map map) {
+        int index = deliveries.indexOf(delivery);
+        if (index == -1)
+            throw new RuntimeException("Delivery not found");
+        removeDelivery(index, map);
+    }
+    
     void clear() {
         round.clear();
         deliveries.clear();
+    }
+    
+    void updateStartingHour(Map map) {
+        round.updateStartingHour(map);
     }
 }
