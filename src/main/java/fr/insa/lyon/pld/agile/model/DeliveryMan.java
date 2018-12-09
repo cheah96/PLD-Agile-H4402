@@ -1,7 +1,5 @@
 package fr.insa.lyon.pld.agile.model;
 
-import fr.insa.lyon.pld.agile.tsp.Dijkstra;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +35,7 @@ public class DeliveryMan {
         if (deliveries.contains(delivery))
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
         
-        round.addDelivery(index, delivery.getNode(), map);
+        round.addNode(index, delivery.getNode(), true, map);
         deliveries.add(delivery);
     }
     
@@ -46,10 +44,32 @@ public class DeliveryMan {
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
         
         if (!round.getItinerary().isEmpty())
-            round.addDelivery(round.getItinerary().size()-1, delivery.getNode(), map);
+            round.addNode(round.getItinerary().size()-1, delivery.getNode(), true, map);
         else
-            round.addDelivery(0, delivery.getNode(), map);
+            round.addNode(0, delivery.getNode(), true, map);
         deliveries.add(delivery);
+    }
+    
+    void removeDelivery(Delivery delivery, Map map) {
+        int index = deliveries.indexOf(delivery);
+        if (index == -1)
+            throw new RuntimeException("Delivery not found");
+        removeDelivery(index, map);
+    }
+    
+    void removeDelivery(int index, Map map) {
+        Node node = deliveries.get(index).getNode();
+        
+        int routeIndex = 0;
+        for (Route route : round.getItinerary()) {
+            if (route.getDestination() == node)
+                break;
+            
+            routeIndex++;
+        }
+        
+        round.removeNode(routeIndex, map);
+        deliveries.remove(index);
     }
     
     void clear() {

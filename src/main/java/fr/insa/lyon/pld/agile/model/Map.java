@@ -151,6 +151,13 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
+    public void assignDelivery(int index, Delivery delivery, DeliveryMan deliveryMan) {
+        delivery.setDeliveryMan(deliveryMan);
+        deliveryMan.addDelivery(index, delivery, this);
+        
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+    }
+    
     public void assignDelivery(Delivery delivery, DeliveryMan deliveryMan) {
         delivery.setDeliveryMan(deliveryMan);
         deliveryMan.addDelivery(delivery, this);
@@ -158,6 +165,25 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
+    public void unassignDelivery(int index, DeliveryMan deliveryMan) {
+        Delivery delivery = deliveryMan.getDeliveries().get(index);
+        deliveryMan.removeDelivery(index, this);
+        delivery.setDeliveryMan(null);
+        
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+    }
+    
+    public void unassignDelivery(Delivery delivery) {
+        DeliveryMan deliveryMan = delivery.getDeliveryMan();
+        if (deliveryMan == null)
+            throw new RuntimeException("Delivery is unassigned");
+        
+        deliveryMan.removeDelivery(delivery, this);
+        delivery.setDeliveryMan(null);
+        
+        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+    }
+        
     public void clear() {
         nodes.clear();
         Node oldWarehouse = warehouse;

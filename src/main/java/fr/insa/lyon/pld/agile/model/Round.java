@@ -20,12 +20,8 @@ public class Round {
     public List<Route> getItinerary() {
         return Collections.unmodifiableList(itinerary);
     }
-  
-    void addDelivery(int index, Node node, Map map) {
-        addNode(index, node, true, map);
-    }
     
-    private void addNode(int index, Node node, boolean delivering, Map map) {
+    void addNode(int index, Node node, boolean delivering, Map map) {
         Route before = null;
         Route after = null;
         if (!itinerary.isEmpty()) {
@@ -63,6 +59,36 @@ public class Round {
         route = new Route(route.getArrivalTime(), afterDelivering);
         route.addPassages(Dijkstra.getPath(map.getNodes(), node, destinationNode));
         itinerary.set(index+1, route); //The old route index became index+1 due to the add
+    }
+    
+    void removeNode(int index, Map map) {
+        if (index == itinerary.size()-1)
+            throw new RuntimeException("Cannot remove the last route to the warehouse");
+        
+        Route before = null;
+        if (index-1 >= 0)
+            before = itinerary.get(index-1);
+        Route after = itinerary.get(index+1);
+        
+        Route route;
+        Node startingNode;
+        LocalTime departureTime;
+        if (before != null) {
+            departureTime = before.getArrivalTime();
+            if (before.isDelivering()) {
+                Delivery delivery = map.getDeliveries().get(before.getDestination().getId());
+                departureTime.plusSeconds(delivery.getDuration());
+            }
+            startingNode = before.getDestination();
+        } else {
+            departureTime = map.getStartingHour();
+            startingNode = map.getWarehouse();
+        }
+        
+        route = new Route(departureTime, after.isDelivering());
+        route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, after.getDestination()));
+        itinerary.set(index+1, route);
+        itinerary.remove(index);
     }
     
     void clear() {
