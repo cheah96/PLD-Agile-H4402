@@ -80,8 +80,14 @@ public class Map {
     }
     
     public void addDelivery(Delivery delivery) {
-	boolean added = (deliveries.putIfAbsent(delivery.getNode().getId(), delivery) == null);
-	if (added) this.pcs.firePropertyChange("deliveries", null, deliveries);
+	if (deliveries.putIfAbsent(delivery.getNode().getId(), delivery) == null)
+            this.pcs.firePropertyChange("deliveries", null, deliveries);
+    }
+    
+    public void removeDelivery(Delivery delivery) {
+        unassignDelivery(delivery);
+        if (deliveries.remove(delivery.getNode().getId()) != null)
+            this.pcs.firePropertyChange("deliveries", null, deliveries);
     }
     
     public boolean setWarehouse(long id) {
@@ -191,7 +197,7 @@ public class Map {
     public void unassignDelivery(Delivery delivery) {
         DeliveryMan deliveryMan = delivery.getDeliveryMan();
         if (deliveryMan == null)
-            throw new RuntimeException("Delivery is unassigned");
+            return;
         
         deliveryMan.removeDelivery(delivery, this);
         delivery.setDeliveryMan(null);
