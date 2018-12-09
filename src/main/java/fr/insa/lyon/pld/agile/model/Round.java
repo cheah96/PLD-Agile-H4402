@@ -73,7 +73,7 @@ public class Round {
         Node startingNode;
         LocalTime departureTime;
         if (before != null) {
-            departureTime = departureTime = getNextDepartureTime(before, map);
+            departureTime = getNextDepartureTime(before, map);
             startingNode = before.getDestination();
         } else {
             departureTime = map.getStartingHour();
