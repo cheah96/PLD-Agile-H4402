@@ -28,7 +28,7 @@ public class TSPSolverImplementation2 extends TSPSolverTemplate {
             }
         }
         lowerBound += minimumIncomingBranch;
-    
+        
         // On top of this, let's add the cost of the minimum outgoing branch
         for (int i = 0; i < unexploredNodes.size(); ++i) {
             int minimumOutGoingBranch = edgesCosts[unexploredNodes.get(i)][0];

@@ -15,13 +15,11 @@ public class TSPSolverImplementation1 extends TSPSolverTemplate {
         // The start lower bound to be returned
         int lowerBound = 0;
         
-        // Sets of temporary explored and unexplored nodes
-        ArrayList<Integer> candidateNodes = (ArrayList<Integer>) unexploredNodes.clone();
-        ArrayList<Integer> exploredNodes = new ArrayList<Integer>(unexploredNodes.size());
+        // Set of temporary unexplored nodes
+        ArrayList<Integer> candidateNodes = new ArrayList<Integer>(unexploredNodes);
         
         // First node to be explored
         Integer currentNode = 0;
-        exploredNodes.add(currentNode);
         
         // Greedily compute the best path exploring each node exactly once
         while (!candidateNodes.isEmpty()) {
@@ -38,9 +36,8 @@ public class TSPSolverImplementation1 extends TSPSolverTemplate {
             // Update the lower bound
             lowerBound += edgesCosts[currentNode][nextNode] + nodesCosts[nextNode];
             
-            // Update the sets of explored and unexplored nodes
+            // Update the set of unexplored nodes
             currentNode = nextNode;
-            exploredNodes.add(nextNode);
             candidateNodes.remove(nextNode);
         }
         

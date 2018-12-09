@@ -20,12 +20,8 @@ public class IteratorNearestNode implements Iterator<Integer> {
         nodes = new Integer[unexploredNodes.size()];
         numberOfNodes = 0;
         
-        // Sets of temporary explored and unexplored nodes
+        // Set of temporary unexplored nodes
         ArrayList<Integer> candidateNodes = new ArrayList<Integer>(unexploredNodes);
-        ArrayList<Integer> exploredNodes = new ArrayList<Integer>(unexploredNodes.size());
-        
-        // First node to be explored
-        exploredNodes.add(currentNode);
         
         // Greedily compute the best path exploring each node exactly once
         while (!candidateNodes.isEmpty()) {
@@ -39,15 +35,10 @@ public class IteratorNearestNode implements Iterator<Integer> {
                 }
             }
             
-            // Update the sets of explored and unexplored nodes
+            // Update the current path and the set of unexplored nodes
             currentNode = nextNode;
-            exploredNodes.add(nextNode);
+            nodes[numberOfNodes++] = nextNode;
             candidateNodes.remove((Integer)nextNode);
-        }
-        
-        // Fill the nodes in order (discard the first node, which is the currentNode)
-        for (int i = 1; i < exploredNodes.size(); ++i) {
-            nodes[numberOfNodes++] = exploredNodes.get(i);
         }
     }
 
