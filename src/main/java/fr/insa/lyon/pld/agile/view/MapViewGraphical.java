@@ -4,6 +4,7 @@ import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,30 +26,25 @@ public class MapViewGraphical extends MapView
     private final MainController controller;
     private final Map map;
     
+    private double offsetX;
+    private double offsetY;
     private double latitudeMin;
     private double latitudeMax;
     private double longitudeMin;
     private double longitudeMax;
     
     private Dimension preferred = null;
+
+    private Point2D lastMousePosition = new Point2D.Double();
     
-    private int width;
-    private int height;
-    private int deltaX;
-    private int deltaY;
-    
-    private boolean hasScale = false;
     private boolean hasData = false;
     
     BufferedImage imageMap = null;
     BufferedImage imageDeliveries = null;
     BufferedImage imageSelection = null;
-    private int imageWidth;
-    private int imageHeight;
     
-    private double ratioX;
-    private double ratioY;
     private double ratio;
+    private double ratioMin;
     
     private Node selNode = null;
     private int selDeliveryMan = -1;
@@ -60,14 +56,53 @@ public class MapViewGraphical extends MapView
     private final MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            eventClicked(e);
+            if (!hasData) return;
+        
+            Point2D coord = getPixelToPoint(e.getX(), MapViewGraphical.this.getHeight() - e.getY());
+
+            if (e.getButton() == MouseEvent.BUTTON1)
+                controller.mapClickLeft(MapViewGraphical.this, coord);
+            else if (e.getButton() == MouseEvent.BUTTON3)
+                controller.mapClickRight(MapViewGraphical.this, coord);
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent event) {
+            lastMousePosition.setLocation(event.getX(), event.getY());
+        }
+    
+        @Override
+        public void mouseDragged(MouseEvent event) {
+            if ((event.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) //Return if not left button
+                return;
+
+            Point2D actualMousePosition = new Point2D.Double(event.getX(), event.getY());
+            offsetX -= (actualMousePosition.getX()-lastMousePosition.getX())/ratio;
+            offsetY += (actualMousePosition.getY()-lastMousePosition.getY())/ratio;
+            
+            lastMousePosition = actualMousePosition;
+            setCursor(new Cursor(Cursor.MOVE_CURSOR));
+            imageMap = null;
+            MapViewGraphical.this.repaint();
+        }
+    
+        @Override
+        public void mouseReleased(MouseEvent event) {
+            if (event.getButton() == MouseEvent.BUTTON1) //Left button
+                setCursor(Cursor.getDefaultCursor());
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent event) {
+            lastMousePosition.setLocation(event.getX(), event.getY());
+            updateRatio(Math.pow(1.25, -event.getWheelRotation()));
         }
     };
     
     private final ComponentListener resizeListener = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
-            calcScale();
+            imageMap = null;
             repaint();
         }
     };
@@ -78,6 +113,8 @@ public class MapViewGraphical extends MapView
         this.controller = controller;
         this.addComponentListener(resizeListener);
         this.addMouseListener(mouseListener);
+        this.addMouseMotionListener(mouseListener);
+        this.addMouseWheelListener(mouseListener);
         
         legend = new MapViewGraphicalLegend();
         legend.setVisible(false);
@@ -98,13 +135,21 @@ public class MapViewGraphical extends MapView
                 longitudes.add(n.getLongitude());
             }
             
+            longitudeMin = Collections.min(longitudes);
             latitudeMin = Collections.min(latitudes);
             latitudeMax = Collections.max(latitudes);
-            longitudeMin = Collections.min(longitudes);
             longitudeMax = Collections.max(longitudes);
+        
+            double ratioX = getWidth()/(longitudeMax - longitudeMin);
+            double ratioY = getHeight()/(latitudeMax - latitudeMin);
+            
+            ratio = Math.min(ratioX,ratioY);
+            ratioMin = ratio;
+            
+            offsetX = longitudeMin - (getWidth()/ratio-(longitudeMax - longitudeMin))/2.;
+            offsetY = latitudeMin - (getHeight()/ratio-(latitudeMax - latitudeMin))/2.;
         }
         
-        calcScale();
         calcPreferredSize();
         
         selNode = null;
@@ -175,40 +220,7 @@ public class MapViewGraphical extends MapView
             this.repaint();
         }
     }
-    
-    public void calcScale() {
-        hasScale = false;
-        
-        if (!hasData) return;
-        
-        imageWidth = this.getWidth();
-        imageHeight = this.getHeight();
-        
-        ratioX = imageWidth / (longitudeMax - longitudeMin);
-        ratioY = imageHeight / (latitudeMax - latitudeMin);
-        ratio = (ratioX < ratioY ? ratioX : ratioY);
-        
-        if (ratio > 0) {
-            imageWidth = (int) ((longitudeMax - longitudeMin) * ratio);
-            imageHeight = (int) ((latitudeMax - latitudeMin) * ratio);
-            
-            hasScale = true;
-        }
-        
-        imageMap = null;
-    }
-    
-    public void eventClicked(MouseEvent e) {
-        if (!(hasData && hasScale)) return;
-        
-        Point2D coord = getPixelToPoint(e.getX() - deltaX, this.getHeight() - deltaY - e.getY());
-        
-        if (e.getButton() == MouseEvent.BUTTON1)
-            controller.mapClickLeft(this, coord);
-        else if (e.getButton() == MouseEvent.BUTTON3)
-            controller.mapClickRight(this, coord);
-    }
-    
+
     public Node findClosestNode(Point2D coord) {
         double closestdistance = -1;
         Node closest = null;
@@ -232,27 +244,46 @@ public class MapViewGraphical extends MapView
     public void paintComponent(Graphics g0) {
         super.paintComponent(g0);
         
-        if (!(hasData && hasScale)) return;
+        if (!hasData) return;
         
         if (imageMap == null) paintMap();
         if (imageDeliveries == null) paintDeliveries();
         if (imageSelection == null) paintSelection();
         
-        width = this.getWidth();
-        height = this.getHeight();
-        deltaX = (width - imageWidth) / 2;
-        deltaY = (height - imageHeight) / 2;
+        int width = this.getWidth();
+        int height = this.getHeight();
         
         g0.clearRect(0, 0, width, height);
-        g0.drawImage(imageSelection, deltaX, deltaY+imageHeight, imageWidth, -imageHeight, null);
+        g0.drawImage(imageSelection, 0, getHeight(), getWidth(), -getHeight(), null);
     }
     
     private void paintMap() {
-        imageMap = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = imageMap.createGraphics();
+        if ((longitudeMax-longitudeMin)*ratio >= getWidth()) {
+            offsetX = Math.max(offsetX, longitudeMin);
+            offsetX = Math.min(offsetX, longitudeMax-getWidth()/ratio);
+        } else {
+            offsetX = longitudeMin - (getWidth()/ratio-(longitudeMax - longitudeMin))/2.;
+        }
         
-        g.setBackground(Color.white);
-        g.clearRect(0, 0, imageWidth, imageHeight);
+        if ((latitudeMax-latitudeMin)*ratio >= getHeight()) {
+            offsetY = Math.max(offsetY, latitudeMin);
+            offsetY = Math.min(offsetY, latitudeMax-getHeight()/ratio);
+        } else {
+            offsetY = latitudeMin - (getHeight()/ratio-(latitudeMax - latitudeMin))/2.;
+        }
+            
+        imageMap = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = imageMap.createGraphics();
+               
+        g.setBackground(Color.lightGray);
+        g.clearRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.white);
+        Point topLeft = getCoordsToPixel(longitudeMin, latitudeMin);
+        g.fillRect(topLeft.x,
+                   topLeft.y,
+                   (int) ((longitudeMax - longitudeMin)*ratio)+1,
+                   (int) ((latitudeMax - latitudeMin)*ratio)+1);
         
         g.setColor(Color.gray);
         for (Node n1 : map.getNodes().values()) {
@@ -352,15 +383,15 @@ public class MapViewGraphical extends MapView
     }
     public Point getCoordsToPixel(double longitude, double latitude) {
         return new Point(
-            (int) ((longitude - longitudeMin) * ratio),
-            (int) ((latitude - latitudeMin) * ratio)
+            (int) ((longitude - offsetX) * ratio),
+            (int) ((latitude - offsetY) * ratio)
         );
     }
     
     public Point2D getPixelToPoint (double x, double y) {
         return new Point2D.Double(
-            x / ratio + longitudeMin,
-            y / ratio + latitudeMin
+            x / ratio + offsetX,
+            y / ratio + offsetY
         );
     }
     
@@ -385,8 +416,8 @@ public class MapViewGraphical extends MapView
         double preferredPixelLength = 15.0;
         
         preferred = new Dimension (
-            (int) (preferredPixelLength * (longitudeMax - longitudeMin) / avgSectionLength),
-            (int) (preferredPixelLength * (latitudeMax - latitudeMin) / avgSectionLength)
+            (int) (preferredPixelLength * (longitudeMax - offsetX) / avgSectionLength),
+            (int) (preferredPixelLength * (latitudeMax - offsetY) / avgSectionLength)
         );
         
     }
@@ -396,4 +427,24 @@ public class MapViewGraphical extends MapView
         return (preferred != null ? preferred : super.getPreferredSize());
     }
     
+    private void updateRatio(double scaleFactor) {
+        if (ratio * scaleFactor < ratioMin)
+            return;
+        
+        /* On soustrait la différence entre la position de la souris
+         * (dans le système de coordonnées de la carte) après le zoom et avant le zoom
+         * Ainsi, le point de la carte en dessous de la souris le reste après le zoom
+         * Offset -= PosSourisCarteAprès - PosSourisCarteAvant
+         *           -= PosSouris/ZoomAprès - PosSouris/ZoomAvant
+         *           -= PosSouris/ZoomAvant/FacteurDeZoom - PosSouris/ZoomAvant 
+         *           -= PosSouris/ZoomAvant * (1/Facteur de Zoom - 1)
+         * (Pas besoin de tenir compte de l'offset car la soustraction l'annule) */
+        
+        offsetX -= lastMousePosition.getX()/ratio*(1./scaleFactor - 1);
+        offsetY -= (getHeight()-lastMousePosition.getY())/ratio*(1./scaleFactor - 1); // Attention à l'inversion des Y
+        ratio *= scaleFactor;
+        
+        imageMap = null;
+        repaint();
+    }
 }
