@@ -102,9 +102,11 @@ public class KMeans {
         int[] clusters = new int[nodes.size()];   // the clusters to which the points belong
         int[] clustersNodesNumber = new int[clustersNb];    // the number of points in the clusters
         
+        clustersNb = Math.min(clustersNb, nodes.size());
         
         initKMeans(nodes, clustersNb, clustersCenters);
         
+        // TODO / WARNING : deliveryNodes is modified by kMeans
         sortNodes(nodes, warehouse);
         
         

@@ -131,6 +131,7 @@ public class Map {
     }
     
     public void distributeDeliveries() {
+        // TODO / WARNING : deliveryNodes is modified by kMeans
         List<Node> deliveryNodes = deliveries.values().stream().map(Delivery::getNode).collect(Collectors.toList());
         int[] clusters = KMeans.kMeans(deliveryNodes, deliveryMen.size(), this.warehouse);
         
@@ -195,6 +196,7 @@ public class Map {
                 Map.this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
                 
                 if (pce.getPropertyName().equals("finalBestPath")) {
+                    System.err.println("Remove");
                     pendingSolvers.remove(tspSolver);
                     
                     if (pendingSolvers.isEmpty()) {
