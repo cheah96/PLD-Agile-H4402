@@ -86,7 +86,11 @@ public class Dijkstra {
         
         List<Section> path = new ArrayList<>();
         NodeInfo node = nodeInfos.get(destination.getId());
-        while(node.node != origin){
+        while(node.node != origin) {
+            if (node.parentSection == -1) {
+                System.err.println("Broken path..."); //TODO : better error handling
+                return null;
+            }
             NodeInfo parentNode = nodeInfos.get( node.parent );
             path.add( parentNode.node.getOutgoingSections().get( node.parentSection ) );
             node = parentNode;

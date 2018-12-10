@@ -22,7 +22,7 @@ public class Round {
         return Collections.unmodifiableList(itinerary);
     }
     
-    void addNode(int index, Node node, boolean delivering, Map map) {
+    boolean addNode(int index, Node node, boolean delivering, Map map) {
         Route before = null;
         Route after = null;
         if (!itinerary.isEmpty()) {
@@ -46,18 +46,28 @@ public class Round {
             destinationNode = startingNode;
             departureTime = map.getStartingHour();
             afterDelivering = false;
-            itinerary.add(null); //For itinary.set to work
         }
         
+        List<Section> firstSections = Dijkstra.getPath(map.getNodes(), startingNode, node);
+        List<Section> secondSections = Dijkstra.getPath(map.getNodes(), node, destinationNode);
+        
+        if (firstSections == null || secondSections == null)
+            return false;
+
+        if (itinerary.isEmpty())
+            itinerary.add(null); //For itinary.set to work
+        
         Route route = new Route(departureTime, delivering);
-        route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, node));
+        route.addPassages(firstSections);
         itinerary.add(index, route);
         
         route = new Route(route.getArrivalTime(), afterDelivering);
-        route.addPassages(Dijkstra.getPath(map.getNodes(), node, destinationNode));
+        route.addPassages(secondSections);
         itinerary.set(index+1, route); //The old route index became index+1 due to the add
         
         updateDepartureTimes(index+1, map);
+        
+        return true;
     }
     
     void removeNode(int index, Map map) {

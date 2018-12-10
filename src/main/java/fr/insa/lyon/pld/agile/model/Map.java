@@ -197,17 +197,18 @@ public class Map {
     }
     
     public void assignDelivery(int index, Delivery delivery, DeliveryMan deliveryMan) {
-        delivery.setDeliveryMan(deliveryMan);
-        deliveryMan.addDelivery(index, delivery, this);
-        
-        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+        if (deliveryMan.addDelivery(index, delivery, this)) { //TODO : handle unreachable deliveries
+            delivery.setDeliveryMan(deliveryMan);
+            this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+        }
     }
     
     public void assignDelivery(Delivery delivery, DeliveryMan deliveryMan) {
-        delivery.setDeliveryMan(deliveryMan);
-        deliveryMan.addDelivery(delivery, this);
+        if (deliveryMan.addDelivery(delivery, this)) {
+            delivery.setDeliveryMan(deliveryMan);
         
-        this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+            this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
+        }
     }
     
     public void unassignDelivery(int index, DeliveryMan deliveryMan) {
