@@ -102,6 +102,7 @@ public class MapViewGraphical extends MapView
     private final ComponentListener resizeListener = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
+            updateRatioMin();
             imageMap = null;
             repaint();
         }
@@ -140,11 +141,8 @@ public class MapViewGraphical extends MapView
             latitudeMax = Collections.max(latitudes);
             longitudeMax = Collections.max(longitudes);
         
-            double ratioX = getWidth()/(longitudeMax - longitudeMin);
-            double ratioY = getHeight()/(latitudeMax - latitudeMin);
-            
-            ratio = Math.min(ratioX,ratioY);
-            ratioMin = ratio;
+            updateRatioMin();
+            ratio = ratioMin;
             
             offsetX = longitudeMin - (getWidth()/ratio-(longitudeMax - longitudeMin))/2.;
             offsetY = latitudeMin - (getHeight()/ratio-(latitudeMax - latitudeMin))/2.;
@@ -425,6 +423,14 @@ public class MapViewGraphical extends MapView
     @Override
     public Dimension getPreferredSize() {
         return (preferred != null ? preferred : super.getPreferredSize());
+    }
+    
+    private void updateRatioMin() {
+        double ratioX = getWidth()/(longitudeMax - longitudeMin);
+        double ratioY = getHeight()/(latitudeMax - latitudeMin);
+        ratioMin = Math.min(ratioX,ratioY);
+        if (ratio < ratioMin)
+            ratio = ratioMin;
     }
     
     private void updateRatio(double scaleFactor) {
