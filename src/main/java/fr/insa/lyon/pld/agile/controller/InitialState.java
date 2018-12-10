@@ -22,8 +22,8 @@ public class InitialState extends DefaultState {
         if (selectedFile != null) {
             map.clear();
             XMLParser.loadMap(map, selectedFile.toPath());
+            controller.setCurrentState(controller.MAP_LOADED_STATE);
         }
-        controller.setCurrentState(controller.MAP_LOADED_STATE);
         cmdList.reset();
     }
 
