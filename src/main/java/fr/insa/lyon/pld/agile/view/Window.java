@@ -2,12 +2,7 @@ package fr.insa.lyon.pld.agile.view;
 
 import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
-import fr.insa.lyon.pld.agile.xml.XMLAttributeFormatException;
-import fr.insa.lyon.pld.agile.xml.XMLDuplicateNodeException;
-import fr.insa.lyon.pld.agile.xml.XMLMissingAttributeException;
-import fr.insa.lyon.pld.agile.xml.XMLMultipleDefinitionOfWarehouseException;
-import fr.insa.lyon.pld.agile.xml.XMLUndefinedNodeReferenceException;
-import fr.insa.lyon.pld.agile.xml.XMLUnexpectedElementException;
+import fr.insa.lyon.pld.agile.xml.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -59,7 +54,6 @@ public class Window
         frame.setTitle("PLD Livraison à Domicile");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(200,200); //initialize status bar
         
         // Bottom status bar
         JPanel panStatus = new JPanel();
@@ -199,50 +193,36 @@ public class Window
         btnOpenMap.addActionListener(e -> {
             try {
                 controller.loadMap();
-                stateRefresh();
             } catch (XMLAttributeFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Attribut " + ex.getAttributeName()
-                    + " de valeur non conforme (" + ex.getAttributeValue() + ")",
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Attribut " + ex.getAttributeName() + " de valeur non conforme (" + ex.getAttributeValue() + ")");
             } catch (XMLMissingAttributeException ex) {
-                JOptionPane.showMessageDialog(frame, "Attribut manquant : " + ex.getMissingAttributeName(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Attribut manquant : " + ex.getMissingAttributeName());
             } catch (XMLDuplicateNodeException ex) {
-                JOptionPane.showMessageDialog(frame, "Définitions multiples d'un même élément : " + ex.getNodeId(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Définitions multiples d'un même élément : " + ex.getNodeId());
             } catch (XMLUndefinedNodeReferenceException ex) {
-                JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Référence à un élément non défini : " + ex.getNodeId());
             } catch (XMLUnexpectedElementException ex) {
-                JOptionPane.showMessageDialog(frame, "Elément inattendu trouvé : " + ex.getElementName(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Elément inattendu trouvé : " + ex.getElementName());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Fichier non conforme.");
             }
         });
         
         btnOpenLoc.addActionListener(e -> {
             try {
                 controller.loadDeliveriesFile();
-                stateRefresh();
             } catch (XMLAttributeFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Attribut " + ex.getAttributeName()
-                    + " de valeur non conforme (" + ex.getAttributeValue() + ")",
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Attribut " + ex.getAttributeName() + " de valeur non conforme (" + ex.getAttributeValue() + ")");
             } catch (XMLMissingAttributeException ex) {
-                JOptionPane.showMessageDialog(frame, "Attribut manquant : " + ex.getMissingAttributeName(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Attribut manquant : " + ex.getMissingAttributeName());
             } catch (XMLMultipleDefinitionOfWarehouseException ex) {
-                JOptionPane.showMessageDialog(frame, "Définitions multiples de l'entrepôt",
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Définitions multiples de l'entrepôt");
             } catch (XMLUndefinedNodeReferenceException ex) {
-                JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Référence à un élément non défini : " + ex.getNodeId());
             } catch (XMLUnexpectedElementException ex) {
-                JOptionPane.showMessageDialog(frame, "Elément inattendu trouvé : " + ex.getElementName(),
-                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Elément inattendu trouvé : " + ex.getElementName());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                popupError("Fichier non conforme.");
             }
         });
         
@@ -275,11 +255,9 @@ public class Window
             int nbDeliveryMen = (int) numDeliveries.getValue();
             if (!map.isShorteningDeliveries()) {
                 controller.generateDeliveryMen(nbDeliveryMen);
-            } else
-            {
+            } else {
                 controller.stopGeneration();
             }
-            stateRefresh();
         });
         
         cckDirection.addItemListener(e -> {
@@ -293,39 +271,34 @@ public class Window
         });
         
         
-        // INITIAL STATE
-        
-        stateRefresh();
-        
-        
         // READY
         
         frame.pack();
         frame.setVisible(true);
     }
     
-    protected final void stateRefresh()
-    {
-        Boolean hasMap = (map != null && !map.getNodes().isEmpty());
-        Boolean hasLoc = (hasMap && !map.getDeliveries().isEmpty());
+    public final void setButtonsState(
+        boolean canOpenMap, boolean canOpenLoc,
+        boolean canGenerateDeliveryMen,
+        boolean canEditDeliveries,
+        boolean canUndo, boolean canRedo) {
         
-        btnOpenMap.setEnabled(true);
-        btnOpenLoc.setEnabled(hasMap);
+        btnOpenMap.setEnabled(canOpenMap);
+        btnOpenLoc.setEnabled(canOpenLoc);
         
-        btnUndo.setEnabled(hasMap);
-        btnRedo.setEnabled(hasMap);
-        btnDeliveryRecords.setEnabled(false);
+        btnUndo.setEnabled(canUndo);
+        btnRedo.setEnabled(canRedo);
         
-        numDeliveries.setEnabled(true);
-        btnGenerate.setEnabled(hasLoc);
+        numDeliveries.setEnabled(canGenerateDeliveryMen);
+        btnGenerate.setEnabled(canGenerateDeliveryMen);
+        btnDeliveryRecords.setEnabled(canGenerateDeliveryMen);
         
-        btnListAdd.setEnabled(hasLoc);
-        btnListMove.setEnabled(hasLoc);
-        btnListRemove.setEnabled(hasLoc);
-        btnDeliveryRecords.setEnabled(hasLoc);
+        btnListAdd.setEnabled(canEditDeliveries);
+        btnListMove.setEnabled(canEditDeliveries);
+        btnListRemove.setEnabled(canEditDeliveries);
     }
     
-    public File askFile(String title){
+    public File promptFile(String title){
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("res/xml"));
         fileChooser.setDialogTitle(title);
@@ -336,6 +309,10 @@ public class Window
             return selectedFile;
         }
         return null;
+    }
+    
+    public void popupError(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
     
     public void selectNode(Node node) {

@@ -1,10 +1,13 @@
 package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.model.*;
+import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import fr.insa.lyon.pld.agile.view.Window;
+import fr.insa.lyon.pld.agile.xml.XMLParser;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 
 /**
  *
@@ -16,73 +19,83 @@ public class MainController implements PropertyChangeListener{
     private State currentState;
     private CommandList cmdList;
     
-    protected final InitialState INITIAL_STATE = new InitialState();
-    protected final MapLoadedState MAP_LOADED_STATE = new MapLoadedState();
-    protected final DeliveriesLoadedState DELIVERIES_LOADED_STATE = new DeliveriesLoadedState();
-    protected final AddDeliveryState ADD_DELIVERY_STATE = new AddDeliveryState();
-    protected final DeliveryMenComputingState DELIVERY_MEN_COMPUTING_STATE = new DeliveryMenComputingState();
-    protected final DeliveryMenGeneratedState DELIVERY_MEN_GENERATED_STATE = new DeliveryMenGeneratedState();
+    protected final InitialState INITIAL_STATE = new InitialState(this);
+    protected final MapLoadedState MAP_LOADED_STATE = new MapLoadedState(this);
+    protected final DeliveriesLoadedState DELIVERIES_LOADED_STATE = new DeliveriesLoadedState(this);
+    protected final AddDeliveryState ADD_DELIVERY_STATE = new AddDeliveryState(this);
+    protected final DeliveryMenComputingState DELIVERY_MEN_COMPUTING_STATE = new DeliveryMenComputingState(this);
+    protected final DeliveryMenGeneratedState DELIVERY_MEN_GENERATED_STATE = new DeliveryMenGeneratedState(this);
 
     public MainController(Map map) {
         this.map = map;
         this.view = new Window(map, this);
-        this.currentState = INITIAL_STATE;
         this.cmdList = new CommandList();
+        setCurrentState(INITIAL_STATE);
         map.addPropertyChangeListener(this);
     }
 
-    protected void setCurrentState(State state) {
+    protected final void setCurrentState(State state) {
         currentState = state;
         state.enterState(view);
         System.out.println(currentState);
     }
     
     public void addDelivery(Node node) {
-        currentState.addDelivery(this, map, node);
+        currentState.addDelivery(map, node);
     }
     
     public void deleteDelivery(Delivery delivery) {
-        currentState.deleteDelivery(this, map, delivery, cmdList);
+        currentState.deleteDelivery(map, delivery, cmdList);
     }
     
     public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndice, int newIndice) {
-        currentState.moveDelivery(this, map, delivery, oldDeliveryMan, newDeliveryMan, oldIndice, newIndice, cmdList);
+        currentState.moveDelivery(map, delivery, oldDeliveryMan, newDeliveryMan, oldIndice, newIndice, cmdList);
     }
      
     public void generateDeliveryMen(int deliveryMenCount) {
-        currentState.generateDeliveryMen(this, map, deliveryMenCount, cmdList);
+        currentState.generateDeliveryMen(map, deliveryMenCount, cmdList);
     }
     
     public void stopGeneration() {
-        currentState.stopGeneration(this, map);
+        currentState.stopGeneration(map);
     }
     
     public void generationFinished(){
-        currentState.generationFinished(this, map);
+        currentState.generationFinished(map);
     }
             
     public void undo() {
-        currentState.undo(cmdList);
+        cmdList.undo();
     }
     
     public void redo() {
-        currentState.redo(cmdList);
+        cmdList.redo();
     }
     
-    public void leftClick(Point2D p) {
-        currentState.leftClick(this, map, cmdList, view, p);
+    public void mapClickLeft(MapViewGraphical mapview, Point2D p) {
+        currentState.mapClickLeft(map, cmdList, mapview, p);
     }
-    
-    public void rightClick(Point2D p) {
-        currentState.rightClick(this, map, cmdList, view, p);
+    public void mapClickRight(MapViewGraphical mapview, Point2D p) {
+        currentState.mapClickRight(map, cmdList, mapview, p);
     }
     
     public void loadMap() throws Exception {
-        currentState.loadMap(this, map, cmdList, view);
+        File selectedFile = view.promptFile("Chargement d'un plan");
+        if (selectedFile == null) return;
+        cmdList.reset();
+        map.clear();
+        XMLParser.loadMap(map, selectedFile.toPath());
+        setCurrentState(MAP_LOADED_STATE);
     }
     
     public void loadDeliveriesFile() throws Exception {
-        currentState.loadDeliveriesFile(this, map, cmdList, view);
+        File selectedFile = view.promptFile("Chargement de demandes de livraison");
+        if (selectedFile == null) return;
+        cmdList.reset();
+        map.clearDeliveries();
+        map.clearWarehouse();
+        XMLParser.loadDeliveries(map, selectedFile.toPath());
+        setCurrentState(DELIVERIES_LOADED_STATE);
     }
     
     public void selectedNode(Node node) {
@@ -98,7 +111,9 @@ public class MainController implements PropertyChangeListener{
         String propertyName = evt.getPropertyName();
         switch (propertyName) {
             case "shortenDeliveriesFinished":
-                currentState.generationFinished(this, map);
+                currentState.generationFinished(map);
+                break;
         }
     }
+    
 }

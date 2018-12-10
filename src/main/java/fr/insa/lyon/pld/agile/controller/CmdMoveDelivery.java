@@ -9,31 +9,32 @@ import fr.insa.lyon.pld.agile.model.Map;
  * @author scheah
  */
 public class CmdMoveDelivery implements Command {
-    Map map;
-    private Delivery delivery;
-    private DeliveryMan oldDeliveryMan;
-    private DeliveryMan newDeliveryMan;
-    private int oldIndice;
-    private int newIndice;
+    private final Map map;
+    private final Delivery delivery;
+    private final DeliveryMan oldDeliveryMan;
+    private final DeliveryMan newDeliveryMan;
+    private final int oldIndex;
+    private final int newIndex;
     
-    public CmdMoveDelivery(Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndice, int newIndice){
+    public CmdMoveDelivery(Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex) {
         this.map = map;
         this.delivery = delivery;
         this.oldDeliveryMan = oldDeliveryMan;
         this.newDeliveryMan = newDeliveryMan;
-        this.oldIndice = oldIndice;
-        this.newIndice = newIndice;
+        this.oldIndex = oldIndex;
+        this.newIndex = newIndex;
     }
     
     @Override
     public void doCmd(){
-        map.unassignDelivery(oldIndice, oldDeliveryMan);
-        map.assignDelivery(newIndice, delivery, newDeliveryMan);
+        map.unassignDelivery(oldIndex, oldDeliveryMan);
+        map.assignDelivery(newIndex, delivery, newDeliveryMan);
     }
 
     @Override
     public void undoCmd() {
-        map.unassignDelivery(newIndice, newDeliveryMan);
-        map.assignDelivery(oldIndice, delivery, oldDeliveryMan);
+        map.unassignDelivery(newIndex, newDeliveryMan);
+        map.assignDelivery(oldIndex, delivery, oldDeliveryMan);
     }
+    
 }

@@ -7,15 +7,20 @@ import fr.insa.lyon.pld.agile.view.Window;
  *
  * @author scheah
  */
-public class DeliveryMenComputingState extends DefaultState { // extends DefaultState {
+public class DeliveryMenComputingState extends DefaultState {
+
+    public DeliveryMenComputingState(MainController controller) {
+        super(controller);
+    }
     
     @Override
     public void enterState(Window window) {
         window.setStatusMessage("Génération des tournées en cours...");
+        window.setButtonsState(false, false, true, false, false, false);
     }
     
     @Override
-    public void stopGeneration(MainController controller, Map map)
+    public void stopGeneration(Map map)
     {
         System.err.println("Arrêt des calculs...");
         map.stopShorteningDeliveries();
@@ -23,7 +28,7 @@ public class DeliveryMenComputingState extends DefaultState { // extends Default
     }
     
     @Override
-    public void generationFinished(MainController controller, Map map)
+    public void generationFinished(Map map)
     {
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }

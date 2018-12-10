@@ -105,7 +105,7 @@ public class Drawing {
     
     protected static void drawWarehouse(Graphics g, Point coords) {
         g.setColor(Color.black);
-        drawHouse(g, coords, 17);
+        drawHouse(g, coords, 18);
     }
     
     protected static void drawDelivery(Graphics g, Point coords, Color color) {

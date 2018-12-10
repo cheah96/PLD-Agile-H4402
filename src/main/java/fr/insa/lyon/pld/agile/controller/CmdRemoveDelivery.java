@@ -9,19 +9,19 @@ import fr.insa.lyon.pld.agile.model.Map;
  * @author scheah
  */
 public class CmdRemoveDelivery implements Command {
-    private Map map;
-    private DeliveryMan deliveryMan;
-    private int ind;
-    private Delivery delivery;
+    private final Map map;
+    private final Delivery delivery;
+    private final DeliveryMan deliveryMan;
+    private final int index;
     
     public CmdRemoveDelivery(Map map, Delivery delivery){
         this.map = map;
         this.delivery = delivery;
         this.deliveryMan = delivery.getDeliveryMan();
-        this.ind = this.deliveryMan.getDeliveries().indexOf(delivery);
+        this.index = this.deliveryMan.getDeliveries().indexOf(delivery);
         System.err.println(this.deliveryMan.getDeliveries());
         System.err.println(this.deliveryMan.getDeliveries().size());
-        System.err.println(ind);
+        System.err.println(index);
     }
     
     @Override
@@ -32,6 +32,7 @@ public class CmdRemoveDelivery implements Command {
     @Override
     public void undoCmd() {
         map.addDelivery(delivery);
-        map.assignDelivery(ind, delivery, deliveryMan);
+        map.assignDelivery(index, delivery, deliveryMan);
     }
+    
 }

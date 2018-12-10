@@ -9,27 +9,28 @@ import fr.insa.lyon.pld.agile.model.Map;
  * @author scheah
  */
 public class CmdAddDelivery implements Command {
-    private Map map;
-    private Delivery delivery;
-    private DeliveryMan deliveryMan;
-    private int ind;
+    private final Map map;
+    private final Delivery delivery;
+    private final DeliveryMan deliveryMan;
+    private final int index;
     
-    public CmdAddDelivery(Map map, Delivery delivery, DeliveryMan deliveryMan, int ind){
+    public CmdAddDelivery(Map map, Delivery delivery, DeliveryMan deliveryMan, int index){
         this.map = map;
         this.delivery = delivery;
         this.deliveryMan = deliveryMan;
-        this.ind = ind;
+        this.index = index;
     }
     
     @Override
     public void doCmd(){
         map.addDelivery(delivery);
-        map.assignDelivery(ind, delivery, deliveryMan);
+        map.assignDelivery(index, delivery, deliveryMan);
     }
 
     @Override
     public void undoCmd() {
-        map.unassignDelivery(ind,deliveryMan);
+        map.unassignDelivery(index, deliveryMan);
         map.removeDelivery(delivery);
     }
+    
 }
