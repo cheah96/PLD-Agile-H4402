@@ -11,10 +11,7 @@ import java.awt.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  *
@@ -198,32 +195,27 @@ public class Window
                 ex.printStackTrace();
             }
         });
-
+        
         btnDeliveryRecords.addActionListener(e -> {
             try {
-                JFrame listDeliveries = new JFrame ("Plan de route");
+                JFrame listDeliveries = new JFrame("Plan de route");
                 listDeliveries.setVisible(true);
-
+                
                 DefaultListModel<String> model2 = new DefaultListModel<>(); 
                 JList<String> list2 = new JList<>(model2);
-
-                for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary())
-                {
-                    Section lastsection = null;
-                    String lastsectionname = "";
-                    String currentsectionname = "";
+                
+                Section lastsection = null;
+                for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary()) {
                     for (Passage location : route.getPassages()) {
                         Section currentsection = location.getSection();
-                        currentsectionname = currentsection.getName();
-                            if(!currentsectionname.equals(lastsectionname)) 
-                            ((DefaultListModel<String>)list2.getModel()).addElement(currentsectionname);
+                        if (lastsection!=null && !currentsection.getName().equals(lastsection.getName())) 
+                            ((DefaultListModel<String>)list2.getModel()).addElement(currentsection.getName());
                         lastsection = currentsection;
-                        lastsectionname = currentsectionname;
                     }
                 }
+                
                 listDeliveries.add(list2);
                 listDeliveries.pack();
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -239,7 +231,7 @@ public class Window
             boolean checked = cckDirection.getModel().isSelected();
             mapViewGraphical.showDirection(checked);
         });
-
+        
         cckLegend.addItemListener(e -> {
             boolean checked = cckLegend.getModel().isSelected();
             mapViewGraphical.showLegend(checked);
@@ -302,6 +294,5 @@ public class Window
             view.selectDeliveryMan(deliveryManIndex);
         }
     }
-   
     
 }

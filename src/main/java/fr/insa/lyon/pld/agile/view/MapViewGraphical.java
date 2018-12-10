@@ -50,8 +50,8 @@ public class MapViewGraphical extends MapView
     private double ratioY;
     private double ratio;
     
-    Node selNode = null;
-    int selDeliveryMan = -1;
+    private Node selNode = null;
+    private int selDeliveryMan = -1;
     
     private boolean isDirection = false;
     private boolean isLegend = false;
@@ -107,18 +107,36 @@ public class MapViewGraphical extends MapView
         calcScale();
         calcPreferredSize();
         
+        selNode = null;
+        
         imageMap = null;
         this.repaint();
     }
     
     @Override
-    public void updateDeliveries()
-    {
-        selNode = null;
-        selDeliveryMan = -1;
-        
+    public void updateDeliveries() {
         imageDeliveries = null;
         this.repaint();
+    }
+    
+    @Override
+    public void updateDeliveryMen() {
+        selDeliveryMan = -1;
+        updateDeliveries();
+    }
+    
+    @Override
+    public void updateDeliveryMan() {
+        updateDeliveries();
+    }
+    
+    @Override
+    public void updateStartingHour() {
+    }
+    
+    @Override
+    public void updateWarehouse() {
+        updateNodes();
     }
     
     @Override
@@ -132,8 +150,7 @@ public class MapViewGraphical extends MapView
     }
     
     @Override
-    public void selectDeliveryMan(int deliveryManIndex)
-    {
+    public void selectDeliveryMan(int deliveryManIndex) {
         if (selDeliveryMan != deliveryManIndex) {
             selDeliveryMan = deliveryManIndex;
             
@@ -159,22 +176,7 @@ public class MapViewGraphical extends MapView
         }
     }
     
-    @Override
-    public void updateDeliveryMen() {
-        updateDeliveries();
-    }
-    
-    @Override
-    public void updateStartingHour() {
-    }
-    
-    @Override
-    public void updateWarehouse() {
-        updateNodes();
-    }
-    
-    public void calcScale()
-    {
+    public void calcScale() {
         hasScale = false;
         
         if (!hasData) return;
@@ -199,14 +201,13 @@ public class MapViewGraphical extends MapView
     public void eventClicked(MouseEvent e) {
         if (!(hasData && hasScale)) return;
         
-        Point2D coord = getPixelToPoint(this.getWidth() - deltaX - e.getX(), this.getHeight() - deltaY - e.getY());
+        Point2D coord = getPixelToPoint(e.getX() - deltaX, this.getHeight() - deltaY - e.getY());
         
         controller.leftClick(coord);
     }
     
     @Override
-    public void paintComponent(Graphics g0)
-    {
+    public void paintComponent(Graphics g0) {
         super.paintComponent(g0);
         
         if (!(hasData && hasScale)) return;
@@ -221,7 +222,7 @@ public class MapViewGraphical extends MapView
         deltaY = (height - imageHeight) / 2;
         
         g0.clearRect(0, 0, width, height);
-        g0.drawImage(imageSelection, deltaX+imageWidth, deltaY+imageHeight, -imageWidth, -imageHeight, null);
+        g0.drawImage(imageSelection, deltaX, deltaY+imageHeight, imageWidth, -imageHeight, null);
     }
     
     private void paintMap() {
@@ -242,8 +243,6 @@ public class MapViewGraphical extends MapView
                 Drawing.drawLine(g, coordsn1, coordsn2);
             }
         }
-        
-        System.out.println("redraw map");
         
         g.dispose();
         imageDeliveries = null;
@@ -288,8 +287,6 @@ public class MapViewGraphical extends MapView
             Drawing.drawDelivery(g, coords, color);
         }
         
-        System.out.println("redraw deliveries");
-        
         g.dispose();
         imageSelection = null;
     }
@@ -308,8 +305,6 @@ public class MapViewGraphical extends MapView
             Color color = getNodeColor(selNode, Color.gray);
             Drawing.drawSelectedNode(g, coords, color);
         }
-        
-        System.out.println("redraw selection");
         
         g.dispose();
     }

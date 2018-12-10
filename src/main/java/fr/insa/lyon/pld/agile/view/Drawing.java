@@ -97,10 +97,14 @@ public class Drawing {
     protected static void drawDot(Graphics g, Point coords, int diameter) {
         g.fillOval((int) coords.getX()-diameter/2, (int) coords.getY()-diameter/2, diameter, diameter);
     }
+    protected static void drawHouse(Graphics g, Point coords, int size) {
+        g.fillPolygon(new int[] {coords.x-size/2, coords.x, coords.x+size/2}, new int[] {coords.y+size/2, coords.y+size, coords.y+size/2}, 3);
+        g.fillRect(coords.x - size/2, coords.y - size/2, size, size);
+    }
     
     protected static void drawWarehouse(Graphics g, Point coords) {
         g.setColor(Color.black);
-        drawDot(g, coords, 11);
+        drawHouse(g, coords, 11);
     }
     
     protected static void drawDelivery(Graphics g, Point coords, Color color) {
