@@ -26,9 +26,11 @@ public class Round {
         Route before = null;
         Route after = null;
         if (!itinerary.isEmpty()) {
-            if (itinerary.size() == 1)
-                throw new RuntimeException("Round has only one passage");
-            before = itinerary.get(index-1);
+            if (itinerary.size() == 1) //Consistency check : Should never happen
+                throw new RuntimeException("Round has only one route");
+            
+            if (index-1 >= 0)
+                before = itinerary.get(index-1);
             after = itinerary.get(index);
         }
         
@@ -36,26 +38,31 @@ public class Round {
         Node destinationNode;
         LocalTime departureTime;
         boolean afterDelivering;
-        if (before != null && after != null) {
+        
+        if (before != null) {
             startingNode = before.getDestination();
-            destinationNode = after.getDestination();
             departureTime = getNextDepartureTime(before, map);
-            afterDelivering = true;
         } else {
             startingNode = map.getWarehouse();
-            destinationNode = startingNode;
             departureTime = map.getStartingHour();
+        }
+        
+        if (after != null) {
+            destinationNode = after.getDestination();
+            afterDelivering = after.isDelivering();
+        } else {
+            destinationNode = map.getWarehouse();
             afterDelivering = false;
         }
         
         List<Section> firstSections = Dijkstra.getPath(map.getNodes(), startingNode, node);
         List<Section> secondSections = Dijkstra.getPath(map.getNodes(), node, destinationNode);
         
-        if (firstSections == null || secondSections == null)
+        if (firstSections == null || secondSections == null) // TODO : remove this by preventing inaccesssible nodes before here
             return false;
 
         if (itinerary.isEmpty())
-            itinerary.add(null); //For itinary.set to work
+            itinerary.add(null); //For itinary.set(index+1, route) to work
         
         Route route = new Route(departureTime, delivering);
         route.addPassages(firstSections);
