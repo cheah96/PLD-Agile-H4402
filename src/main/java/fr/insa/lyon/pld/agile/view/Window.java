@@ -43,6 +43,72 @@ public class Window
     
     List<MapView> mapViews = new ArrayList<>();
     
+    private class RoutePart {
+        String sectionName;
+        Passage firstPassage;
+        long duration; // seconds
+        double distance; // meters
+        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration){
+            this.sectionName = sectionName;
+            this.firstPassage = firstPassage;
+            this.duration = duration;
+            this.distance = distance;
+        }
+        public void setDuration(int duration){
+            this.duration = duration;
+        }
+        public void setDistance(double distance){
+            this.distance = distance;
+        }
+        public long getDuration(){
+            return this.duration;
+        }
+        public double getDistance(){
+            return this.distance;
+        }
+        @Override
+        public String toString(){
+            return this.firstPassage.getArrivalTime().toString().substring(0, 5) + " - " + this.sectionName + " (" + Long.toString(Math.round(this.distance)) + " m)";
+        }
+    }
+    
+    private List<RoutePart> buildRoadMap(Map map){
+        List<RoutePart> routeParts = new ArrayList<RoutePart>();
+        
+        String routePartName = null;
+        double distance = 0;
+        long duration = 0;
+        Passage firstPassage = null;
+
+        for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary()){
+            for (Passage location : route.getPassages()) {
+                Section currentSection = location.getSection();
+                if(routePartName==null && firstPassage==null ){
+                    routePartName= currentSection.getName();
+                    firstPassage = location;
+                }
+                
+                if(currentSection.getName().equals(routePartName)){
+                    distance += currentSection.getLength();
+                    duration += currentSection.getDuration();
+                }
+                else {
+                    routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration));
+                    firstPassage = location;
+                    routePartName = currentSection.getName();
+                    distance = currentSection.getLength();
+                    duration = currentSection.getDuration();                    
+                }
+                
+            }
+        }
+        routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration));
+        
+        return routeParts;
+    }
+    
+    
+    
     public Window(Map map, final MainController controller) {
         this.map = map;
         this.controller = controller;
@@ -234,15 +300,12 @@ public class Window
                 DefaultListModel<String> model2 = new DefaultListModel<>(); 
                 JList<String> list2 = new JList<>(model2);
                 
-                Section lastsection = null;
-                for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary()) {
-                    for (Passage location : route.getPassages()) {
-                        Section currentsection = location.getSection();
-                        if (lastsection!=null && !currentsection.getName().equals(lastsection.getName())) 
-                            ((DefaultListModel<String>)list2.getModel()).addElement(currentsection.getName());
-                        lastsection = currentsection;
-                    }
+                List<RoutePart> routeParts = buildRoadMap(map);
+                
+                for(RoutePart part : routeParts){
+                    ((DefaultListModel<String>)list2.getModel()).addElement(part.toString());
                 }
+                
                 
                 listDeliveries.add(list2);
                 listDeliveries.pack();
