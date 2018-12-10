@@ -113,7 +113,7 @@ public class KMeans {
         //! the final iteration is the iteration where no point changes its cluster
         boolean aChangeOccured=true;
         int iter=0;
-        while(aChangeOccured){
+        while(aChangeOccured && iter<nodes.size()){
             aChangeOccured=false;
             ++iter;
             
