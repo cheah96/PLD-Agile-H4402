@@ -11,7 +11,7 @@ import java.awt.geom.Point2D;
  *
  * @author scheah
  */
-public abstract class DefaultState implements State{
+public abstract class DefaultState implements State {
     @Override
     public void addDelivery(MainController controller, Map map, Node node) {}
     @Override

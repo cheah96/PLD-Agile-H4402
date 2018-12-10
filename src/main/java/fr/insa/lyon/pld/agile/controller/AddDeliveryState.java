@@ -16,6 +16,11 @@ public class AddDeliveryState extends DefaultState {
     private int duration; 
     
     @Override
+    public void enterState(Window window) {
+        window.setStatusMessage("Ajout d'un point de livraison");
+    }
+    
+    @Override
     public void validateAddDelivery(MainController controller, Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList) {
         Delivery toBeAdded = new Delivery(node, duration, deliveryMan);
         cmdList.addCommand(new CmdAddDelivery(map, toBeAdded, deliveryMan, ind));
@@ -27,7 +32,8 @@ public class AddDeliveryState extends DefaultState {
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     
-     protected void enterAction(Map map, Node node) {
+    protected void enterAction(Map map, Node node) {
         this.node = node;
     }
+    
 }

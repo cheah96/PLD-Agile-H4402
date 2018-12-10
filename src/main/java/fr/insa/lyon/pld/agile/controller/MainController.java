@@ -33,10 +33,11 @@ public class MainController implements PropertyChangeListener{
 
     protected void setCurrentState(State state) {
         currentState = state;
+        state.enterState(view);
         System.out.println(currentState);
     }
     
-     public void addDelivery(Node node) {
+    public void addDelivery(Node node) {
         currentState.addDelivery(this, map, node);
     }
     

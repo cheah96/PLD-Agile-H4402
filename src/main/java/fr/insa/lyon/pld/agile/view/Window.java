@@ -38,6 +38,7 @@ public class Window
     private final JButton btnListMove;
     private final JButton btnListRemove;
     private final JButton btnDeliveryRecords;
+    private final JLabel lblStatus;
     
     List<MapView> mapViews = new ArrayList<>();
     
@@ -58,7 +59,7 @@ public class Window
         JPanel panStatus = new JPanel();
         panStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
         panStatus.setLayout(new BoxLayout(panStatus, BoxLayout.X_AXIS));
-        JLabel lblStatus = new JLabel("Barre d'état");
+        lblStatus = new JLabel("Barre d'état");
         
         // Top tool-bar
         JToolBar tlbTop = new JToolBar();
@@ -118,8 +119,8 @@ public class Window
         tlbTop.add(btnOpenMap);
         tlbTop.add(btnOpenLoc);
         tlbTop.add(btnDeliveryRecords);
-        // tlbTop.add(btnUndo);
-        // tlbTop.add(btnRedo);
+        tlbTop.add(btnUndo);
+        tlbTop.add(btnRedo);
         JPanel panSeparator = new JPanel();
         panSeparator.setOpaque(false);
         tlbTop.add(panSeparator);
@@ -177,6 +178,14 @@ public class Window
         // EVENTS HANDLING
         
         // File opening
+        
+        btnUndo.addActionListener(e -> {
+            controller.undo();
+        });
+        
+        btnRedo.addActionListener(e -> {
+            controller.redo();
+        });
         
         btnOpenMap.addActionListener(e -> {
             try {
@@ -262,8 +271,8 @@ public class Window
         btnOpenMap.setEnabled(true);
         btnOpenLoc.setEnabled(hasMap);
         
-        btnUndo.setEnabled(false);
-        btnRedo.setEnabled(false);
+        btnUndo.setEnabled(hasMap);
+        btnRedo.setEnabled(hasMap);
         btnDeliveryRecords.setEnabled(false);
         
         numDeliveries.setEnabled(true);
@@ -298,6 +307,10 @@ public class Window
         for (MapView view : mapViews) {
             view.selectDeliveryMan(deliveryManIndex);
         }
+    }
+    
+    public void setStatusMessage(String message) {
+        lblStatus.setText(message);
     }
     
 }

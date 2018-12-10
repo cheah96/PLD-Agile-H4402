@@ -13,6 +13,8 @@ import java.awt.geom.Point2D;
  */
 public interface State {
     
+    public void enterState(Window window);
+    
     public void addDelivery(MainController controller, Map map, Node node);
     
     public void validateAddDelivery(MainController controller, Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList);
@@ -40,4 +42,5 @@ public interface State {
     public void loadMap(MainController controller, Map map, CommandList cmdList, Window view) throws Exception;
     
     public void loadDeliveriesFile(MainController controller, Map map, CommandList cmdList, Window view) throws Exception;
+    
 }

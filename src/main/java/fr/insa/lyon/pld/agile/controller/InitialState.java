@@ -10,6 +10,12 @@ import java.io.File;
  * @author scheah
  */
 public class InitialState extends DefaultState {
+    
+    @Override
+    public void enterState(Window window) {
+        window.setStatusMessage("Prêt");
+    }
+    
     @Override
     public void loadMap(MainController controller, Map map, CommandList cmdList, Window view) throws Exception {
         File selectedFile = view.askFile("Chargement d'un plan");
@@ -20,4 +26,5 @@ public class InitialState extends DefaultState {
         controller.setCurrentState(controller.MAP_LOADED_STATE);
         cmdList.reset();
     }
+
 }

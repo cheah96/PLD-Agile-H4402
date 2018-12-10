@@ -14,6 +14,12 @@ import java.io.File;
  * @author scheah
  */
 public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
+    
+    @Override
+    public void enterState(Window window) {
+        window.setStatusMessage("Prêt");
+    }
+    
     @Override
     public void addDelivery(MainController controller, Map map, Node node) {
         controller.ADD_DELIVERY_STATE.enterAction(map, node);

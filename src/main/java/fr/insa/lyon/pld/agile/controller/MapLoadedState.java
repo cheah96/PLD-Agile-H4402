@@ -11,7 +11,13 @@ import java.io.File;
  *
  * @author scheah
  */
-public class MapLoadedState extends InitialState {
+public class MapLoadedState extends DefaultState {
+    
+    @Override
+    public void enterState(Window window) {
+        window.setStatusMessage("Prêt");
+    }
+    
     @Override
     public void leftClick(MainController controller, Map map, CommandList cmdList, Window view, Point2D p) {
         selectNode(controller, map, cmdList, view, p);
