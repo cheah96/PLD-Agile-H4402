@@ -11,6 +11,7 @@ import java.util.List;
 public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {   
     private ArrayList<Integer> bestPath = null;
     private Integer bestPathCost = 0;
+    private Double progress = 0.0;
 
     public TSPSolverWorkerTemplate() {
         super();
@@ -35,6 +36,7 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
     
         bestPathCost = startBound(unexploredNodes, edgesCosts, nodesCosts);
         bestPath = null;
+        progress = 0.0;
 
         // Start exploring from node 0
         ArrayList<Integer> exploredNodes = new ArrayList<>(nodes);
@@ -96,6 +98,10 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
         
         // All nodes have been explored
         if (unexploredNodes.isEmpty()) {
+            if(exploredNodes.size() <= 3) {
+                updateProgress(exploredNodes.size() - 1, unexploredNodes.size());
+            }
+            
             // Complete the loop
             currentCost += edgesCosts[currentNode][0];
             // This is the best solution so far
@@ -105,6 +111,10 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
                 publish(bestPath);
             }
         } else if (currentCost + bound(currentNode, unexploredNodes, edgesCosts, nodesCosts) < bestPathCost) {
+            if(exploredNodes.size() == 3) {
+                updateProgress(exploredNodes.size() - 1, unexploredNodes.size());
+            }
+            
             // Choose an order to iterate over the unexplored nodes
             Iterator<Integer> it = iterator(currentNode, unexploredNodes, edgesCosts, nodesCosts);
             while (it.hasNext()) {
@@ -117,6 +127,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
                 exploredNodes.remove(nextNode);
                 unexploredNodes.add(nextNode);
             }
+        } else if(exploredNodes.size() <= 3) {
+            updateProgress(exploredNodes.size() - 1, unexploredNodes.size());
         }
     }
 
@@ -129,5 +141,17 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
     @Override
     protected void done() {
         firePropertyChange("finalBestPath", null, bestPath);
+    }
+    
+    protected void updateProgress(int exploredNodesCount, int unexploredNodesCount) {
+        if (exploredNodesCount <= 0) return;
+        
+        long statesCount = 1;
+        for(int k = 0; k < exploredNodesCount; k++) {
+            statesCount *= (exploredNodesCount + unexploredNodesCount - k);
+        }
+        
+        firePropertyChange("progressUpdate", progress, progress + 1.0 / statesCount);
+        progress += 1.0 / statesCount;
     }
 }

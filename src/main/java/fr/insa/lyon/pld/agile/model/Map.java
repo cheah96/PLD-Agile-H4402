@@ -2,7 +2,6 @@ package fr.insa.lyon.pld.agile.model;
 
 import fr.insa.lyon.pld.agile.tsp.Dijkstra;
 import fr.insa.lyon.pld.agile.tsp.KMeans;
-import fr.insa.lyon.pld.agile.tsp.TSPSolver;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverFactory;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverWorker;
 import java.beans.PropertyChangeEvent;
@@ -177,6 +176,11 @@ public class Map {
 
             TSPSolverWorker tspSolver = TSPSolverFactory.getSolver(nodeCount, edgesCosts, nodesCost);
             tspSolver.addPropertyChangeListener((PropertyChangeEvent pce) -> {
+                //  debug
+                if (pce.getPropertyName().equals("progressUpdate")) {
+                    System.out.println("Progress : " + ((Double)pce.getNewValue()) * 100);
+                }
+                
                 if (!pce.getPropertyName().equals("intermediateBestPath") && !pce.getPropertyName().equals("finalBestPath"))
                     return;
                 
