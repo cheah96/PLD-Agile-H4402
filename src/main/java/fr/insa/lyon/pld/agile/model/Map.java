@@ -1,7 +1,7 @@
 package fr.insa.lyon.pld.agile.model;
 
 import fr.insa.lyon.pld.agile.tsp.Dijkstra;
-import fr.insa.lyon.pld.agile.tsp.KMeansV1;
+import fr.insa.lyon.pld.agile.tsp.KMeans;
 import fr.insa.lyon.pld.agile.tsp.TSPSolver;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverFactory;
 import fr.insa.lyon.pld.agile.tsp.TSPSolverWorker;
@@ -128,7 +128,7 @@ public class Map {
     
     public void distributeDeliveries() {
         List<Node> deliveryNodes = deliveries.values().stream().map(Delivery::getNode).collect(Collectors.toList());
-        int[] clusters = KMeansV1.kMeans(deliveryNodes, deliveryMen.size());
+        int[] clusters = KMeans.kMeans(deliveryNodes, deliveryMen.size(), this.warehouse);
         
         ListIterator<Node> nodeIterator = deliveryNodes.listIterator();
         for (int i = 0; i < clusters.length; i++) {
