@@ -196,7 +196,6 @@ public class Map {
                 Map.this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
                 
                 if (pce.getPropertyName().equals("finalBestPath")) {
-                    System.err.println("Remove");
                     pendingSolvers.remove(tspSolver);
                     
                     if (pendingSolvers.isEmpty()) {
@@ -318,5 +317,4 @@ public class Map {
         
         return -1;
     }
-    
 }

@@ -14,16 +14,18 @@ public class CmdRemoveDelivery implements Command {
     private int ind;
     private Delivery delivery;
     
-    public CmdRemoveDelivery(Map map, DeliveryMan deliveryMan, int ind){
+    public CmdRemoveDelivery(Map map, Delivery delivery){
         this.map = map;
-        this.deliveryMan = deliveryMan;
-        this.ind = ind;
-        this.delivery = this.deliveryMan.getDeliveries().get(ind);
+        this.delivery = delivery;
+        this.deliveryMan = delivery.getDeliveryMan();
+        this.ind = this.deliveryMan.getDeliveries().indexOf(delivery);
+        System.err.println(this.deliveryMan.getDeliveries());
+        System.err.println(this.deliveryMan.getDeliveries().size());
+        System.err.println(ind);
     }
     
     @Override
     public void doCmd(){
-        map.unassignDelivery(ind, deliveryMan);
         map.removeDelivery(delivery);
     }
 

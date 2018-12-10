@@ -27,8 +27,8 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     }
     
     @Override
-    public void deleteDelivery(MainController controller, Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList) {
-        cmdList.addCommand(new CmdRemoveDelivery(map, deliveryMan, ind));
+    public void deleteDelivery(MainController controller, Map map, Delivery delivery, CommandList cmdList) {
+        cmdList.addCommand(new CmdRemoveDelivery(map, delivery));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     
@@ -42,6 +42,11 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     public void rightClick(MainController controller, Map map, CommandList cmdList, Window view, Point2D p) {
         Node closest = selectNode(controller, map, cmdList, view, p);
         if(closest != null) {
+            int deliveryManIndex = map.getNodeDeliveryManIndex(closest);
+            if( deliveryManIndex != -1) {
+                Delivery delivery = map.getDeliveries().get(closest.getId());
+                deleteDelivery(controller, map, delivery , cmdList);
+            }
             //view.showOptionsNode(closest);
         }
     }

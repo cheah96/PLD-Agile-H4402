@@ -97,6 +97,11 @@ public class Round {
             startingNode = map.getWarehouse();
         }
         
+        if (startingNode == map.getWarehouse() && after.getDestination() == map.getWarehouse()) {
+            itinerary.clear();
+            return;
+        }
+        
         route = new Route(departureTime, after.isDelivering());
         route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, after.getDestination()));
         itinerary.set(index, route);

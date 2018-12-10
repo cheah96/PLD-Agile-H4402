@@ -285,7 +285,8 @@ public class MapViewTextual extends MapView
     }
     
     private Color getNodeColor(Node n, Color normal) {
-        int deliveryManIndex = map.getNodeDeliveryManIndex(n);
+        int deliveryManIndex = -1;
+        if (n != null) deliveryManIndex = map.getNodeDeliveryManIndex(n);
         if (deliveryManIndex < 0) return normal;
         return Drawing.getColor(deliveryManIndex, map.getDeliveryMen().size());
     }

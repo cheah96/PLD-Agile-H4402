@@ -21,7 +21,7 @@ public interface State {
     
     public void cancelAddDelivery(MainController controller);
     
-    public void deleteDelivery(MainController controller, Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList);
+    public void deleteDelivery(MainController controller, Map map,Delivery delivery, CommandList cmdList);
     
     public void moveDelivery(MainController controller, Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndice, int newIndice, CommandList cmdList);
     

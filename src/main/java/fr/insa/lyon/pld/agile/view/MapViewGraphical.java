@@ -203,7 +203,11 @@ public class MapViewGraphical extends MapView
         
         Point2D coord = getPixelToPoint(e.getX() - deltaX, this.getHeight() - deltaY - e.getY());
         
-        controller.leftClick(coord);
+        if(e.getButton()== MouseEvent.BUTTON1) {
+            controller.leftClick(coord);
+        }else {
+            controller.rightClick(coord);
+        }
     }
     
     @Override

@@ -24,5 +24,6 @@ public class DeliveriesLoadedState extends MapLoadedState { // extends DefaultSt
         System.err.println("Raccourcissement des livraisons...");
         map.shortenDeliveriesInBackground();
         controller.setCurrentState(controller.DELIVERY_MEN_COMPUTING_STATE);
+        cmdList.reset();
     }
 }

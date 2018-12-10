@@ -41,8 +41,8 @@ public class MainController implements PropertyChangeListener{
         currentState.addDelivery(this, map, node);
     }
     
-    public void deleteDelivery(DeliveryMan deliveryMan, int ind) {
-        currentState.deleteDelivery(this, map, deliveryMan, ind, cmdList);
+    public void deleteDelivery(Delivery delivery) {
+        currentState.deleteDelivery(this, map, delivery, cmdList);
     }
     
     public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndice, int newIndice) {
@@ -71,6 +71,10 @@ public class MainController implements PropertyChangeListener{
     
     public void leftClick(Point2D p) {
         currentState.leftClick(this, map, cmdList, view, p);
+    }
+    
+    public void rightClick(Point2D p) {
+        currentState.rightClick(this, map, cmdList, view, p);
     }
     
     public void loadMap() throws Exception {

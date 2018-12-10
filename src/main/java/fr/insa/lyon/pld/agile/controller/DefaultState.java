@@ -19,7 +19,7 @@ public abstract class DefaultState implements State {
     @Override
     public void cancelAddDelivery(MainController controller) {}
     @Override
-    public void deleteDelivery(MainController controller, Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList) {}
+    public void deleteDelivery(MainController controller, Map map, Delivery delivery, CommandList cmdList) {}
     @Override
     public void moveDelivery(MainController controller, Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndice, int newIndice, CommandList cmdList) {}
     @Override
