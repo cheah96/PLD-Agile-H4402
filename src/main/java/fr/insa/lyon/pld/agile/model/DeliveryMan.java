@@ -31,21 +31,17 @@ public class DeliveryMan {
         return Collections.unmodifiableList(deliveries);
     }
     
-    boolean addDelivery(int index, Delivery delivery, Map map) {
+    void addDelivery(int index, Delivery delivery, Map map) {
         if (deliveries.contains(delivery))
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
         
-        if (round.addNode(index, delivery.getNode(), true, map)) {
-            deliveries.add(delivery);
-            return true;
-        } else {
-            return false;
-        }
+        round.addNode(index, delivery.getNode(), true, map);
+        deliveries.add(delivery);
     }
     
-    boolean addDelivery(Delivery delivery, Map map) {
+    void addDelivery(Delivery delivery, Map map) {
         int index = !round.getItinerary().isEmpty() ? round.getItinerary().size()-1 : 0;
-        return addDelivery(index, delivery, map);
+        addDelivery(index, delivery, map);
     }
     
     void removeDelivery(int index, Map map) {

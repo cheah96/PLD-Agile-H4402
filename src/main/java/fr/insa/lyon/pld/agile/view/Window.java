@@ -292,7 +292,9 @@ public class Window
             } catch (XMLUndefinedNodeReferenceException ex) {
                 popupError("Référence à un élément non défini : " + ex.getNodeId());
             } catch (XMLUnexpectedElementException ex) {
-                popupError("Elément inattendu trouvé : " + ex.getElementName());
+                popupError("Élément inattendu trouvé : " + ex.getElementName());
+            } catch (UnreachableDeliveryException ex) {
+                popupError("Point de livraison " + ex.getDelivery().getNode().getId() + " inaccessible en aller-retour depuis l'entrepôt");
             } catch (Exception ex) {
                 popupError("Fichier non conforme.");
             }

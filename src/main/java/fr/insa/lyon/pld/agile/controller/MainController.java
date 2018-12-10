@@ -94,7 +94,13 @@ public class MainController implements PropertyChangeListener{
         cmdList.reset();
         map.clearDeliveries();
         map.clearWarehouse();
-        XMLParser.loadDeliveries(map, selectedFile.toPath());
+        try {
+            XMLParser.loadDeliveries(map, selectedFile.toPath());
+        } catch (Exception e) {
+            map.clearDeliveries();
+            map.clearWarehouse();
+            throw e;
+        }
         setCurrentState(DELIVERIES_LOADED_STATE);
     }
     

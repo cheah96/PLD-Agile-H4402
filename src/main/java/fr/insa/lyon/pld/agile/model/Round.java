@@ -22,7 +22,7 @@ public class Round {
         return Collections.unmodifiableList(itinerary);
     }
     
-    boolean addNode(int index, Node node, boolean delivering, Map map) {
+    void addNode(int index, Node node, boolean delivering, Map map) {
         Route before = null;
         Route after = null;
         if (!itinerary.isEmpty()) {
@@ -50,31 +50,21 @@ public class Round {
         if (after != null) {
             destinationNode = after.getDestination();
             afterDelivering = after.isDelivering();
-        } else {
+        } else { //itinerary is empty
             destinationNode = map.getWarehouse();
             afterDelivering = false;
-        }
-        
-        List<Section> firstSections = Dijkstra.getPath(map.getNodes(), startingNode, node);
-        List<Section> secondSections = Dijkstra.getPath(map.getNodes(), node, destinationNode);
-        
-        if (firstSections == null || secondSections == null) // TODO : remove this by preventing inaccesssible nodes before here
-            return false;
-
-        if (itinerary.isEmpty())
             itinerary.add(null); //For itinary.set(index+1, route) to work
-        
+        }
+
         Route route = new Route(departureTime, delivering);
-        route.addPassages(firstSections);
+        route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, node));
         itinerary.add(index, route);
         
         route = new Route(route.getArrivalTime(), afterDelivering);
-        route.addPassages(secondSections);
+        route.addPassages(Dijkstra.getPath(map.getNodes(), node, destinationNode));
         itinerary.set(index+1, route); //The old route index became index+1 due to the add
         
         updateDepartureTimes(index+1, map);
-        
-        return true;
     }
     
     void removeNode(int index, Map map) {

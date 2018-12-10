@@ -77,14 +77,22 @@ public class Map {
     
     public boolean addNode(Node node) {
         // putIfAbsent returns null if the key was absent
-        boolean added = (nodes.putIfAbsent(node.getId(), node) == null);
+        boolean added = nodes.putIfAbsent(node.getId(), node) == null;
         if (added) this.pcs.firePropertyChange("nodes", null, nodes);
         return added;
     }
     
-    public void addDelivery(Delivery delivery) {
-	if (deliveries.putIfAbsent(delivery.getNode().getId(), delivery) == null)
-            this.pcs.firePropertyChange("deliveries", null, deliveries);
+    public boolean addDelivery(Delivery delivery) {
+        if (deliveries.containsKey(delivery.getNode().getId()))
+            return false;
+        
+        if (Dijkstra.getPath(nodes, warehouse, delivery.getNode()) == null || Dijkstra.getPath(nodes, delivery.getNode(), warehouse) == null) {
+            throw new UnreachableDeliveryException(delivery);
+        }
+        
+	deliveries.put(delivery.getNode().getId(), delivery);
+        this.pcs.firePropertyChange("deliveries", null, deliveries);
+        return true;
     }
     
     public void removeDelivery(Delivery delivery) {
@@ -223,19 +231,17 @@ public class Map {
     }
     
     public void assignDelivery(int index, Delivery delivery, DeliveryMan deliveryMan) {
-        if (deliveryMan.addDelivery(index, delivery, this)) { //TODO : handle unreachable deliveries
-            delivery.setDeliveryMan(deliveryMan);
+        deliveryMan.addDelivery(index, delivery, this);
+        delivery.setDeliveryMan(deliveryMan);
             
-            this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
-        }
+        this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
     public void assignDelivery(Delivery delivery, DeliveryMan deliveryMan) {
-        if (deliveryMan.addDelivery(delivery, this)) {
-            delivery.setDeliveryMan(deliveryMan);
+        deliveryMan.addDelivery(delivery, this);
+        delivery.setDeliveryMan(deliveryMan);
             
-            this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
-        }
+        this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
     public void unassignDelivery(int index, DeliveryMan deliveryMan) {
