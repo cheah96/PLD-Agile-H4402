@@ -67,15 +67,15 @@ public class Window
         JToolBar tlbTop = new JToolBar();
         tlbTop.setFloatable(false);
         // and its buttons
-        btnOpenMap = new JButton(new ImageIcon("res/icons/map.png"));
+        btnOpenMap = new JButton(new ImageIcon(getClass().getResource("/icons/map.png")));
         btnOpenMap.setToolTipText("Ouvrir une carte");
-        btnOpenLoc = new JButton(new ImageIcon("res/icons/pin.png"));
+        btnOpenLoc = new JButton(new ImageIcon(getClass().getResource("/icons/pin.png")));
         btnOpenLoc.setToolTipText("Ouvrir des points de livraison");
-        btnDeliveryRecords = new JButton(new ImageIcon("res/icons/list.png"));
+        btnDeliveryRecords = new JButton(new ImageIcon(getClass().getResource("/icons/list.png")));
         btnDeliveryRecords.setToolTipText("Générer la liste de livraisons");
-        btnUndo = new JButton(new ImageIcon("res/icons/undo.png"));
+        btnUndo = new JButton(new ImageIcon(getClass().getResource("/icons/undo.png")));
         btnUndo.setToolTipText("Annuler");
-        btnRedo = new JButton(new ImageIcon("res/icons/redo.png"));
+        btnRedo = new JButton(new ImageIcon(getClass().getResource("/icons/redo.png")));
         btnRedo.setToolTipText("Refaire");
         cckLegend = new JCheckBox("Légende");
         cckDirection = new JCheckBox("Sens de parcours");
@@ -103,9 +103,9 @@ public class Window
         mapViews.add(mapViewTextual);
         map.addPropertyChangeListener(mapViewTextual);
         // > and their buttons
-        btnListAdd = new JButton(new ImageIcon("res/icons/add.png"));
-        btnListMove = new JButton(new ImageIcon("res/icons/move.png"));
-        btnListRemove = new JButton(new ImageIcon("res/icons/delete.png"));
+        btnListAdd = new JButton(new ImageIcon(getClass().getResource("/icons/add.png")));
+        btnListMove = new JButton(new ImageIcon(getClass().getResource("/icons/move.png")));
+        btnListRemove = new JButton(new ImageIcon(getClass().getResource("/icons/delete.png")));
         
         
         // CREATING DISPLAY
