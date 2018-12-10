@@ -1,5 +1,6 @@
 package fr.insa.lyon.pld.agile;
 
+import fr.insa.lyon.pld.agile.xml.XMLParser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

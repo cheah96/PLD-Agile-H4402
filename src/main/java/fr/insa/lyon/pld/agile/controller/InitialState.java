@@ -1,6 +1,6 @@
 package fr.insa.lyon.pld.agile.controller;
 
-import fr.insa.lyon.pld.agile.XMLParser;
+import fr.insa.lyon.pld.agile.xml.XMLParser;
 import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.view.Window;
 import java.io.File;
