@@ -2,6 +2,11 @@ package fr.insa.lyon.pld.agile.view;
 
 import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
+import fr.insa.lyon.pld.agile.xml.XMLAttributeFormatException;
+import fr.insa.lyon.pld.agile.xml.XMLDuplicateNodeException;
+import fr.insa.lyon.pld.agile.xml.XMLMissingAttributeException;
+import fr.insa.lyon.pld.agile.xml.XMLMultipleDefinitionOfWarehouseException;
+import fr.insa.lyon.pld.agile.xml.XMLUndefinedNodeReferenceException;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -191,8 +196,21 @@ public class Window
             try {
                 controller.loadMap();
                 stateRefresh();
+            } catch (XMLAttributeFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Attribut " + ex.getAttributeName()
+                    + " de valeur non conforme (" + ex.getAttributeValue() + ")",
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLMissingAttributeException ex) {
+                JOptionPane.showMessageDialog(frame, "Attribut manquant : " + ex.getMissingAttributeName(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLDuplicateNodeException ex) {
+                JOptionPane.showMessageDialog(frame, "Définitions multiples d'un même élément : " + ex.getNodeId(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLUndefinedNodeReferenceException ex) {
+                JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
         
@@ -200,8 +218,21 @@ public class Window
             try {
                 controller.loadDeliveriesFile();
                 stateRefresh();
+            } catch (XMLAttributeFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Attribut " + ex.getAttributeName()
+                    + " de valeur non conforme (" + ex.getAttributeValue() + ")",
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLMissingAttributeException ex) {
+                JOptionPane.showMessageDialog(frame, "Attribut manquant : " + ex.getMissingAttributeName(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLMultipleDefinitionOfWarehouseException ex) {
+                JOptionPane.showMessageDialog(frame, "Définitions multiples de l'entrepôt",
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLUndefinedNodeReferenceException ex) {
+                JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
         
