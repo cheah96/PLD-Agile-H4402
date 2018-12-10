@@ -18,19 +18,31 @@ public class AddDeliveryState extends DefaultState {
         super(controller);
     }
     
-    protected void prepareState(Map map, Node node) {
+    protected void prepareState(Node node) {
         this.node = node;
     }
     @Override
     public void enterState(Window window) {
         window.setStatusMessage("Ajout d'un point de livraison");
+        window.setStatusButton("Annuler");
         window.setButtonsState(false, false, false, false, false, false);
+    }
+    @Override
+    public void btnStatusClick() {
+        cancelAddDelivery();
+    }
+    @Override
+    public void keyEscape() {
+        cancelAddDelivery();
     }
     
     @Override
-    public void validateAddDelivery(Map map, DeliveryMan deliveryMan, int ind, CommandList cmdList) {
+    public void validateAddDelivery(DeliveryMan deliveryMan, int index) {
+        Map map = controller.getMap();
+        CommandList cmdList = controller.getCmdList();
+        
         Delivery toBeAdded = new Delivery(node, duration, deliveryMan);
-        cmdList.addCommand(new CmdAddDelivery(map, toBeAdded, deliveryMan, ind));
+        cmdList.addCommand(new CmdAddDelivery(map, toBeAdded, deliveryMan, index));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     

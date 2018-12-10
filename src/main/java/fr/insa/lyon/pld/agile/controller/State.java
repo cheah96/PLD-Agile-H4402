@@ -1,9 +1,7 @@
 package fr.insa.lyon.pld.agile.controller;
 
-import fr.insa.lyon.pld.agile.model.Delivery;
-import fr.insa.lyon.pld.agile.model.DeliveryMan;
-import fr.insa.lyon.pld.agile.model.Map;
-import fr.insa.lyon.pld.agile.model.Node;
+import fr.insa.lyon.pld.agile.model.*;
+
 import fr.insa.lyon.pld.agile.view.Window;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import java.awt.geom.Point2D;
@@ -17,25 +15,32 @@ public interface State {
     public void enterState(Window window);
     
     
-    public void addDelivery(Map map, Node node);
+    public void addDelivery(Node node);
     
-    public void validateAddDelivery(Map map, DeliveryMan deliveryMan, int index, CommandList cmdList);
+    public void validateAddDelivery(DeliveryMan deliveryMan, int index);
     
     public void cancelAddDelivery();
     
-    public void deleteDelivery(Map map, Delivery delivery, CommandList cmdList);
+    public void deleteDelivery(Delivery delivery);
     
-    public void moveDelivery(Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex, CommandList cmdList);
+    public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex);
     
-    public void generateDeliveryMen(Map map, int deliveryMenCount, CommandList cmdList);
-    
-    public void stopGeneration(Map map);
-    
-    public void generationFinished(Map map);
+    public void generateDeliveryMen(int deliveryMenCount);
     
     
-    public void mapClickLeft(Map map, CommandList cmdList, MapViewGraphical mapView, Point2D p);
+    // public void stopGeneration();
     
-    public void mapClickRight(Map map, CommandList cmdList, MapViewGraphical mapView, Point2D p);
+    // public void generationFinished();
+    
+    
+    public void mapClickLeft(MapViewGraphical mapView, Point2D coords);
+    
+    public void mapClickRight(MapViewGraphical mapView, Point2D coords);
+    
+    public void btnStatusClick();
+    
+    public void keyEscape();
+    
+    public void handleExternalEvent(String eventName);
     
 }

@@ -9,6 +9,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 import java.io.File;
 import java.util.List;
@@ -39,7 +40,9 @@ public class Window
     private final JButton btnListMove;
     private final JButton btnListRemove;
     private final JButton btnDeliveryRecords;
+    
     private final JLabel lblStatus;
+    private final JButton btnStatus;
     
     List<MapView> mapViews = new ArrayList<>();
     
@@ -126,6 +129,7 @@ public class Window
         panStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
         panStatus.setLayout(new BoxLayout(panStatus, BoxLayout.X_AXIS));
         lblStatus = new JLabel("Barre d'état");
+        btnStatus = new JButton("");
         
         // Top tool-bar
         JToolBar tlbTop = new JToolBar();
@@ -183,6 +187,8 @@ public class Window
         // Bottom status bar
         lblStatus.setBorder(semispacer);
         panStatus.add(lblStatus);
+        panStatus.add(Box.createHorizontalGlue());
+        panStatus.add(btnStatus);
         
         // Top tool-bar
         tlbTop.add(btnOpenMap);
@@ -316,11 +322,12 @@ public class Window
         
         btnGenerate.addActionListener(e -> {
             int nbDeliveryMen = (int) numDeliveries.getValue();
-            if (!map.isShorteningDeliveries()) {
+            if (!map.isShorteningDeliveries())
                 controller.generateDeliveryMen(nbDeliveryMen);
-            } else {
-                controller.stopGeneration();
-            }
+        });
+        
+        btnStatus.addActionListener(e -> {
+            controller.btnStatusClick();
         });
         
         cckDirection.addItemListener(e -> {
@@ -333,6 +340,19 @@ public class Window
             mapViewGraphical.showLegend(checked);
         });
         
+        // TODO : replace ugly loop
+        for (Component component : frame.getComponents()) {
+            if (component instanceof JComponent) {
+                JComponent cmpn = (JComponent) component;
+                cmpn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "strokeESCAPE");
+                cmpn.getActionMap().put("strokeESCAPE", new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        controller.keyEscape();
+                    }
+                });
+            }
+        }
         
         // READY
         
@@ -392,6 +412,11 @@ public class Window
     
     public void setStatusMessage(String message) {
         lblStatus.setText(message);
+        btnStatus.setVisible(false);
+    }
+    public void setStatusButton(String caption) {
+        btnStatus.setText(caption);
+        btnStatus.setVisible(true);
     }
     
 }

@@ -2,7 +2,6 @@ package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.model.DeliveryMan;
-import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import fr.insa.lyon.pld.agile.view.Window;
@@ -27,30 +26,33 @@ public abstract class DefaultState implements State {
     
     
     @Override
-    public void addDelivery(Map map, Node node) {}
+    public void addDelivery(Node node) {}
     @Override
-    public void validateAddDelivery(Map map, DeliveryMan deliveryMan, int index, CommandList cmdList) {}
+    public void validateAddDelivery(DeliveryMan deliveryMan, int index) {}
     @Override
     public void cancelAddDelivery() {}
     @Override
-    public void deleteDelivery(Map map, Delivery delivery, CommandList cmdList) {}
+    public void deleteDelivery(Delivery delivery) {}
     @Override
-    public void moveDelivery(Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex, CommandList cmdList) {}
+    public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex) {}
     @Override
-    public void generateDeliveryMen(Map map, int deliveryMenCount, CommandList cmdList) {}
-    @Override
-    public void stopGeneration(Map map) {}
-    @Override
-    public void generationFinished( Map map) {}
+    public void generateDeliveryMen(int deliveryMenCount) {}
     
     
     @Override
-    public void mapClickLeft(Map map, CommandList cmdList, MapViewGraphical mapView, Point2D p) {
-        mapView.selectNode(mapView.findClosestNode(p));
+    public void mapClickLeft(MapViewGraphical mapView, Point2D coords) {
+        mapView.selectNode(mapView.findClosestNode(coords));
     }
     
     @Override
-    public void mapClickRight(Map map, CommandList cmdList, MapViewGraphical mapView, Point2D p) {
+    public void mapClickRight(MapViewGraphical mapView, Point2D coords) {
     }
+    
+    @Override
+    public void btnStatusClick() { }
+    @Override
+    public void keyEscape() { }
+    @Override
+    public void handleExternalEvent(String eventName) { }
     
 }

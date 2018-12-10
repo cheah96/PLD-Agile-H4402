@@ -8,7 +8,7 @@ import fr.insa.lyon.pld.agile.view.Window;
  * @author scheah
  */
 public class DeliveriesLoadedState extends MapLoadedState { 
-
+    
     public DeliveriesLoadedState(MainController controller) {
         super(controller);
     }
@@ -20,16 +20,20 @@ public class DeliveriesLoadedState extends MapLoadedState {
     }
     
     @Override
-    public void generateDeliveryMen(Map map, int deliveryMenCount, CommandList cmdList)
+    public void generateDeliveryMen(int deliveryMenCount)
     {
-        System.err.println("Génération avec " + deliveryMenCount + " livreurs.");
+        Map map = controller.getMap();
+        CommandList cmdList = controller.getCmdList();
+        
+        System.out.println("Génération avec " + deliveryMenCount + " livreurs.");
         map.setDeliveryManCount(deliveryMenCount);
-        System.err.println("Distribution des livraisons...");
+        System.out.println("Distribution des livraisons...");
         map.distributeDeliveries();
-        System.err.println("Raccourcissement des livraisons...");
+        System.out.println("Raccourcissement des livraisons...");
         map.shortenDeliveriesInBackground();
-        controller.setCurrentState(controller.DELIVERY_MEN_COMPUTING_STATE);
         cmdList.reset();
+        
+        controller.setCurrentState(controller.DELIVERY_MEN_COMPUTING_STATE);
     }
     
 }
