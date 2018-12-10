@@ -183,7 +183,7 @@ public class Window
         
         btnOpenMap.addActionListener(e -> {
             try {
-                controller.loadMapFile();
+                controller.loadMap();
                 stateRefresh();
             } catch (Exception ex) {
                 ex.printStackTrace();
