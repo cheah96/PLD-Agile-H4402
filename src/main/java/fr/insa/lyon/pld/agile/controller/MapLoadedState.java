@@ -22,6 +22,7 @@ public class MapLoadedState extends InitialState {
         File selectedFile = view.askFile("Chargement de demandes de livraison");
         if (selectedFile != null) {
             map.clearDeliveries();
+            map.clearWarehouse();
             XMLParser.loadDeliveries(map, selectedFile.toPath());
         }
         controller.setCurrentState(controller.DELIVERIES_LOADED_STATE);

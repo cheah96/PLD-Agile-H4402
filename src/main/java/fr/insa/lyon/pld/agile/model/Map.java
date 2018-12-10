@@ -106,6 +106,10 @@ public class Map {
         }
     }
     
+    public void clearWarehouse() {
+        this.warehouse = null;
+    }
+    
     public void setStartingHour(LocalTime startingHour) {
         LocalTime oldStartingHour = startingHour;
         this.startingHour = startingHour;
