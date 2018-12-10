@@ -27,6 +27,8 @@ public abstract class DefaultState implements State{
     @Override
     public void stopGeneration(MainController controller, Map map) {}
     @Override
+    public void generationFinished(MainController controller, Map map) {}
+    @Override
     public void undo(CommandList cmdList) {}
     @Override
     public void redo(CommandList cmdList) {}

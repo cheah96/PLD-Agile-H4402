@@ -14,4 +14,10 @@ public class DeliveryMenComputingState extends DefaultState {
         map.stopShorteningDeliveries();
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
+    
+    @Override
+    public void generationFinished(MainController controller, Map map)
+    {
+        controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
+    }
 }

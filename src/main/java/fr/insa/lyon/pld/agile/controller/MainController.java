@@ -3,12 +3,14 @@ package fr.insa.lyon.pld.agile.controller;
 import fr.insa.lyon.pld.agile.model.*;
 import fr.insa.lyon.pld.agile.view.Window;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author Stanley
  */
-public class MainController {
+public class MainController implements PropertyChangeListener{
     private Map map;
     private Window view;
     private State currentState;
@@ -26,10 +28,12 @@ public class MainController {
         this.view = new Window(map, this);
         this.currentState = INITIAL_STATE;
         this.cmdList = new CommandList();
+        map.addPropertyChangeListener(this);
     }
 
     protected void setCurrentState(State state) {
         currentState = state;
+        System.out.println(currentState);
     }
     
      public void addDelivery(Node node) {
@@ -52,6 +56,10 @@ public class MainController {
         currentState.stopGeneration(this, map);
     }
     
+    public void generationFinished(){
+        currentState.generationFinished(this, map);
+    }
+            
     public void undo() {
         currentState.undo(cmdList);
     }
@@ -78,5 +86,14 @@ public class MainController {
     
     public void selectedDeliveryMan(int deliveryManIndex) {
         view.selectDeliveryMan(deliveryManIndex);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String propertyName = evt.getPropertyName();
+        switch (propertyName) {
+            case "shortenDeliveriesFinished":
+                currentState.generationFinished(this, map);
+        }
     }
 }

@@ -27,6 +27,8 @@ public interface State {
     
     public void stopGeneration(MainController controller, Map map);
     
+    public void generationFinished(MainController controller, Map map);
+    
     public void undo(CommandList cmdList);
     
     public void redo(CommandList cmdList);

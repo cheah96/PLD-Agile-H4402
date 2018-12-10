@@ -223,7 +223,12 @@ public class Window
         
         btnGenerate.addActionListener(e -> {
             int nbDeliveryMen = (int) numDeliveries.getValue();
-            controller.generateDeliveryMen(nbDeliveryMen);
+            if (!map.isShorteningDeliveries()) {
+                controller.generateDeliveryMen(nbDeliveryMen);
+            } else
+            {
+                controller.stopGeneration();
+            }
             stateRefresh();
         });
         
