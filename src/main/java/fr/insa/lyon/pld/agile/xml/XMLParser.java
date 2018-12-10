@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -28,14 +30,22 @@ public class XMLParser {
 
     private static class MapNodesHandler extends DefaultHandler {
         private final Map map;
+        private final HashSet<String> expectedElements;
         
         public MapNodesHandler(Map map) {
             this.map = map;
+            expectedElements = new HashSet<String>();
+            expectedElements.add("noeud");
+            expectedElements.add("troncon");
+            expectedElements.add("reseau");
         }
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException, XMLMissingAttributeException, XMLDuplicateNodeException {
+            if(!expectedElements.contains(qName))
+                throw new XMLUnexpectedElementException(qName);
+            
             if(!"noeud".equals(qName)) return;
             
             if(attributes.getValue("id") == null)
@@ -73,13 +83,21 @@ public class XMLParser {
     
     private static class MapSectionsHandler extends DefaultHandler {
         private final Map map;
+        private final HashSet<String> expectedElements;
         
         public MapSectionsHandler(Map map) {
             this.map = map;
+            expectedElements = new HashSet<String>();
+            expectedElements.add("noeud");
+            expectedElements.add("troncon");
+            expectedElements.add("reseau");
         }
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if(!expectedElements.contains(qName))
+                throw new XMLUnexpectedElementException(qName);
+            
             if(!"troncon".equals(qName)) return;
             
             if(attributes.getValue("origine") == null)
@@ -135,13 +153,21 @@ public class XMLParser {
 
     private static class DeliveriesHandler extends DefaultHandler {
         private final Map map;
+        private final HashSet<String> expectedElements;
         
         public DeliveriesHandler(Map map) {
             this.map = map;
+            expectedElements = new HashSet<String>();
+            expectedElements.add("entrepot");
+            expectedElements.add("livraison");
+            expectedElements.add("demandeDeLivraisons");
         }
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if(!expectedElements.contains(qName))
+                throw new XMLUnexpectedElementException(qName);
+            
             switch (qName) {
                 case "entrepot":
                     if (map.getWarehouse() != null)

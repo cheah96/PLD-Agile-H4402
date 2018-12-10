@@ -7,6 +7,7 @@ import fr.insa.lyon.pld.agile.xml.XMLDuplicateNodeException;
 import fr.insa.lyon.pld.agile.xml.XMLMissingAttributeException;
 import fr.insa.lyon.pld.agile.xml.XMLMultipleDefinitionOfWarehouseException;
 import fr.insa.lyon.pld.agile.xml.XMLUndefinedNodeReferenceException;
+import fr.insa.lyon.pld.agile.xml.XMLUnexpectedElementException;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -212,6 +213,9 @@ public class Window
             } catch (XMLUndefinedNodeReferenceException ex) {
                 JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
                     "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLUnexpectedElementException ex) {
+                JOptionPane.showMessageDialog(frame, "Elément inattendu trouvé : " + ex.getElementName(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
@@ -233,6 +237,9 @@ public class Window
                     "Erreur", JOptionPane.ERROR_MESSAGE);
             } catch (XMLUndefinedNodeReferenceException ex) {
                 JOptionPane.showMessageDialog(frame, "Référence à un élément non défini : " + ex.getNodeId(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (XMLUnexpectedElementException ex) {
+                JOptionPane.showMessageDialog(frame, "Elément inattendu trouvé : " + ex.getElementName(),
                     "Erreur", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Fichier non conforme.", "Erreur", JOptionPane.ERROR_MESSAGE);
