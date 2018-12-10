@@ -141,25 +141,35 @@ public class Map {
     
     public void shortenDeliveriesInBackground() {
         for (DeliveryMan deliveryMan : deliveryMen) {
-            List<Delivery> deliveries = new ArrayList<>(deliveryMan.getDeliveries());
-            int[][] edgesCosts = new int[deliveries.size()][deliveries.size()];
-            int[] nodesCost = new int[deliveries.size()];
+            int nodeCount = deliveryMan.getDeliveries().size()+1;
+            List<Node> deliveryNodes = new ArrayList<>(nodeCount);
+            deliveryNodes.add(warehouse);
             
-            ListIterator<Delivery> fromIterator = deliveries.listIterator();
-            for (int i = 0; i < deliveries.size(); i++) {
-                Delivery from = fromIterator.next();
-                java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, from.getNode());
-                
-                ListIterator<Delivery> toIterator = deliveries.listIterator();
-                for (int j = 0; j < deliveries.size(); j++) {
-                    Delivery to = toIterator.next();
-                    edgesCosts[i][j] = (int) Section.computeDuration(distances.get(to.getNode().getId()));
+            int[][] edgesCosts = new int[nodeCount][nodeCount];
+            int[] nodesCost = new int[nodeCount];
+            
+            {
+                int i = 1;
+                for (Delivery delivery : deliveryMan.getDeliveries()) {
+                    deliveryNodes.add(delivery.getNode());
+                    nodesCost[i] = delivery.getDuration();
+                    i++;
                 }
+            }
+            
+            ListIterator<Node> fromIterator = deliveryNodes.listIterator();
+            for (int i = 0; i < nodeCount; i++) {
+                Node from = fromIterator.next();
+                java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, from);
                 
-                nodesCost[i] = from.getDuration();
+                ListIterator<Node> toIterator = deliveryNodes.listIterator();
+                for (int j = 0; j < nodeCount; j++) {
+                    Node to = toIterator.next();
+                    edgesCosts[i][j] = (int) Section.computeDuration(distances.get(to.getId()));
+                }
             }
 
-            TSPSolverWorker tspSolver = TSPSolverFactory.getSolver(deliveries.size(), edgesCosts, nodesCost);
+            TSPSolverWorker tspSolver = TSPSolverFactory.getSolver(nodeCount, edgesCosts, nodesCost);
             tspSolver.addPropertyChangeListener((PropertyChangeEvent pce) -> {
                 if (!pce.getPropertyName().equals("intermediateBestPath") && !pce.getPropertyName().equals("finalBestPath"))
                     return;
@@ -168,7 +178,13 @@ public class Map {
                 deliveryMan.clear();
                 
                 for (Integer index : bestIds) {
-                    deliveryMan.addDelivery(deliveries.get(index), Map.this);
+                    if (index != 0) {
+                        Delivery delivery = deliveries.get(deliveryNodes.get(index).getId());
+                        if (delivery != null)
+                            deliveryMan.addDelivery(delivery, Map.this);
+                        else
+                            throw new RuntimeException("Delivery not found");
+                    }
                 }
                 
                 Map.this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
