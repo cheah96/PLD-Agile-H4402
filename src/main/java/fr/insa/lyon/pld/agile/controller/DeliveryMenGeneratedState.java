@@ -34,24 +34,10 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     
     @Override
     public void rightClick(MainController controller, Map map, CommandList cmdList, Window view, Point2D p) {
-        double closestdistance = -1;
-        Node closest = null;
-        for (Node n : map.getNodes().values()) {
-            double distance = Math.pow((p.getX() - n.getLongitude()), 2)
-                            + Math.pow((p.getY() - n.getLatitude()), 2);
-            if (closestdistance < 0 || distance < closestdistance) {
-                closestdistance = distance;
-                closest = n;
-            }
-        }
-
-        if (closestdistance > 15.0) {
-            closest = null;
-        }
-        if (closest != null) {
-            view.selectNode(closest);
+        Node closest = selectNode(controller, map, cmdList, view, p);
+        if(closest != null) {
             //view.showOptionsNode(closest);
-        }   
+        }
     }
     
     @Override

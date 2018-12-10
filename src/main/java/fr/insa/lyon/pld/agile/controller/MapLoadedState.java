@@ -13,7 +13,22 @@ import java.io.File;
  */
 public class MapLoadedState extends InitialState {
     @Override
-    public void leftClick(MainController controller, Map map, CommandList listeDeCdes, Window view, Point2D p) {
+    public void leftClick(MainController controller, Map map, CommandList cmdList, Window view, Point2D p) {
+        selectNode(controller, map, cmdList, view, p);
+    }
+    
+    @Override
+    public void loadDeliveriesFile(MainController controller, Map map, CommandList cmdList, Window view) throws Exception {
+        File selectedFile = view.askFile("Chargement de demandes de livraison");
+        if (selectedFile != null) {
+            map.clearDeliveries();
+            XMLParser.loadDeliveries(map, selectedFile.toPath());
+        }
+        controller.setCurrentState(controller.DELIVERIES_LOADED_STATE);
+        cmdList.reset();
+    }
+    
+    protected Node selectNode(MainController controller, Map map, CommandList cmdList, Window view, Point2D p) {
         double closestdistance = -1;
         Node closest = null;
         for (Node n : map.getNodes().values()) {
@@ -29,16 +44,6 @@ public class MapLoadedState extends InitialState {
             closest = null;
         }
         view.selectNode(closest);
-    }
-    
-    @Override
-    public void loadDeliveriesFile(MainController controller, Map map, CommandList cmdList, Window view) throws Exception {
-        File selectedFile = view.askFile("Chargement de demandes de livraison");
-        if (selectedFile != null) {
-            map.clearDeliveries();
-            XMLParser.loadDeliveries(map, selectedFile.toPath());
-        }
-        controller.setCurrentState(controller.DELIVERIES_LOADED_STATE);
-        cmdList.reset();
+        return closest;
     }
 }

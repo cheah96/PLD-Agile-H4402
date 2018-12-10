@@ -12,7 +12,7 @@ public class CommandList {
     private int currentIndex;
     
     public CommandList() {
-        commandList = new LinkedList();
+        commandList = new LinkedList<>();
         currentIndex = -1;
     }
     
