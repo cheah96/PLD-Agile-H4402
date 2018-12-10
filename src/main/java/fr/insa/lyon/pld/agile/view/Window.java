@@ -107,8 +107,11 @@ public class Window
         map.addPropertyChangeListener(mapViewTextual);
         // > and their buttons
         btnListAdd = new JButton(new ImageIcon(getClass().getResource("/icons/add.png")));
+        btnListAdd.setToolTipText("Ajouter une livraison");
         btnListMove = new JButton(new ImageIcon(getClass().getResource("/icons/move.png")));
+        btnListMove.setToolTipText("Déplacer une livraison");
         btnListRemove = new JButton(new ImageIcon(getClass().getResource("/icons/delete.png")));
+        btnListRemove.setToolTipText("Supprimer une livraison");
         
         
         // CREATING DISPLAY
@@ -322,7 +325,7 @@ public class Window
         int result = fileChooser.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
             return selectedFile;
         }
         return null;

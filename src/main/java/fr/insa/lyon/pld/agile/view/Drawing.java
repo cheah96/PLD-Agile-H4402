@@ -99,7 +99,7 @@ public class Drawing {
     }
     
     protected static void drawHouse(Graphics g, Point coords, int size) {
-        g.fillPolygon(new int[] {coords.x-size/2, coords.x, coords.x+size/2}, new int[] {coords.y+size/2, coords.y+size, coords.y+size/2}, 3);
+        // g.fillPolygon(new int[] {coords.x-size/2, coords.x, coords.x+size/2}, new int[] {coords.y+size/2, coords.y+size, coords.y+size/2}, 3);
         g.fillRect(coords.x - size/2, coords.y - size/2, size, size);
     }
     

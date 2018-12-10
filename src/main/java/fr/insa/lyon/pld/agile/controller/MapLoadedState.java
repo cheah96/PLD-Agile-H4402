@@ -11,7 +11,7 @@ import java.io.File;
  *
  * @author scheah
  */
-public class MapLoadedState extends DefaultState {
+public class MapLoadedState extends InitialState {
     
     @Override
     public void enterState(Window window) {
@@ -26,12 +26,11 @@ public class MapLoadedState extends DefaultState {
     @Override
     public void loadDeliveriesFile(MainController controller, Map map, CommandList cmdList, Window view) throws Exception {
         File selectedFile = view.askFile("Chargement de demandes de livraison");
-        if (selectedFile != null) {
-            map.clearDeliveries();
-            map.clearWarehouse();
-            XMLParser.loadDeliveries(map, selectedFile.toPath());
-            controller.setCurrentState(controller.DELIVERIES_LOADED_STATE);
-        }
+        if (selectedFile == null) return;
+        map.clearDeliveries();
+        map.clearWarehouse();
+        XMLParser.loadDeliveries(map, selectedFile.toPath());
+        controller.setCurrentState(controller.DELIVERIES_LOADED_STATE);
         cmdList.reset();
     }
     
@@ -53,4 +52,5 @@ public class MapLoadedState extends DefaultState {
         view.selectNode(closest);
         return closest;
     }
+    
 }
