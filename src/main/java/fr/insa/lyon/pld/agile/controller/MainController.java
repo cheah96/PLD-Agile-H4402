@@ -50,11 +50,16 @@ public class MainController {
     }
     
     public void generateDeliveryMen(int deliveryMenCount) {
-        System.err.println("Génération avec " + deliveryMenCount + " livreurs.");
-        map.setDeliveryManCount(deliveryMenCount);
-        System.err.println("Distribution des livraisons...");
-        map.distributeDeliveries();
-        System.err.println("Raccourcissement des livraisons...");
-        map.shortenDeliveries();
+        if (!map.isShorteningDeliveries()) {
+            System.err.println("Génération avec " + deliveryMenCount + " livreurs.");
+            map.setDeliveryManCount(deliveryMenCount);
+            System.err.println("Distribution des livraisons...");
+            map.distributeDeliveries();
+            System.err.println("Raccourcissement des livraisons...");
+            map.shortenDeliveriesInBackground();
+        } else {
+            System.err.println("Arrêt des calculs...");
+            map.stopShorteningDeliveries();
+        }
     }
 }

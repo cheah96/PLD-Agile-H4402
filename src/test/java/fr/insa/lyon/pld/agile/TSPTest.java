@@ -28,10 +28,10 @@ public class TSPTest {
         int[][] cost = generateRandomCost(nb);
         int[] durr = generateRandomDurr(nb);
         
-        tsp.solve(100000, nb, cost, durr);
+        tsp.solve(nb, cost, durr);
         int val = tsp.getBestCost();
 
-        tsp1.solve(100000, nb, cost, durr);
+        tsp1.solve(nb, cost, durr);
         int val1 = tsp1.getBestCost();
 
         assertEquals(val,val1);
@@ -45,10 +45,10 @@ public class TSPTest {
         int[][] cost = generateRandomCost(nb);
         int[] durr = generateRandomDurr(nb);
 
-        tsp.solve(100000, nb, cost, durr);
+        tsp.solve(nb, cost, durr);
         int val = tsp.getBestCost();
 
-        tsp1.solve(100000, nb, cost, durr);
+        tsp1.solve(nb, cost, durr);
         int val1 = tsp1.getBestCost();
 
         assertEquals(val,val1);     
@@ -62,10 +62,10 @@ public class TSPTest {
         int[][] cost = generateRandomCost(nb);
         int[] durr = generateRandomDurr(nb);
 
-        tsp.solve(100000, nb, cost, durr);
+        tsp.solve(nb, cost, durr);
         int val = tsp.getBestCost();
 
-        tsp1.solve(100000, nb, cost, durr);
+        tsp1.solve(nb, cost, durr);
         int val1 = tsp.getBestCost();
 
         assertEquals(val,val1);      

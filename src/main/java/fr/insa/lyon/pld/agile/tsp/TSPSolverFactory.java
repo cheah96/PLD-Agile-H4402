@@ -2,13 +2,15 @@ package fr.insa.lyon.pld.agile.tsp;
 
 public abstract class TSPSolverFactory {
     
-    public static TSPSolver getSolver(int nodesCount) {
-	if(nodesCount<=20) {
-	    return new TSPSolverImplementation2();
-	}
-	else {
-	    return new TSPSolverImplementation2();
-	}
-	
+    public static TSPSolverWorkerTemplate getSolver(int nodes, int[][] edgesCosts, int[] nodesCosts) {
+        if (nodes <= 20) {
+            return new TSPSolverImplementation2(nodes, edgesCosts, nodesCosts);
+        } else {
+            return new TSPSolverImplementation2(nodes, edgesCosts, nodesCosts);
+        }
+    }
+    
+    public static TSPSolverWorkerTemplate getSolver(int nodes) {
+        return getSolver(nodes, null, null);
     }
 }

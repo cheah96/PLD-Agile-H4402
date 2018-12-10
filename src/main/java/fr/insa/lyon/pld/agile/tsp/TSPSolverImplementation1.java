@@ -3,7 +3,15 @@ package fr.insa.lyon.pld.agile.tsp;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TSPSolverImplementation1 extends TSPSolverTemplate {
+public class TSPSolverImplementation1 extends TSPSolverWorkerTemplate {
+
+    public TSPSolverImplementation1() {
+        super();
+    }
+    
+    public TSPSolverImplementation1(int nodes, int[][] edgesCosts, int[] nodesCosts) {
+        super(nodes, edgesCosts, nodesCosts);
+    }
 
     @Override
     protected Iterator<Integer> iterator(Integer currentNode, ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts) {
