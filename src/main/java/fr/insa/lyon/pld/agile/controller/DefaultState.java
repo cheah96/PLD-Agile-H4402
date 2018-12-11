@@ -53,6 +53,6 @@ public abstract class DefaultState implements State {
     @Override
     public void keyEscape() { }
     @Override
-    public void handleExternalEvent(String eventName) { }
+    public void handleExternalEvent(String eventName, Object value) { }
     
 }

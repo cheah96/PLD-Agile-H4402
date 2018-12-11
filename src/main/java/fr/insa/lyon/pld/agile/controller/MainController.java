@@ -40,6 +40,7 @@ public class MainController implements PropertyChangeListener{
     
     protected final void setCurrentState(State state) {
         currentState = state;
+        view.clearStatus();
         state.enterState(view);
         System.out.println(currentState);
     }
@@ -119,7 +120,7 @@ public class MainController implements PropertyChangeListener{
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
-        currentState.handleExternalEvent(propertyName);
+        currentState.handleExternalEvent(propertyName, evt.getNewValue());
     }
     
 }

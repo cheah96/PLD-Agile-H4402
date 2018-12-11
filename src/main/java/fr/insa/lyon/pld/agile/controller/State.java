@@ -41,6 +41,6 @@ public interface State {
     
     public void keyEscape();
     
-    public void handleExternalEvent(String eventName);
+    public void handleExternalEvent(String eventName, Object value);
     
 }

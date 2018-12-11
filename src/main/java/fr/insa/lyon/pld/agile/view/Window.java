@@ -412,10 +412,15 @@ public class Window
         }
     }
     
-    public void setStatusMessage(String message) {
-        lblStatus.setText(message);
+    public void clearStatus() {
+        lblStatus.setText("");
         btnStatus.setVisible(false);
     }
+    
+    public void setStatusMessage(String message) {
+        lblStatus.setText(message);
+    }
+    
     public void setStatusButton(String caption) {
         btnStatus.setText(caption);
         btnStatus.setVisible(true);

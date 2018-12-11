@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -40,7 +41,7 @@ public class Map {
         this.startingHour = startingHour;
         this.deliveries = new HashMap<>();
         this.deliveryMen = new ArrayList<>();
-        this.pendingSolvers = Collections.synchronizedList(new ArrayList<TSPSolverWorker>());
+        this.pendingSolvers = Collections.synchronizedList(new ArrayList<>());
     }
     
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -183,36 +184,51 @@ public class Map {
             }
 
             TSPSolverWorker tspSolver = TSPSolverFactory.getSolver(nodeCount, edgesCosts, nodesCost);
-            tspSolver.addPropertyChangeListener((PropertyChangeEvent pce) -> {
-                //  debug
-                if (pce.getPropertyName().equals("progressUpdate")) {
-                    System.out.println("Progress : " + ((Double)pce.getNewValue()) * 100);
-                }
-                
-                if (!pce.getPropertyName().equals("intermediateBestPath") && !pce.getPropertyName().equals("finalBestPath"))
-                    return;
-                
-                ArrayList<Integer> bestIds = (ArrayList<Integer>) pce.getNewValue();
-                deliveryMan.clear();
-                
-                for (Integer index : bestIds) {
-                    if (index != 0) {
-                        Delivery delivery = deliveries.get(deliveryNodes.get(index).getId());
-                        if (delivery != null)
-                            deliveryMan.addDelivery(delivery, Map.this);
-                        else
-                            throw new RuntimeException("Delivery not found");
+            tspSolver.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent pce) {
+                    switch (pce.getPropertyName()) {
+                        case "progress":
+                            List<TSPSolverWorker> solvers = new ArrayList<>(pendingSolvers);
+                            int progress = solvers.stream().map(TSPSolverWorker::getProgress).min(Integer::compare).get();
+                            System.out.println("Progress : " + progress);
+                            Map.this.pcs.firePropertyChange("shortenDeliveriesProgress", null, progress);
+                            break;
+                        case "intermediateBestPath":
+                            updateDeliveries((ArrayList<Integer>) pce.getNewValue());
+                            break;
+                        case "state":
+                            if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
+                                try {
+                                    updateDeliveries(tspSolver.get());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                pendingSolvers.remove(tspSolver);
+
+                                if (pendingSolvers.isEmpty()) {
+                                    Map.this.pcs.firePropertyChange("shortenDeliveriesFinished", null, deliveryMen);
+                                }
+                            }
+                            break;
                     }
                 }
                 
-                Map.this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
-                
-                if (pce.getPropertyName().equals("finalBestPath")) {
-                    pendingSolvers.remove(tspSolver);
-                    
-                    if (pendingSolvers.isEmpty()) {
-                        Map.this.pcs.firePropertyChange("shortenDeliveriesFinished", null, deliveryMen);
+                private void updateDeliveries(ArrayList<Integer> bestIds) {
+                    deliveryMan.clear();
+
+                    for (Integer index : bestIds) {
+                        if (index != 0) {
+                            Delivery delivery = deliveries.get(deliveryNodes.get(index).getId());
+                            if (delivery != null)
+                                deliveryMan.addDelivery(delivery, Map.this);
+                            else
+                                throw new RuntimeException("Delivery not found");
+                        }
                     }
+
+                    Map.this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
                 }
             });
             

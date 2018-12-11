@@ -137,11 +137,6 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
         List<Integer> bestPath = list.get(list.size()-1);
         firePropertyChange("intermediateBestPath", null, bestPath);
     }
-
-    @Override
-    protected void done() {
-        firePropertyChange("finalBestPath", null, bestPath);
-    }
     
     protected void updateProgress(int exploredNodesCount, int unexploredNodesCount) {
         if (exploredNodesCount <= 0) return;
@@ -151,7 +146,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
             statesCount *= (exploredNodesCount + unexploredNodesCount - k);
         }
         
-        firePropertyChange("progressUpdate", progress, progress + 1.0 / statesCount);
-        progress += 1.0 / statesCount;
+        double newProgress = progress + 1.0 / statesCount;
+        setProgress((int)(newProgress*100));
+        progress = newProgress;
     }
 }

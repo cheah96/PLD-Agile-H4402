@@ -18,18 +18,23 @@ public class DeliveryMenComputingState extends DefaultState {
         window.setStatusButton("Interrompre");
         window.setButtonsState(false, false, false, false, false, false);
     }
+    
     @Override
     public void btnStatusClick() {
         generationInterrupt();
     }
+    
     @Override
     public void keyEscape() {
         generationInterrupt();
     }
     
     @Override
-    public void handleExternalEvent(String eventName) {
+    public void handleExternalEvent(String eventName, Object value) {
         switch (eventName) {
+            case "shortenDeliveriesProgress":
+                controller.getWindow().setStatusMessage("Génération des tournées en cours... " + (Integer) value + " %");
+                break;
             case "shortenDeliveriesFinished":
                 generationFinished();
                 break;
