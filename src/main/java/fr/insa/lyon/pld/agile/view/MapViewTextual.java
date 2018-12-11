@@ -53,7 +53,7 @@ public class MapViewTextual extends MapView
             public void stateChanged(ChangeEvent e) {
                 int deliveryManIndex = panTabs.getSelectedIndex()-1;
                 selectDeliveryMan(deliveryManIndex);
-                controller.selectedDeliveryMan(selDeliveryMan);
+                controller.selectDeliveryMan(selDeliveryMan);
             }
         });
     }
@@ -210,7 +210,7 @@ public class MapViewTextual extends MapView
             Node node = (index == -1 ? null : tabList.get(index).getNode());
             if (selNode != node) {
                 selectNode(node);
-                controller.selectedNode(node);
+                controller.selectNode(node);
             }
         });
         

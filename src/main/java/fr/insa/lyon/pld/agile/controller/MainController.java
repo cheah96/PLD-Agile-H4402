@@ -106,11 +106,11 @@ public class MainController implements PropertyChangeListener{
         currentState.loadDeliveriesFile();
     }
     
-    public void selectedNode(Node node) {
+    public void selectNode(Node node) {
         currentState.selectNode(node);
     }
     
-    public void selectedDeliveryMan(int deliveryManIndex) {
+    public void selectDeliveryMan(int deliveryManIndex) {
         currentState.selectDeliveryMan(deliveryManIndex);
     }
 

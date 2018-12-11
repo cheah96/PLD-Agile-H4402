@@ -55,7 +55,7 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
         if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON3) {
             Point2D p = mapView.getPixelToPoint(event.getX(), event.getY());
             Node closest = mapView.findClosestNode(p);
-            mapView.selectNode(closest);
+            controller.selectNode(closest);
 
             if (event.getButton() == MouseEvent.BUTTON3) {//Right click
                 if(controller.getMap().getNodeDeliveryManIndex(closest) == -1 && controller.getMap().getDeliveries().get(closest.getId()) == null) {
