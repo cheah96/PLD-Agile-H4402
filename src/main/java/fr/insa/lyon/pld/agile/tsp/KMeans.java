@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-// https://elki-project.github.io/tutorial/same-size_k_means
 
 /**
  *
