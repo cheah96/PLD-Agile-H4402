@@ -14,7 +14,7 @@ public class CmdAddDelivery implements Command {
     private final DeliveryMan deliveryMan;
     private final int index;
     
-    public CmdAddDelivery(Map map, Delivery delivery, DeliveryMan deliveryMan, int index){
+    public CmdAddDelivery(Map map, Delivery delivery, DeliveryMan deliveryMan, int index) {
         this.map = map;
         this.delivery = delivery;
         this.deliveryMan = deliveryMan;
@@ -24,12 +24,16 @@ public class CmdAddDelivery implements Command {
     @Override
     public void doCmd(){
         map.addDelivery(delivery);
-        map.assignDelivery(index, delivery, deliveryMan);
+        if( deliveryMan != null) {
+            map.assignDelivery(index, delivery, deliveryMan);
+        }
     }
 
     @Override
     public void undoCmd() {
-        map.unassignDelivery(index, deliveryMan);
+        if( deliveryMan != null) {
+            map.unassignDelivery(index, deliveryMan);
+        }
         map.removeDelivery(delivery);
     }
     

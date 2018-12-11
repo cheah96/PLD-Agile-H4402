@@ -8,7 +8,7 @@ import fr.insa.lyon.pld.agile.model.Map;
  *
  * @author scheah
  */
-public class CmdMoveDelivery implements Command {
+public class CmdAssignDelivery implements Command {
     private final Map map;
     private final Delivery delivery;
     private final DeliveryMan oldDeliveryMan;
@@ -16,25 +16,32 @@ public class CmdMoveDelivery implements Command {
     private final int oldIndex;
     private final int newIndex;
     
-    public CmdMoveDelivery(Map map, Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex) {
+    public CmdAssignDelivery(Map map, Delivery delivery, DeliveryMan newDeliveryMan, int newIndex) {
         this.map = map;
         this.delivery = delivery;
-        this.oldDeliveryMan = oldDeliveryMan;
+        this.oldDeliveryMan = delivery.getDeliveryMan();
         this.newDeliveryMan = newDeliveryMan;
-        this.oldIndex = oldIndex;
+        if (oldDeliveryMan != null) {
+            this.oldIndex = oldDeliveryMan.getDeliveries().indexOf(this.delivery);
+        } else {
+            this.oldIndex = -1;
+        }
         this.newIndex = newIndex;
     }
     
     @Override
     public void doCmd(){
-        map.unassignDelivery(oldIndex, oldDeliveryMan);
+        if(oldDeliveryMan != null) {
+            map.unassignDelivery(oldIndex, oldDeliveryMan);
+        }
         map.assignDelivery(newIndex, delivery, newDeliveryMan);
     }
 
     @Override
     public void undoCmd() {
         map.unassignDelivery(newIndex, newDeliveryMan);
-        map.assignDelivery(oldIndex, delivery, oldDeliveryMan);
+        if(oldDeliveryMan != null) {
+            map.assignDelivery(oldIndex, delivery, oldDeliveryMan);
+        }
     }
-    
 }

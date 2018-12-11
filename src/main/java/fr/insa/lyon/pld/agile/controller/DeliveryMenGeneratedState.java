@@ -2,7 +2,6 @@ package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.model.DeliveryMan;
-import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import fr.insa.lyon.pld.agile.view.Window;
@@ -26,9 +25,10 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     }
     
     @Override
-    public void addDelivery(Node node) {
-        controller.ADD_DELIVERY_STATE.prepareState(node);
-        controller.setCurrentState(controller.ADD_DELIVERY_STATE);
+    public void addDelivery(Node node, DeliveryMan deliveryMan, int index) {
+        Delivery delivery = new Delivery(node, index, deliveryMan);
+        controller.doCmd(new CmdAddDelivery(controller.getMap(), delivery, deliveryMan, index));
+        controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     
     @Override
@@ -38,21 +38,27 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     }
     
     @Override
-    public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex) {
-        controller.doCmd(new CmdMoveDelivery(controller.getMap(), delivery, oldDeliveryMan, newDeliveryMan, oldIndex, newIndex));
+    public void assignDelivery(Delivery delivery, DeliveryMan newDeliveryMan, int newIndex) {
+        controller.doCmd(new CmdAssignDelivery(controller.getMap(), delivery, newDeliveryMan, newIndex));
+        controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
+    }
+    
+    @Override
+    public void unassignDelivery(Delivery delivery) {
+        controller.doCmd(new CmdUnassignDelivery(controller.getMap(), delivery));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     
     @Override
     public void mapClickRight(MapViewGraphical mapView, Point2D p) {
         Node closest = mapView.findClosestNode(p);
-        if (closest != null) {
-            Map map = controller.getMap();
-            int deliveryManIndex = map.getNodeDeliveryManIndex(closest);
-            if (deliveryManIndex >= 0) {
-                Delivery delivery = map.getDeliveries().get(closest.getId());
-                deleteDelivery(delivery);
-            }
+        mapView.selectNode(closest);
+        if(controller.getMap().getNodeDeliveryManIndex(closest) == -1 && controller.getMap().getDeliveries().get(closest.getId()) == null) {
+            mapView.showPopupNode(p);
+        } else if (controller.getMap().getNodeDeliveryManIndex(closest) == -1){
+            mapView.showPopupUnassignedDelivery(p);
+        }else {
+            mapView.showPopupDelivery(p);
         }
     }
     

@@ -18,7 +18,7 @@ public interface State {
     
     public void loadDeliveriesFile() throws Exception;
     
-    public void addDelivery(Node node);
+    public void addDelivery(Node node, DeliveryMan deliveryMan, int index);
     
     public void validateAddDelivery(DeliveryMan deliveryMan, int index);
     
@@ -26,7 +26,9 @@ public interface State {
     
     public void deleteDelivery(Delivery delivery);
     
-    public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex);
+    public void assignDelivery(Delivery delivery, DeliveryMan newDeliveryMan, int newIndex);
+    
+    public void unassignDelivery(Delivery delivery);
     
     public void generateDeliveryMen(int deliveryMenCount);
     

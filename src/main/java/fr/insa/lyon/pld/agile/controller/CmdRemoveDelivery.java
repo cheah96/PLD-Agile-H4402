@@ -18,10 +18,12 @@ public class CmdRemoveDelivery implements Command {
         this.map = map;
         this.delivery = delivery;
         this.deliveryMan = delivery.getDeliveryMan();
-        this.index = this.deliveryMan.getDeliveries().indexOf(delivery);
-        System.err.println(this.deliveryMan.getDeliveries());
-        System.err.println(this.deliveryMan.getDeliveries().size());
-        System.err.println(index);
+        if(this.deliveryMan != null) {
+            this.index = this.deliveryMan.getDeliveries().indexOf(delivery);
+        }
+        else {
+            index = -1;
+        }
     }
     
     @Override
@@ -32,7 +34,8 @@ public class CmdRemoveDelivery implements Command {
     @Override
     public void undoCmd() {
         map.addDelivery(delivery);
-        map.assignDelivery(index, delivery, deliveryMan);
+        if(this.deliveryMan != null) {
+            map.assignDelivery(index, delivery, deliveryMan);
+        }
     }
-    
 }
