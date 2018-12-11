@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -217,6 +216,10 @@ public class XMLParser {
                     break;
             }
         }
+    }
+    
+    private XMLParser() {
+        
     }
     
     public static void main(String args[]) throws IOException, SAXException, ParserConfigurationException {
