@@ -1,5 +1,6 @@
 package fr.insa.lyon.pld.agile;
 
+import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.xml.XMLParser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,8 +49,9 @@ public class ParserDeliveriesTest {
         assertTrue(map.getWarehouse()!=null);
         assertEquals(25175791L,map.getWarehouse().getId());
         assertEquals(1, map.getDeliveries().size());
-        assertEquals(2129259178L, map.getDeliveries().get(0).getNode().getId());
-        assertEquals(60, map.getDeliveries().get(0).getDuration());
+        Delivery delivery = map.getDeliveries().values().iterator().next();
+        assertEquals(2129259178L, delivery.getNode().getId());
+        assertEquals(60, delivery.getDuration());
         assertEquals(8, map.getStartingHour().getHour());
         assertEquals(0, map.getStartingHour().getMinute());
         assertEquals(0, map.getStartingHour().getSecond());
