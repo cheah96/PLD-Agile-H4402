@@ -129,6 +129,7 @@ public class Window
         
         // Bottom status bar
         JPanel panStatus = new JPanel();
+        panStatus.setPreferredSize(new Dimension(32,32));
         panStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
         panStatus.setLayout(new BoxLayout(panStatus, BoxLayout.X_AXIS));
         lblStatus = new JLabel("Barre d'état");
@@ -162,7 +163,7 @@ public class Window
         
         // > Top settings
         JPanel panDeliveries = new JPanel();
-        SpinnerModel model = new SpinnerNumberModel(3, 1, 12, 1);
+        SpinnerModel model = new SpinnerNumberModel(3, 1, 30, 1);
         numDeliveries = new JSpinner(model);
         // ((JSpinner.DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
