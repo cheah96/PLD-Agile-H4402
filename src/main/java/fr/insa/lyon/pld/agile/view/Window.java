@@ -360,8 +360,8 @@ public class Window
         // READY
         
         frame.pack();
-        panSplitRight.setResizeWeight(0.8);
-        panSplitRight.setDividerLocation(0.8);
+        panSplitRight.setResizeWeight(0.9);
+        panSplitRight.setDividerLocation(0.7);
         frame.setVisible(true);
     }
     
