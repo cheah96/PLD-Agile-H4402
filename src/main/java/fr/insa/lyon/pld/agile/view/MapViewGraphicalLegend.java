@@ -22,6 +22,9 @@ public class MapViewGraphicalLegend extends JPanel
 {
     EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
     
+    /**
+     * Creates a Legend.
+     */
     public MapViewGraphicalLegend() {
         this.setLayout(new GridBagLayout());
         this.setBackground(Color.getHSBColor(0f, 0f, 7f/8));
@@ -70,14 +73,30 @@ public class MapViewGraphicalLegend extends JPanel
         this.addMouseMotionListener(drag);
     }
     
+    /**
+     * drawing function wrapper
+     */
     public interface Drawer {
+        
+        /**
+         * icon drawing function
+         * @param g object to draw on
+         * @param coords coordinates of the middle of the component
+         */
         public void draw(Graphics g, Point coords);
     }
     
+    /**
+     * custom icon component
+     */
     public class JIcon extends JPanel {
         private final Drawer drawer;
         private final Point coords;
         
+        /**
+         * icon constructor
+         * @param drawer icon drawing function
+         */
         public JIcon(Drawer drawer) {
             this.drawer = drawer;
             this.setBorder(spacer);
@@ -93,6 +112,10 @@ public class MapViewGraphicalLegend extends JPanel
         
     }
     
+    
+    /**
+     * Makes a component draggable.
+     */
     // https://tips4java.wordpress.com/2009/06/14/moving-windows/
     public class DragListener extends MouseInputAdapter
     {
