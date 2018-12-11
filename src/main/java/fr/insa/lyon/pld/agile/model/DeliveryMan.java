@@ -36,7 +36,7 @@ public class DeliveryMan {
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
         
         round.addNode(index, delivery.getNode(), true, map);
-        deliveries.add(delivery);
+        deliveries.add(index, delivery);
     }
     
     void addDelivery(Delivery delivery, Map map) {
