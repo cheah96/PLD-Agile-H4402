@@ -20,7 +20,7 @@ public abstract class DefaultState implements State {
     
     @Override
     public void enterState(Window window) {
-        window.setStatusMessage("");
+        window.clearStatus();
         window.setButtonsState(true, true, true, true, true, true);
     }
     
