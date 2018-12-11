@@ -142,6 +142,9 @@ public class MapViewTextual extends MapView
         jlists = new ArrayList<>();
         lists = new ArrayList<>();
         
+        int prevDeliveryMan = selDeliveryMan;
+        Node prevNode = selNode;
+        
         panTabs.removeAll();
         
         DefaultListModel<ListItem> items = new DefaultListModel<>();
@@ -187,8 +190,6 @@ public class MapViewTextual extends MapView
             }
         }
         
-        int prevDeliveryMan = selDeliveryMan;
-        Node prevNode = selNode;
         selDeliveryMan = -1;
         selectDeliveryMan(prevDeliveryMan);
         selNode = null;

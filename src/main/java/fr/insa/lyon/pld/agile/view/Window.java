@@ -318,11 +318,11 @@ public class Window
                 JList<String> list2 = new JList<>(model2);
                 
                 List<RoutePart> routeParts = buildRoadmap(map, 0);
+                DefaultListModel<String> list3 = (DefaultListModel<String>)list2.getModel();
                 
                 for(RoutePart part : routeParts){
-                    ((DefaultListModel<String>)list2.getModel()).addElement(part.toString());
+                    list3.addElement(part.toString());
                 }
-                
                 
                 listDeliveries.add(list2);
                 listDeliveries.pack();
