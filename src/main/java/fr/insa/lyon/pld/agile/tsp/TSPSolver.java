@@ -14,6 +14,8 @@ public interface TSPSolver {
     public ArrayList<Integer> solve(int nodes, int[][] edgesCosts, int[] nodesCost);
 
     /** 
+     * After the solve method was called, a call to getBestCost will return the cost of the best solution computed by solve
+     * 
      * @return the cost of the solution computed by solve
      */
     public Integer getBestCost();

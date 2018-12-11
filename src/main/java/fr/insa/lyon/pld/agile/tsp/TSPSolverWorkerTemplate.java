@@ -4,23 +4,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- *
- * @author paul
- */
 public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {   
     private ArrayList<Integer> bestPath = null;
     private Integer bestPathCost = 0;
     private Double progress = 0.0;
 
+    /**
+     * Default constructor
+     */
     public TSPSolverWorkerTemplate() {
         super();
     }
     
+    /**
+     * Constructor
+     * 
+     * @param nodes the number of nodes to process
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     */
     public TSPSolverWorkerTemplate(int nodes, int[][] edgesCosts, int[] nodesCosts) {
         super(nodes, edgesCosts, nodesCosts);
     }
-
+    
+    /**
+     * This method solves the TSP
+     * 
+     * @return the best path for the TSP
+     */
     public final ArrayList<Integer> solve() {
         // Base case
         if(nodes == 0) {
@@ -45,6 +56,11 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
         return bestPath;
     }
 
+    /** 
+     * After the solve method was called, a call to getBestCost will return the cost of the best solution computed by solve
+     * 
+     * @return the cost of the solution computed by solve
+     */
     public Integer getBestCost() {
         return bestPathCost;
     }
@@ -62,7 +78,11 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
     protected abstract int bound(Integer currentNode, ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts);
     
     /**
+     * This method computes a lower bound of branch costs to allow early branch cutting before the exploration.
      * 
+     * @param unexploredNodes the list of the nodes that have not been explored so far
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
      * */
     protected abstract int startBound(ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts);
     
@@ -131,13 +151,24 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
             updateProgress(exploredNodes.size() - 1, unexploredNodes.size());
         }
     }
-
+    
+    /**
+     * This method update the best intermediate path during the TSP computation
+     * 
+     * @param list the current best path
+     */
     @Override
     protected void process(List<ArrayList<Integer>> list) {
         List<Integer> bestPath = list.get(list.size()-1);
         firePropertyChange("intermediateBestPath", null, bestPath);
     }
     
+    /**
+     * This method updates the progress during the TSP computation
+     * 
+     * @param exploredNodesCount number of explored nodes in the current state of the computation
+     * @param unexploredNodesCount number of unexplored nodes in the current state of the computation
+     */
     protected void updateProgress(int exploredNodesCount, int unexploredNodesCount) {
         if (exploredNodesCount <= 0) return;
         
