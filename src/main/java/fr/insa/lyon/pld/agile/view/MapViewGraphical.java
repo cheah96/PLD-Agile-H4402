@@ -46,6 +46,7 @@ public class MapViewGraphical extends MapView
     
     private double ratio;
     private double ratioMin;
+    private double ratioMax;
     
     private Node selNode = null;
     private int selDeliveryMan = -1;
@@ -103,7 +104,7 @@ public class MapViewGraphical extends MapView
     private final ComponentListener resizeListener = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
-            updateRatioMin();
+            updateRatioMinMax();
             imageMap = null;
             repaint();
         }
@@ -142,7 +143,7 @@ public class MapViewGraphical extends MapView
             latitudeMax = Collections.max(latitudes);
             longitudeMax = Collections.max(longitudes);
         
-            updateRatioMin();
+            updateRatioMinMax();
             ratio = ratioMin;
             
             offsetX = longitudeMin - (getWidth()/ratio-(longitudeMax - longitudeMin))/2.;
@@ -437,16 +438,19 @@ public class MapViewGraphical extends MapView
         return (preferred != null ? preferred : super.getPreferredSize());
     }
     
-    private void updateRatioMin() {
+    private void updateRatioMinMax() {
         double ratioX = getWidth()/(longitudeMax - longitudeMin);
         double ratioY = getHeight()/(latitudeMax - latitudeMin);
         ratioMin = Math.min(ratioX,ratioY);
+        ratioMax = 10000000;
         if (ratio < ratioMin)
             ratio = ratioMin;
+        if (ratio > ratioMax)
+            ratio = ratioMax;
     }
     
     private void updateRatio(double scaleFactor) {
-        if (ratio * scaleFactor < ratioMin)
+        if (ratio * scaleFactor < ratioMin || ratio * scaleFactor > ratioMax)
             return;
         
         /* On soustrait la différence entre la position de la souris

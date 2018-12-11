@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -50,11 +51,12 @@ public class Drawing {
         int vy = p2.y - p1.y;
         int vx = p2.x - p1.x;
         
+        double x = p1.x;
+        double y = p1.y;
+        
         if ((vy == 0) && (vx == 0)) return position;
         
         double vlen = getVectorLength(vx,vy);
-        double uvx = vx/vlen;
-        double uvy = vy/vlen;
         
         int safety = 0;
         double total;
@@ -62,18 +64,18 @@ public class Drawing {
         for (; (total = position+remaining) >= step;) {
             if (safety++ > 1000) return position;
             
-            p1.x += ((step-position)*vx)/vlen;
-            p1.y += ((step-position)*vy)/vlen;
+            x += ((step-position)*vx)/vlen;
+            y += ((step-position)*vy)/vlen;
             
-            if ((vx*(p2.x-p1.x) + vy*(p2.y-p1.y)) < 0) return position;
+            if ((vx*(p2.x-x) + vy*(p2.y-y)) < 0) return position;
             
             drawLineThick(g,
-                new Point(p1.x+(int)((-vy-vx)*8./vlen), p1.y+(int)((vx-vy)*8./vlen)),
-                new Point(p1.x, p1.y)
+                new Point((int)(x+(-vy-vx)*8./vlen), (int)(y+(vx-vy)*8./vlen)),
+                new Point((int)x, (int)y)
             );
             drawLineThick(g,
-                new Point(p1.x, p1.y),
-                new Point(p1.x+(int)((vy-vx)*8./vlen), p1.y+(int)((-vx-vy)*8./vlen))
+                new Point((int) x, (int)y),
+                new Point((int)(x+((vy-vx)*8./vlen)), (int)(y+(-vx-vy)*8./vlen))
             );
             
             position = 0;
