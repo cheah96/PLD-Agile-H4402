@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
 
 /**
  *
@@ -51,18 +50,15 @@ public class RoadmapPanel extends MapView {
     private final MainController controller;
     private final Map map;
     JList<String> roadMapParts;
-    JScrollPane scrollPane;
     
     public RoadmapPanel(Map map, MainController controller){
         this.controller = controller;
         this.map = map;
-        this.roadMapParts = new JList<>(new DefaultListModel<>());
-        this.scrollPane = new JScrollPane(roadMapParts);
-        this.add(scrollPane);
+        
     }
     
     private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex){
-        List<RoutePart> routeParts = new ArrayList<>();
+        List<RoutePart> routeParts = new ArrayList<RoutePart>();
         
         String routePartName = null;
         double distance = 0;
@@ -98,9 +94,12 @@ public class RoadmapPanel extends MapView {
     
     public void displayRoadmap(int deliveryManIndex){
         try {
-            List<RoutePart> routeParts = buildRoadmap(this.map, deliveryManIndex);
+            this.removeAll();
             
-            this.roadMapParts.setModel(new DefaultListModel<>());
+            DefaultListModel<String> model = new DefaultListModel<>(); 
+            this.roadMapParts = new JList<>(model);
+
+            List<RoutePart> routeParts = buildRoadmap(this.map, deliveryManIndex);
             
             ((DefaultListModel<String>)this.roadMapParts.getModel()).addElement("*** Feuille de route du livreur "+Integer.toString(deliveryManIndex+1) + " ***");
             
@@ -108,6 +107,7 @@ public class RoadmapPanel extends MapView {
                 ((DefaultListModel<String>)this.roadMapParts.getModel()).addElement(part.toString());
             }
 
+            this.add(this.roadMapParts);
             this.updateUI();
         } catch (Exception ex) {
             System.err.println("Error when displaying the roadmap !");
