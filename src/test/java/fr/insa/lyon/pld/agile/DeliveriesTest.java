@@ -60,7 +60,7 @@ public class DeliveriesTest {
         assertTrue(del2.getNode().getId()==map.getDeliveryMen().get(0).getDeliveries().get(1).getNode().getId());
         
         map.assignDelivery(2, del1, map.getDeliveryMen().get(0));
-        assertTrue(del1.getNode().getId()==map.getDeliveryMen().get(0).getDeliveries().get(3).getNode().getId());
+        assertTrue(del1.getNode().getId()==map.getDeliveryMen().get(0).getDeliveries().get(2).getNode().getId());
         
         LocalTime last = LocalTime.of(0, 0, 1, 1);
         for(int i=0;i<map.getDeliveryMen().get(0).getRound().getItinerary().size();++i) {
