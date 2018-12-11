@@ -39,7 +39,6 @@ public class Window
     private final JButton btnListAdd;
     private final JButton btnListMove;
     private final JButton btnListRemove;
-    private final JButton btnDeliveryRecords;
     
     private final JLabel lblStatus;
     private final JButton btnStatus;
@@ -79,8 +78,6 @@ public class Window
         btnOpenMap.setToolTipText("Ouvrir une carte");
         btnOpenLoc = new JButton(new ImageIcon(getClass().getResource("/icons/pin.png")));
         btnOpenLoc.setToolTipText("Ouvrir des points de livraison");
-        btnDeliveryRecords = new JButton(new ImageIcon(getClass().getResource("/icons/list.png")));
-        btnDeliveryRecords.setToolTipText("Générer la liste de livraisons");
         btnUndo = new JButton(new ImageIcon(getClass().getResource("/icons/undo.png")));
         btnUndo.setToolTipText("Annuler");
         btnRedo = new JButton(new ImageIcon(getClass().getResource("/icons/redo.png")));
@@ -133,7 +130,6 @@ public class Window
         // Top tool-bar
         tlbTop.add(btnOpenMap);
         tlbTop.add(btnOpenLoc);
-        tlbTop.add(btnDeliveryRecords);
         tlbTop.add(btnUndo);
         tlbTop.add(btnRedo);
         JPanel panSeparator = new JPanel();
@@ -185,6 +181,7 @@ public class Window
         panRoadmap = new RoadmapPanel(this.map, this.controller);
         mapViews.add(panRoadmap);
         scrollPanRoadmap = new JScrollPane(panRoadmap);
+        scrollPanRoadmap.getVerticalScrollBar().setUnitIncrement(16);
         
         // Window
         JPanel panMain = new JPanel(new BorderLayout());
@@ -282,6 +279,7 @@ public class Window
         frame.pack();
         rightPanSplit.setResizeWeight(0.9);
         rightPanSplit.setDividerLocation(0.7);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
     
@@ -308,7 +306,6 @@ public class Window
         
         numDeliveries.setEnabled(canGenerateDeliveryMen);
         btnGenerate.setEnabled(canGenerateDeliveryMen);
-        btnDeliveryRecords.setEnabled(canGenerateDeliveryMen);
         
         btnListAdd.setEnabled(canEditDeliveries);
         btnListMove.setEnabled(canEditDeliveries);

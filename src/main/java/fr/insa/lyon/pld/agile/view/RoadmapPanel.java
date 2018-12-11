@@ -6,6 +6,7 @@ import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.Passage;
 import fr.insa.lyon.pld.agile.model.Route;
 import fr.insa.lyon.pld.agile.model.Section;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -106,8 +107,9 @@ public class RoadmapPanel extends MapView {
             for(RoutePart part : routeParts){
                 ((DefaultListModel<String>)this.roadMapParts.getModel()).addElement(part.toString());
             }
-
-            this.add(this.roadMapParts);
+            
+            this.setLayout(new BorderLayout());
+            this.add(this.roadMapParts, BorderLayout.CENTER);
             this.updateUI();
         } catch (Exception ex) {
             System.err.println("Error when displaying the roadmap !");
