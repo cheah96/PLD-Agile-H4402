@@ -249,15 +249,13 @@ public class Window
         scrollPanRoadmap = new JScrollPane(panRoadmap);
         
         // Window
-        JPanel panMain = new JPanel (new BorderLayout());
+        JPanel panMain = new JPanel(new BorderLayout());
         panMain.add(panStatus, BorderLayout.SOUTH);
         panMain.add(mapViewGraphical,BorderLayout.CENTER);
-        JSplitPane leftPanSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMain);
-        
-        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanSplit, scrollPanRoadmap);
-        
+        JSplitPane panSplitRight = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panMain, scrollPanRoadmap);
+        JSplitPane panSplitLeft = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panSplitRight);
         frame.add(tlbTop, BorderLayout.NORTH);
-        frame.add(panSplit, BorderLayout.CENTER);
+        frame.add(panSplitLeft, BorderLayout.CENTER);
         
         
         // EVENTS HANDLING
@@ -351,24 +349,33 @@ public class Window
             mapViewGraphical.showLegend(checked);
         });
         
-        // TODO : replace ugly loop
-        for (Component component : frame.getComponents()) {
-            if (component instanceof JComponent) {
-                JComponent cmpn = (JComponent) component;
-                cmpn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "strokeESCAPE");
-                cmpn.getActionMap().put("strokeESCAPE", new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        controller.keyEscape();
-                    }
-                });
+        bindKeyAction(frame, "ESCAPE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.keyEscape();
             }
-        }
+        });
+        
         
         // READY
         
         frame.pack();
+        panSplitRight.setResizeWeight(0.8);
+        panSplitRight.setDividerLocation(0.8);
         frame.setVisible(true);
+    }
+    
+    private static void bindKeyAction(JFrame frm, String key, AbstractAction action) {
+        for (Component cmp : frm.getComponents()) {
+            if (cmp instanceof JComponent) {
+                bindKeyAction((JComponent) cmp, key, action);
+                break;
+            }
+        }
+    }
+    private static void bindKeyAction(JComponent cmp, String key, AbstractAction action) {
+        cmp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key), "stroke" + key);
+        cmp.getActionMap().put("stroke" + key, action);
     }
     
     public void setButtonsState(
