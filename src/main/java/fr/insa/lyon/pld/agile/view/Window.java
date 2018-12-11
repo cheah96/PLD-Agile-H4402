@@ -37,6 +37,8 @@ public class Window
     private final JButton btnGenerate;
     
     private final JButton btnListAdd;
+    private final JButton btnListUp;
+    private final JButton btnListDown;
     private final JButton btnListMove;
     private final JButton btnListRemove;
     
@@ -110,6 +112,10 @@ public class Window
         // > and their buttons
         btnListAdd = new JButton(new ImageIcon(getClass().getResource("/icons/add.png")));
         btnListAdd.setToolTipText("Ajouter une livraison");
+        btnListUp = new JButton(new ImageIcon(getClass().getResource("/icons/up.png")));
+        btnListUp.setToolTipText("Avancer une livraison");
+        btnListDown = new JButton(new ImageIcon(getClass().getResource("/icons/down.png")));
+        btnListDown.setToolTipText("Retarder une livraison");
         btnListMove = new JButton(new ImageIcon(getClass().getResource("/icons/move.png")));
         btnListMove.setToolTipText("Déplacer une livraison");
         btnListRemove = new JButton(new ImageIcon(getClass().getResource("/icons/delete.png")));
@@ -165,9 +171,9 @@ public class Window
         c.gridwidth = 1;
         c.gridy = 1;
         c.gridx = 0;
-        panLists.add(btnListAdd, c);
+        panLists.add(btnListUp, c);
         c.gridx = 1;
-        panLists.add(btnListMove, c);
+        panLists.add(btnListDown, c);
         c.gridx = 2;
         panLists.add(btnListRemove, c);
         
@@ -256,6 +262,18 @@ public class Window
             controller.btnStatusClick();
         });
         
+        btnListUp.addActionListener(e -> {
+            // TODO
+        });
+        
+        btnListDown.addActionListener(e -> {
+            // TODO
+        });
+        
+        btnListRemove.addActionListener(e -> {
+            // TODO
+        });
+        
         cckDirection.addItemListener(e -> {
             boolean checked = cckDirection.getModel().isSelected();
             mapViewGraphical.showDirection(checked);
@@ -308,6 +326,8 @@ public class Window
         btnGenerate.setEnabled(canGenerateDeliveryMen);
         
         btnListAdd.setEnabled(canEditDeliveries);
+        btnListUp.setEnabled(canEditDeliveries);
+        btnListDown.setEnabled(canEditDeliveries);
         btnListMove.setEnabled(canEditDeliveries);
         btnListRemove.setEnabled(canEditDeliveries);
     }
