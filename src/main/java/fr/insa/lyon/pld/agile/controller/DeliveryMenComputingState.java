@@ -17,7 +17,9 @@ public class DeliveryMenComputingState extends DefaultState {
         Window window = controller.getWindow();
         window.setStatusMessage("Génération des tournées en cours...");
         window.setStatusButton("Interrompre");
-        window.setButtonsState(false, false, false, false, false, false);
+        window.setButtonsState(false, false, false, false);
+        window.setUndoEnabled(false);
+        window.setRedoEnabled(false);
     }
     
     @Override

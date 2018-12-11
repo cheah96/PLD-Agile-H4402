@@ -27,7 +27,7 @@ public class CommandList {
     }
     
     public void undo() {
-        if(currentIndex >= 0) {
+        if(canUndo()) {
             Command cmd = commandList.get(currentIndex);
             currentIndex--;
             cmd.undoCmd();
@@ -35,7 +35,7 @@ public class CommandList {
     }
     
     public void redo() {
-        if(currentIndex < commandList.size() -1) {
+        if(canRedo()) {
             currentIndex++;
             Command cmd = commandList.get(currentIndex);
             cmd.doCmd();
@@ -45,5 +45,13 @@ public class CommandList {
     public void reset() {
         currentIndex = -1;
         commandList.clear();
+    }
+    
+    public boolean canUndo() {
+        return currentIndex >= 0;
+    }
+    
+    public boolean canRedo() {
+        return currentIndex < commandList.size() - 1;
     }
 }

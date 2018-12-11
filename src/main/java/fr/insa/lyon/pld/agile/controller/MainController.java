@@ -34,11 +34,12 @@ public class MainController implements PropertyChangeListener{
     
     public Map getMap() { return map; }
     public Window getWindow() { return view; }
-    public CommandList getCmdList() { return cmdList; }
     
     protected final void setCurrentState(State state) {
         currentState = state;
         view.clearStatus();
+        view.setUndoEnabled(cmdList.canUndo());
+        view.setRedoEnabled(cmdList.canRedo());
         state.enterState();
         System.out.println(currentState);
     }
@@ -59,12 +60,30 @@ public class MainController implements PropertyChangeListener{
         currentState.generateDeliveryMen(deliveryMenCount);
     }
     
+    public void doCmd(Command cmd) {
+        cmdList.addCommand(cmd);
+    }
+    
     public void undo() {
         cmdList.undo();
+        
+        updateUndoRedoButtonsState();
     }
     
     public void redo() {
         cmdList.redo();
+        
+        updateUndoRedoButtonsState();
+    }
+    
+    public void resetCmdList() {
+        cmdList.reset();
+        updateUndoRedoButtonsState();
+    }
+    
+    private void updateUndoRedoButtonsState() {
+        view.setUndoEnabled(cmdList.canUndo());
+        view.setRedoEnabled(cmdList.canRedo());
     }
     
     public void btnStatusClick() {

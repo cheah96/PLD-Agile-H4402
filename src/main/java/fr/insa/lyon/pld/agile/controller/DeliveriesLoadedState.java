@@ -17,14 +17,13 @@ public class DeliveriesLoadedState extends MapLoadedState {
     public void enterState() {
         Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
-        window.setButtonsState(true, true, true, false, false, false);
+        window.setButtonsState(true, true, true, false);
     }
     
     @Override
     public void generateDeliveryMen(int deliveryMenCount)
     {
         Map map = controller.getMap();
-        CommandList cmdList = controller.getCmdList();
         
         System.out.println("Génération avec " + deliveryMenCount + " livreurs.");
         map.setDeliveryManCount(deliveryMenCount);
@@ -32,7 +31,7 @@ public class DeliveriesLoadedState extends MapLoadedState {
         map.distributeDeliveries();
         System.out.println("Raccourcissement des livraisons...");
         map.shortenDeliveriesInBackground();
-        cmdList.reset();
+        controller.resetCmdList();
         
         controller.setCurrentState(controller.DELIVERY_MEN_COMPUTING_STATE);
     }

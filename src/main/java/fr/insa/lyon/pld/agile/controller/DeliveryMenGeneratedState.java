@@ -22,7 +22,7 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     public void enterState() {
         Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
-        window.setButtonsState(true, true, true, true, true, true);
+        window.setButtonsState(true, true, true, true);
     }
     
     @Override
@@ -33,13 +33,13 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     
     @Override
     public void deleteDelivery(Delivery delivery) {
-        controller.getCmdList().addCommand(new CmdRemoveDelivery(controller.getMap(), delivery));
+        controller.doCmd(new CmdRemoveDelivery(controller.getMap(), delivery));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     
     @Override
     public void moveDelivery(Delivery delivery, DeliveryMan oldDeliveryMan, DeliveryMan newDeliveryMan, int oldIndex, int newIndex) {
-        controller.getCmdList().addCommand(new CmdMoveDelivery(controller.getMap(), delivery, oldDeliveryMan, newDeliveryMan, oldIndex, newIndex));
+        controller.doCmd(new CmdMoveDelivery(controller.getMap(), delivery, oldDeliveryMan, newDeliveryMan, oldIndex, newIndex));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
     

@@ -19,14 +19,14 @@ public class MapLoadedState extends InitialState {
     public void enterState() {
         Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
-        window.setButtonsState(true, true, false, false, false, false);
+        window.setButtonsState(true, true, false, false);
     }
 
     @Override
     public void loadDeliveriesFile() throws Exception {
         File selectedFile = controller.getWindow().promptFile("Chargement de demandes de livraison");
         if (selectedFile == null) return;
-        controller.getCmdList().reset();
+        controller.resetCmdList();
         
         Map map = controller.getMap();
         map.clearDeliveries();

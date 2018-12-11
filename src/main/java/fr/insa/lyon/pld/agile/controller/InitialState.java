@@ -18,14 +18,14 @@ public class InitialState extends DefaultState {
     public void enterState() {
         Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
-        window.setButtonsState(true, false, false, false, false, false);
+        window.setButtonsState(true, false, false, false);
     }
 
     @Override
     public void loadMap() throws Exception {
         File selectedFile = controller.getWindow().promptFile("Chargement d'un plan");
         if (selectedFile == null) return;
-        controller.getCmdList().reset();
+        controller.resetCmdList();
         controller.getMap().clear();
         XMLParser.loadMap(controller.getMap(), selectedFile.toPath());
         controller.setCurrentState(controller.MAP_LOADED_STATE);

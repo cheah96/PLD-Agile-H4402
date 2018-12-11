@@ -22,7 +22,7 @@ public abstract class DefaultState implements State {
     public void enterState() {
         Window window = controller.getWindow();
         window.clearStatus();
-        window.setButtonsState(true, true, true, true, true, true);
+        window.setButtonsState(true, true, true, true);
     }
 
     @Override

@@ -371,17 +371,13 @@ public class Window
         frame.setVisible(true);
     }
     
-    public final void setButtonsState(
+    public void setButtonsState(
         boolean canOpenMap, boolean canOpenLoc,
         boolean canGenerateDeliveryMen,
-        boolean canEditDeliveries,
-        boolean canUndo, boolean canRedo) {
+        boolean canEditDeliveries) {
         
         btnOpenMap.setEnabled(canOpenMap);
         btnOpenLoc.setEnabled(canOpenLoc);
-        
-        btnUndo.setEnabled(canUndo);
-        btnRedo.setEnabled(canRedo);
         
         numDeliveries.setEnabled(canGenerateDeliveryMen);
         btnGenerate.setEnabled(canGenerateDeliveryMen);
@@ -390,6 +386,14 @@ public class Window
         btnListAdd.setEnabled(canEditDeliveries);
         btnListMove.setEnabled(canEditDeliveries);
         btnListRemove.setEnabled(canEditDeliveries);
+    }
+    
+    public void setUndoEnabled(boolean enabled) {
+        btnUndo.setEnabled(enabled);
+    }
+    
+    public void setRedoEnabled(boolean enabled) {
+        btnRedo.setEnabled(enabled);
     }
     
     public File promptFile(String title){
