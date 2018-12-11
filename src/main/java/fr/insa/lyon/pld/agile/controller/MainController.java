@@ -3,7 +3,7 @@ package fr.insa.lyon.pld.agile.controller;
 import fr.insa.lyon.pld.agile.model.*;
 import fr.insa.lyon.pld.agile.view.Window;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
-import java.awt.geom.Point2D;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -94,11 +94,8 @@ public class MainController implements PropertyChangeListener{
         currentState.btnStatusClick();
     }
     
-    public void mapClickLeft(MapViewGraphical mapview, Point2D coords) {
-        currentState.mapClickLeft(mapview, coords);
-    }
-    public void mapClickRight(MapViewGraphical mapview, Point2D coords) {
-        currentState.mapClickRight(mapview, coords);
+    public void mapClick(MouseEvent event, MapViewGraphical mapview) {
+        currentState.mapClick(event, mapview);
     }
     
     public void loadMap() throws Exception {

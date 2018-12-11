@@ -190,10 +190,10 @@ public class MapViewTextual extends MapView
             }
         }
         
-        selDeliveryMan = -1;
-        selectDeliveryMan(prevDeliveryMan);
         selNode = null;
         selectNode(prevNode);
+        selDeliveryMan = -1;
+        selectDeliveryMan(prevDeliveryMan);
     }
     
     protected void newTab(String tabName, DefaultListModel<ListItem> tabList, String infos) {

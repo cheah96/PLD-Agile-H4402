@@ -108,13 +108,7 @@ public class MapViewGraphical extends MapView
         @Override
         public void mouseClicked(MouseEvent e) {
             if (!hasData) return;
-        
-            Point2D coord = getPixelToPoint(e.getX(), MapViewGraphical.this.getHeight() - e.getY());
-
-            if (e.getButton() == MouseEvent.BUTTON1)
-                controller.mapClickLeft(MapViewGraphical.this, coord);
-            else if (e.getButton() == MouseEvent.BUTTON3)
-                controller.mapClickRight(MapViewGraphical.this, coord);
+            controller.mapClick(e, MapViewGraphical.this);
         }
         
         @Override
@@ -309,19 +303,19 @@ public class MapViewGraphical extends MapView
         return closest;
     }
     
-    public void showPopupNode(Point2D coord) {
+    public void showPopupNode(Point p) {
         updatePopupMenu();
-        rightClickNodeMenu.show(this, (int)coord.getX(), (int)coord.getY());
+        rightClickNodeMenu.show(this, p.x, p.y);
     }
     
-    public void showPopupUnassignedDelivery(Point2D coord) {
+    public void showPopupUnassignedDelivery(Point p) {
         updatePopupMenu();
-        rightClickUnassignedDeliveryMenu.show(this, (int)coord.getX(), (int)coord.getY());
+        rightClickUnassignedDeliveryMenu.show(this, p.x, p.y);
     }
     
-    public void showPopupDelivery(Point2D coord) {
+    public void showPopupDelivery(Point p) {
         updatePopupMenu();
-        rightClickDeliveryMenu.show(this, (int)coord.getX(), (int)coord.getY());
+        rightClickDeliveryMenu.show(this, p.x, p.y);
     }
     
     private void updatePopupMenu() {
@@ -515,7 +509,7 @@ public class MapViewGraphical extends MapView
     public Point2D getPixelToPoint (double x, double y) {
         return new Point2D.Double(
             x / ratio + offsetX,
-            y / ratio + offsetY
+            (getHeight() - y) / ratio + offsetY
         );
     }
     

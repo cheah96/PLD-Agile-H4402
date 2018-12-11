@@ -5,6 +5,7 @@ import fr.insa.lyon.pld.agile.model.DeliveryMan;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import fr.insa.lyon.pld.agile.view.Window;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 /**
@@ -50,15 +51,21 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     }
     
     @Override
-    public void mapClickRight(MapViewGraphical mapView, Point2D p) {
-        Node closest = mapView.findClosestNode(p);
-        mapView.selectNode(closest);
-        if(controller.getMap().getNodeDeliveryManIndex(closest) == -1 && controller.getMap().getDeliveries().get(closest.getId()) == null) {
-            mapView.showPopupNode(p);
-        } else if (controller.getMap().getNodeDeliveryManIndex(closest) == -1){
-            mapView.showPopupUnassignedDelivery(p);
-        }else {
-            mapView.showPopupDelivery(p);
+    public void mapClick(MouseEvent event, MapViewGraphical mapView) {
+        if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON3) {
+            Point2D p = mapView.getPixelToPoint(event.getX(), event.getY());
+            Node closest = mapView.findClosestNode(p);
+            mapView.selectNode(closest);
+
+            if (event.getButton() == MouseEvent.BUTTON3) {//Right click
+                if(controller.getMap().getNodeDeliveryManIndex(closest) == -1 && controller.getMap().getDeliveries().get(closest.getId()) == null) {
+                    mapView.showPopupNode(event.getPoint());
+                } else if (controller.getMap().getNodeDeliveryManIndex(closest) == -1){
+                    mapView.showPopupUnassignedDelivery(event.getPoint());
+                } else {
+                    mapView.showPopupDelivery(event.getPoint());
+                }
+            }
         }
     }
     

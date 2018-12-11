@@ -2,9 +2,8 @@ package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.model.*;
 
-import fr.insa.lyon.pld.agile.view.Window;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
-import java.awt.geom.Point2D;
+import java.awt.event.MouseEvent;
 
 /**
  *
@@ -32,9 +31,7 @@ public interface State {
     
     public void generateDeliveryMen(int deliveryMenCount);
     
-    public void mapClickLeft(MapViewGraphical mapView, Point2D coords);
-    
-    public void mapClickRight(MapViewGraphical mapView, Point2D coords);
+    public void mapClick(MouseEvent event, MapViewGraphical mapView);
     
     public void selectNode(Node node);
     

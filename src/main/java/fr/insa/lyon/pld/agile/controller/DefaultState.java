@@ -5,7 +5,7 @@ import fr.insa.lyon.pld.agile.model.DeliveryMan;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import fr.insa.lyon.pld.agile.view.Window;
-import java.awt.geom.Point2D;
+import java.awt.event.MouseEvent;
 
 /**
  *
@@ -48,12 +48,10 @@ public abstract class DefaultState implements State {
     
     
     @Override
-    public void mapClickLeft(MapViewGraphical mapView, Point2D coords) {
-        mapView.selectNode(mapView.findClosestNode(coords));
+    public void mapClick(MouseEvent event, MapViewGraphical mapView) {
+        if (event.getButton() == MouseEvent.BUTTON1)
+            mapView.selectNode(mapView.findClosestNode(mapView.getPixelToPoint(event.getX(), event.getY())));
     }
-    
-    @Override
-    public void mapClickRight(MapViewGraphical mapView, Point2D coords) { }
 
     @Override
     public void selectNode(Node node) {

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.StringJoiner;
+import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.swing.SwingWorker;
 
@@ -202,6 +203,8 @@ public class Map {
                             if (pce.getNewValue() == SwingWorker.StateValue.DONE) {
                                 try {
                                     updateDeliveries(tspSolver.get());
+                                } catch (CancellationException e) {
+                                    
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
