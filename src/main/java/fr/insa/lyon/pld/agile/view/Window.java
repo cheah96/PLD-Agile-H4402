@@ -46,6 +46,8 @@ public class Window
     
     List<MapView> mapViews = new ArrayList<>();
     
+    private final JPanel panRoadmap;
+    
     private class RoutePart {
         String sectionName;
         Passage firstPassage;
@@ -75,7 +77,7 @@ public class Window
         }
     }
     
-    private List<RoutePart> buildRoadMap(Map map){
+    private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex){
         List<RoutePart> routeParts = new ArrayList<RoutePart>();
         
         String routePartName = null;
@@ -83,7 +85,7 @@ public class Window
         long duration = 0;
         Passage firstPassage = null;
 
-        for (Route route : map.getDeliveryMen().get(0).getRound().getItinerary()){
+        for (Route route : map.getDeliveryMen().get(deliveryManIndex).getRound().getItinerary()){
             for (Passage location : route.getPassages()) {
                 Section currentSection = location.getSection();
                 if(routePartName==null && firstPassage==null ){
@@ -241,11 +243,17 @@ public class Window
         panTools.add(panDeliveries, BorderLayout.NORTH);
         panTools.add(panLists, BorderLayout.CENTER);
         
+        // Roadmap (right panel)
+        panRoadmap = new JPanel();
+        
         // Window
         JPanel panMain = new JPanel (new BorderLayout());
         panMain.add(panStatus, BorderLayout.SOUTH);
         panMain.add(mapViewGraphical,BorderLayout.CENTER);
-        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMain);
+        JSplitPane leftPanSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMain);
+        
+        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanSplit, panRoadmap);
+        
         frame.add(tlbTop, BorderLayout.NORTH);
         frame.add(panSplit, BorderLayout.CENTER);
         
@@ -308,7 +316,7 @@ public class Window
                 DefaultListModel<String> model2 = new DefaultListModel<>(); 
                 JList<String> list2 = new JList<>(model2);
                 
-                List<RoutePart> routeParts = buildRoadMap(map);
+                List<RoutePart> routeParts = buildRoadmap(map, 0);
                 
                 for(RoutePart part : routeParts){
                     ((DefaultListModel<String>)list2.getModel()).addElement(part.toString());
@@ -406,9 +414,36 @@ public class Window
         }
     }
     
+    public void printRoadmap(int deliveryManIndex){
+        try {
+            this.panRoadmap.removeAll();
+            
+            DefaultListModel<String> model = new DefaultListModel<>(); 
+            JList<String> list = new JList<>(model);
+
+            List<RoutePart> routeParts = buildRoadmap(map, deliveryManIndex);
+
+            for(RoutePart part : routeParts){
+                ((DefaultListModel<String>)list.getModel()).addElement(part.toString());
+            }
+
+            this.panRoadmap.add(list);
+            this.panRoadmap.updateUI();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public void selectDeliveryMan(int deliveryManIndex) {
         for (MapView view : mapViews) {
             view.selectDeliveryMan(deliveryManIndex);
+        }
+        
+        if(deliveryManIndex>=0) {
+            printRoadmap(deliveryManIndex);
+        } else{
+            this.panRoadmap.removeAll();
+            this.panRoadmap.repaint();
         }
     }
     
