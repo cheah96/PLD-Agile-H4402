@@ -51,7 +51,11 @@ public class Window
     private final RoadmapPanel panRoadmap;
     
     
-    
+    /**
+     * constructs a new object of the class Window
+     * @param map passes in the selected map 
+     * @param controller the windows controller 
+     */ 
     public Window(Map map, final MainController controller) {
         this.map = map;
         this.controller = controller;
@@ -314,6 +318,13 @@ public class Window
         cmp.getActionMap().put("stroke" + key, action);
     }
     
+    /**
+     * sets the current state of the buttons
+     * @param canOpenMap should the button to open the map be enabled 
+     * @param canOpenLoc can the button to open the location be enabled
+     * @param canGenerateDeliveryMen can the button to generate delivery men be enabled
+     * @param canEditDeliveries false to prevent the user from editing the deliveries
+     */
     public void setButtonsState(
         boolean canOpenMap, boolean canOpenLoc,
         boolean canGenerateDeliveryMen,
@@ -332,14 +343,27 @@ public class Window
         btnListRemove.setEnabled(canEditDeliveries);
     }
     
+    /**
+     * unlocks the undo button
+     * @param enabled if true the undo button will be enabled
+     */
     public void setUndoEnabled(boolean enabled) {
         btnUndo.setEnabled(enabled);
     }
     
+    /**
+     * unlocks the redo button
+     * @param enabled if true the redo button will be enabled
+     */
     public void setRedoEnabled(boolean enabled) {
         btnRedo.setEnabled(enabled);
     }
     
+    /**
+     * prompts the user to load a file into the program
+     * @param title the title of the file
+     * @return the file selected
+     */
     public File promptFile(String title){
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("res/xml"));
@@ -353,32 +377,54 @@ public class Window
         return null;
     }
     
+    /**
+     * displays the pop-up error message
+     * @param message the text to be displayed
+     */
     public void popupError(String message) {
         JOptionPane.showMessageDialog(frame, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
     
+    /**
+     * selects a particular node
+     * @param node
+     */
     public void selectNode(Node node) {
         for (MapView view : mapViews) {
             view.selectNode(node);
         }
     }
     
-   
+    /**
+     * selects a delivery man to assign tasks
+     * @param deliveryManIndex the designated number of the delivery man
+     */
     public void selectDeliveryMan(int deliveryManIndex) {
         for (MapView view : mapViews) {
             view.selectDeliveryMan(deliveryManIndex);
         }
     }
     
+    /**
+     *
+     */
     public void clearStatus() {
         lblStatus.setText("");
         btnStatus.setVisible(false);
     }
     
+    /**
+     * sets the message of the current status
+     * @param message the message to be displayed
+     */
     public void setStatusMessage(String message) {
         lblStatus.setText(message);
     }
     
+    /**
+     * sets the status button 
+     * @param caption the text to be displayed
+     */
     public void setStatusButton(String caption) {
         btnStatus.setText(caption);
         btnStatus.setVisible(true);
