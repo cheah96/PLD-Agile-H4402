@@ -46,6 +46,7 @@ public class Window
     
     List<MapView> mapViews = new ArrayList<>();
     
+    private final JScrollPane scrollPanRoadmap;
     private final JPanel panRoadmap;
     
     private class RoutePart {
@@ -245,6 +246,7 @@ public class Window
         
         // Roadmap (right panel)
         panRoadmap = new JPanel();
+        scrollPanRoadmap = new JScrollPane(panRoadmap);
         
         // Window
         JPanel panMain = new JPanel (new BorderLayout());
@@ -252,7 +254,7 @@ public class Window
         panMain.add(mapViewGraphical,BorderLayout.CENTER);
         JSplitPane leftPanSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, panMain);
         
-        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanSplit, panRoadmap);
+        JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanSplit, scrollPanRoadmap);
         
         frame.add(tlbTop, BorderLayout.NORTH);
         frame.add(panSplit, BorderLayout.CENTER);
