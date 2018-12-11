@@ -44,21 +44,21 @@ public class Drawing {
             }
         }
     }
-    protected static float drawLineArrows(Graphics g, Point p1, Point p2, float position) {
-        float step = 150f;
+    protected static double drawLineArrows(Graphics g, Point p1, Point p2, double position) {
+        double step = 150.;
         
         int vy = p2.y - p1.y;
         int vx = p2.x - p1.x;
         
         if ((vy == 0) && (vx == 0)) return position;
         
-        float vlen = getVectorLength(vx,vy);
-        float uvx = (float) vx/vlen;
-        float uvy = (float) vy/vlen;
+        double vlen = getVectorLength(vx,vy);
+        double uvx = vx/vlen;
+        double uvy = vy/vlen;
         
         int safety = 0;
-        float total;
-        float remaining = getPointsDistance(p1, p2);
+        double total;
+        double remaining = getPointsDistance(p1, p2);
         for (; (total = position+remaining) >= step;) {
             if (safety++ > 1000) return position;
             
@@ -68,12 +68,12 @@ public class Drawing {
             if ((vx*(p2.x-p1.x) + vy*(p2.y-p1.y)) < 0) return position;
             
             drawLineThick(g,
-                new Point(p1.x+(int)((-uvy-uvx)*8), p1.y+(int)((uvx-uvy)*8)),
+                new Point(p1.x+(int)((-vy-vx)*8./vlen), p1.y+(int)((vx-vy)*8./vlen)),
                 new Point(p1.x, p1.y)
             );
             drawLineThick(g,
                 new Point(p1.x, p1.y),
-                new Point(p1.x+(int)((uvy-uvx)*8), p1.y+(int)((-uvx-uvy)*8))
+                new Point(p1.x+(int)((vy-vx)*8./vlen), p1.y+(int)((-vx-vy)*8./vlen))
             );
             
             position = 0;
@@ -82,12 +82,12 @@ public class Drawing {
         return total; 
     }
     
-    protected static float getPointsDistance(Point p1, Point p2) {
+    protected static double getPointsDistance(Point p1, Point p2) {
         int vx = p2.x - p1.x, vy = p2.y - p1.y;
         return getVectorLength(vx, vy);
     }
-    protected static float getVectorLength(int vx, int vy) {
-        return (float) Math.sqrt((double) ((vx*vx)+(vy*vy)));
+    protected static double getVectorLength(int vx, int vy) {
+        return Math.sqrt((double) ((vx*vx)+(vy*vy)));
     }
     
     protected static void drawLine(Graphics g, Point p1, Point p2) {

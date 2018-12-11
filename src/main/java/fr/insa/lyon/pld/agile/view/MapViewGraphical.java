@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -272,7 +273,9 @@ public class MapViewGraphical extends MapView
             
         imageMap = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = imageMap.createGraphics();
-               
+        
+        enableAntialiasing(g);
+    
         g.setBackground(Color.lightGray);
         g.clearRect(0, 0, getWidth(), getHeight());
         
@@ -303,6 +306,8 @@ public class MapViewGraphical extends MapView
         imageDeliveries = Drawing.copyImage(imageMap);
         Graphics2D g = imageDeliveries.createGraphics();
         
+        enableAntialiasing(g);
+        
         List<DeliveryMan> deliveryMen = map.getDeliveryMen();
         if (!deliveryMen.isEmpty()) {
             int indexMan = 0;
@@ -313,7 +318,7 @@ public class MapViewGraphical extends MapView
                 Point coordsn1 = getCoordsToPixel(n1);
                 
                 if (selDeliveryMan < 0 || selDeliveryMan == indexMan) {
-                    float position = 0f;
+                    double position = 0.;
                     for (Route route : deliveryMan.getRound().getItinerary())
                     {
                         for (Passage p : route.getPassages()) {
@@ -346,6 +351,8 @@ public class MapViewGraphical extends MapView
         imageSelection = Drawing.copyImage(imageDeliveries);
         Graphics2D g = imageSelection.createGraphics();
         
+        enableAntialiasing(g);
+        
         Node wh = map.getWarehouse();
         if (wh != null) {
             Drawing.drawWarehouse(g, getCoordsToPixel(wh));
@@ -358,6 +365,11 @@ public class MapViewGraphical extends MapView
         }
         
         g.dispose();
+    }
+    
+    private void enableAntialiasing(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
     
     protected void drawNode(Graphics g, Node n, int diameter) {
