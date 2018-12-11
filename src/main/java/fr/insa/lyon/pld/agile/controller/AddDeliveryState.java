@@ -21,16 +21,20 @@ public class AddDeliveryState extends DefaultState {
     protected void prepareState(Node node) {
         this.node = node;
     }
+    
     @Override
-    public void enterState(Window window) {
+    public void enterState() {
+        Window window = controller.getWindow();
         window.setStatusMessage("Ajout d'un point de livraison");
         window.setStatusButton("Annuler");
         window.setButtonsState(false, false, false, false, false, false);
     }
+    
     @Override
     public void btnStatusClick() {
         cancelAddDelivery();
     }
+    
     @Override
     public void keyEscape() {
         cancelAddDelivery();

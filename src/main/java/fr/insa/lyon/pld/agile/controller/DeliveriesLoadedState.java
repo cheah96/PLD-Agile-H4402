@@ -14,7 +14,8 @@ public class DeliveriesLoadedState extends MapLoadedState {
     }
     
     @Override
-    public void enterState(Window window) {
+    public void enterState() {
+        Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
         window.setButtonsState(true, true, true, false, false, false);
     }

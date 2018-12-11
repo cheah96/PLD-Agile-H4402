@@ -12,8 +12,11 @@ import java.awt.geom.Point2D;
  */
 public interface State {
     
-    public void enterState(Window window);
+    public void enterState();
     
+    public void loadMap() throws Exception;
+    
+    public void loadDeliveriesFile() throws Exception;
     
     public void addDelivery(Node node);
     
@@ -27,15 +30,13 @@ public interface State {
     
     public void generateDeliveryMen(int deliveryMenCount);
     
-    
-    // public void stopGeneration();
-    
-    // public void generationFinished();
-    
-    
     public void mapClickLeft(MapViewGraphical mapView, Point2D coords);
     
     public void mapClickRight(MapViewGraphical mapView, Point2D coords);
+    
+    public void selectNode(Node node);
+    
+    public void selectDeliveryMan(int deliveryManIndex);
     
     public void btnStatusClick();
     

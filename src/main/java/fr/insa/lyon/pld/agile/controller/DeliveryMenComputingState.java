@@ -13,7 +13,8 @@ public class DeliveryMenComputingState extends DefaultState {
     }
     
     @Override
-    public void enterState(Window window) {
+    public void enterState() {
+        Window window = controller.getWindow();
         window.setStatusMessage("Génération des tournées en cours...");
         window.setStatusButton("Interrompre");
         window.setButtonsState(false, false, false, false, false, false);
@@ -47,6 +48,7 @@ public class DeliveryMenComputingState extends DefaultState {
         controller.getMap().stopShorteningDeliveries();
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }
+
     private void generationFinished() {
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }

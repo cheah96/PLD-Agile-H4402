@@ -19,7 +19,8 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     }
     
     @Override
-    public void enterState(Window window) {
+    public void enterState() {
+        Window window = controller.getWindow();
         window.setStatusMessage("Prêt");
         window.setButtonsState(true, true, true, true, true, true);
     }

@@ -3,11 +3,9 @@ package fr.insa.lyon.pld.agile.controller;
 import fr.insa.lyon.pld.agile.model.*;
 import fr.insa.lyon.pld.agile.view.Window;
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
-import fr.insa.lyon.pld.agile.xml.XMLParser;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 
 /**
  *
@@ -41,7 +39,7 @@ public class MainController implements PropertyChangeListener{
     protected final void setCurrentState(State state) {
         currentState = state;
         view.clearStatus();
-        state.enterState(view);
+        state.enterState();
         System.out.println(currentState);
     }
     
@@ -81,36 +79,19 @@ public class MainController implements PropertyChangeListener{
     }
     
     public void loadMap() throws Exception {
-        File selectedFile = view.promptFile("Chargement d'un plan");
-        if (selectedFile == null) return;
-        cmdList.reset();
-        map.clear();
-        XMLParser.loadMap(map, selectedFile.toPath());
-        setCurrentState(MAP_LOADED_STATE);
+        currentState.loadMap();
     }
     
     public void loadDeliveriesFile() throws Exception {
-        File selectedFile = view.promptFile("Chargement de demandes de livraison");
-        if (selectedFile == null) return;
-        cmdList.reset();
-        map.clearDeliveries();
-        map.clearWarehouse();
-        try {
-            XMLParser.loadDeliveries(map, selectedFile.toPath());
-        } catch (Exception e) {
-            map.clearDeliveries();
-            map.clearWarehouse();
-            throw e;
-        }
-        setCurrentState(DELIVERIES_LOADED_STATE);
+        currentState.loadDeliveriesFile();
     }
     
     public void selectedNode(Node node) {
-        view.selectNode(node);
+        currentState.selectNode(node);
     }
     
     public void selectedDeliveryMan(int deliveryManIndex) {
-        view.selectDeliveryMan(deliveryManIndex);
+        currentState.selectDeliveryMan(deliveryManIndex);
     }
 
     public void keyEscape() {

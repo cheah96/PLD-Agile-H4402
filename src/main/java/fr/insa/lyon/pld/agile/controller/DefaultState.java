@@ -19,11 +19,17 @@ public abstract class DefaultState implements State {
     }
     
     @Override
-    public void enterState(Window window) {
+    public void enterState() {
+        Window window = controller.getWindow();
         window.clearStatus();
         window.setButtonsState(true, true, true, true, true, true);
     }
-    
+
+    @Override
+    public void loadMap() throws Exception { }
+
+    @Override
+    public void loadDeliveriesFile() throws Exception { }
     
     @Override
     public void addDelivery(Node node) {}
@@ -45,7 +51,16 @@ public abstract class DefaultState implements State {
     }
     
     @Override
-    public void mapClickRight(MapViewGraphical mapView, Point2D coords) {
+    public void mapClickRight(MapViewGraphical mapView, Point2D coords) { }
+
+    @Override
+    public void selectNode(Node node) {
+        controller.getWindow().selectNode(node);
+    }
+
+    @Override
+    public void selectDeliveryMan(int deliveryManIndex) {
+        controller.getWindow().selectDeliveryMan(deliveryManIndex);
     }
     
     @Override
