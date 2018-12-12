@@ -89,7 +89,9 @@ public class Window
         btnRedo = new JButton(new ImageIcon(getClass().getResource("/icons/redo.png")));
         btnRedo.setToolTipText("Refaire");
         cckLegend = new JCheckBox("Légende");
+        cckLegend.setToolTipText("Afficher la légende sur la carte");
         cckDirection = new JCheckBox("Sens de parcours");
+        cckDirection.setToolTipText("Afficher le sens de parcours");
         
         // Centered map
         MapViewGraphical mapViewGraphical = new MapViewGraphical(map, controller);
@@ -107,6 +109,7 @@ public class Window
         // ((JSpinner.DefaultEditor) numDeliveries.getEditor()).getTextField().setEditable(false);
         JLabel lblDeliveries = new JLabel("livreurs");
         btnGenerate = new JButton("Générer");
+        btnGenerate.setToolTipText("Générer des parcours");
         
         // > Main lists
         JPanel panLists = new JPanel();
