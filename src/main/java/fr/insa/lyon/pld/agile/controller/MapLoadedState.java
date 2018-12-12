@@ -29,6 +29,7 @@ public class MapLoadedState extends InitialState {
         controller.resetCmdList();
         
         Map map = controller.getMap();
+        map.setDeliveryManCount(0);
         map.clearDeliveries();
         map.clearWarehouse();
         try {
