@@ -131,14 +131,14 @@ public class RoadmapPanel extends MapView {
 
             List<RoutePart> routeParts = buildRoadmap(this.map, deliveryManIndex);
             
-            reallist.addElement("*** Feuille de route du livreur "+Integer.toString(deliveryManIndex+1) + " ***");
+            reallist.addElement("*** Feuille de route du livreur " + Integer.toString(deliveryManIndex+1) + " ***");
             
             for(RoutePart part : routeParts){
                 reallist.addElement(part.toString());
                 if (part.delivery != null) reallist.addElement("Livraison (" + part.delivery.getDuration() + " s)");
             }
             
-            reallist.addElement("***");
+            reallist.addElement("*** Fin de la feuille de route du livreur " + Integer.toString(deliveryManIndex+1) + " ***");
             
             this.setLayout(new BorderLayout());
             this.add(this.roadMapParts, BorderLayout.CENTER);
