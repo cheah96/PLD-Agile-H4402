@@ -32,10 +32,18 @@ public class Map {
     
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    /**
+     * Creates an empty map.
+     */
     public Map() {
         this(null, null);
     }
     
+    /**
+     * Creates a map with a warehouse and a starting delivery hour.
+     * @param warehouse
+     * @param startingHour
+     */
     public Map(Node warehouse, LocalTime startingHour) {
         this.nodes = new HashMap<>();
         this.warehouse = warehouse;
@@ -45,38 +53,76 @@ public class Map {
         this.pendingSolvers = Collections.synchronizedList(new ArrayList<>());
     }
     
+    /**
+     * Adds a property change listener.
+     * @param listener the listener object
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(listener);
     }
 
+    /**
+     * Removes a property change listener.
+     * @param listener the listener object
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.removePropertyChangeListener(listener);
     }
     
+    /**
+     * Gets a node from its id.
+     * @param id the node's id
+     * @return the node
+     */
     public Node getNode(long id) {
         return nodes.get(id);
     }
 
+    /**
+     * Gets all the nodes.
+     * @return the nodes
+     */
     public java.util.Map<Long, Node> getNodes() {
         return Collections.unmodifiableMap(nodes);
     }
 
+    /**
+     * Gets the warehouse.
+     * @return the warehouse
+     */
     public Node getWarehouse() {
         return warehouse;
     }
 
+    /**
+     * Gets the starting hour.
+     * @return the starting hour
+     */
     public LocalTime getStartingHour() {
         return startingHour;
     }
 
+    /**
+     * Gets the deliveries.
+     * @return the deliveries
+     */
     public java.util.Map<Long,Delivery> getDeliveries() {
         return Collections.unmodifiableMap(deliveries);
     }
     
+    /**
+     * Gets the delivery men.
+     * @return the delivery men
+     */
     public List<DeliveryMan> getDeliveryMen() {
         return Collections.unmodifiableList(deliveryMen);
     }
     
+    /**
+     * Adds a node to the map.
+     * @param node
+     * @return true if added, false if the node was already in the map
+     */
     public boolean addNode(Node node) {
         // putIfAbsent returns null if the key was absent
         boolean added = nodes.putIfAbsent(node.getId(), node) == null;
@@ -84,6 +130,11 @@ public class Map {
         return added;
     }
     
+    /**
+     * Adds a delivery to the map. Throws if it isn't reachable from the warehouse.
+     * @param delivery the delivery to add
+     * @return true if added, false if already present
+     */
     public boolean addDelivery(Delivery delivery) {
         if (delivery.getNode() == warehouse)
             return false;
@@ -101,12 +152,21 @@ public class Map {
         return true;
     }
     
+    /**
+     * Removes a delivery.
+     * @param delivery the delivery to remove
+     */
     public void removeDelivery(Delivery delivery) {
         unassignDelivery(delivery);
         if (deliveries.remove(delivery.getNode().getId()) != null)
             this.pcs.firePropertyChange("deliveries", null, deliveries);
     }
     
+    /**
+     * Sets the warehouse.
+     * @param id id of the node that specifies the warehouse
+     * @return true if added, false if incorrect node id
+     */
     public boolean setWarehouse(long id) {
         Node oldWarehouse = warehouse;
         Node newWarehouse = this.nodes.get(id);
@@ -119,10 +179,17 @@ public class Map {
         }
     }
     
+    /**
+     * Removes the warehouse.
+     */
     public void clearWarehouse() {
         this.warehouse = null;
     }
     
+    /**
+     * Sets the starting hour of deliveries.
+     * @param startingHour the starting hour
+     */
     public void setStartingHour(LocalTime startingHour) {
         LocalTime oldStartingHour = startingHour;
         this.startingHour = startingHour;
@@ -134,6 +201,10 @@ public class Map {
         }
     }
     
+    /**
+     * Sets the number of delivery men and give them empty roadmaps.
+     * @param number the new number of delivery men
+     */
     public void setDeliveryManCount(int number) {
         deliveryMen.clear();
         for (int i = 0; i < number; i++) {
@@ -143,6 +214,9 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
+    /**
+     * Distributes evenly the deliveries to the delivery men.
+     */
     public void distributeDeliveries() {
         // TODO / WARNING : deliveryNodes is modified by kMeans
         List<Node> deliveryNodes = deliveries.values().stream().map(Delivery::getNode).collect(Collectors.toList());
@@ -158,6 +232,9 @@ public class Map {
             this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
+    /**
+     * Creates background processes to optimize the roadmaps.
+     */
     public void shortenDeliveriesInBackground() {
         for (DeliveryMan deliveryMan : deliveryMen) {
             int nodeCount = deliveryMan.getDeliveries().size()+1;
@@ -244,15 +321,28 @@ public class Map {
         }
     }
     
+    /**
+     * Indicates whether the roadmaps are currently being optimized.
+     * @return
+     */
     public boolean isShorteningDeliveries() {
         return !pendingSolvers.isEmpty();
     }
     
+    /**
+     * Interrupts the roadmaps optimization process.
+     */
     public void stopShorteningDeliveries() {
         for (TSPSolverWorker solver : new ArrayList<>(pendingSolvers))
             solver.cancel(false);
     }
     
+    /**
+     * Assign a delivery to a delivery man.
+     * @param index index of the node to insert it before
+     * @param delivery delivery to assign
+     * @param deliveryMan delivery man to assign the delivery to
+     */
     public void assignDelivery(int index, Delivery delivery, DeliveryMan deliveryMan) {
         deliveryMan.addDelivery(index, delivery, this);
         delivery.setDeliveryMan(deliveryMan);
@@ -260,6 +350,11 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
+    /**
+     * Assign a delivery to a delivery man.
+     * @param delivery delivery to assign
+     * @param deliveryMan delivery man to assign the delivery to
+     */
     public void assignDelivery(Delivery delivery, DeliveryMan deliveryMan) {
         deliveryMan.addDelivery(delivery, this);
         delivery.setDeliveryMan(deliveryMan);
@@ -267,6 +362,11 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
+    /**
+     * Unassigns a delivery of a delivery man.
+     * @param index index of the delivery to unassign
+     * @param deliveryMan the delivery man
+     */
     public void unassignDelivery(int index, DeliveryMan deliveryMan) {
         Delivery delivery = deliveryMan.getDeliveries().get(index);
         deliveryMan.removeDelivery(index, this);
@@ -275,6 +375,10 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
+    /**
+     * Unassigns a delivery.
+     * @param delivery delivery to unassign
+     */
     public void unassignDelivery(Delivery delivery) {
         DeliveryMan deliveryMan = delivery.getDeliveryMan();
         if (deliveryMan == null)
@@ -286,6 +390,9 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
         
+    /**
+     * Resets completely the map.
+     */
     public void clear() {
         nodes.clear();
         Node oldWarehouse = warehouse;
@@ -301,6 +408,9 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMen", null, deliveryMen);
     }
     
+    /**
+     * Removes all the deliveries.
+     */
     public void clearDeliveries() {
         for (DeliveryMan deliveryMan : deliveryMen) {
             deliveryMan.clear();
@@ -340,6 +450,11 @@ public class Map {
         return builder.toString();
     }
     
+    /**
+     * Get the index of the delivery man responsible of a delivery.
+     * @param node the node where the delivery is made
+     * @return the index of the delivery man in charge of this delivery, or -1 if there's none
+     */
     public int getNodeDeliveryManIndex(Node node) {
         if (node != getWarehouse()) {
             Delivery d = deliveries.get(node.getId());

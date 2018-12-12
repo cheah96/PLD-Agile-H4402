@@ -19,7 +19,7 @@ import javax.swing.TransferHandler;
 
 /**
  *
- * @author momoh
+ * @author momoh, paul
  */
 public class RoadmapPanel extends MapView {
     
@@ -30,7 +30,7 @@ public class RoadmapPanel extends MapView {
         double distance; // meters
         Delivery delivery;
         
-        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery){
+        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery) {
             this.sectionName = sectionName;
             if (sectionName == null || sectionName.isEmpty())
                 this.sectionName = "Rue anonyme";
@@ -64,15 +64,19 @@ public class RoadmapPanel extends MapView {
             return new StringSelection(String.join("\n",list.getSelectedValuesList()));
         }
     };
-        
-    public RoadmapPanel(Map map, MainController controller){
+    
+    /**
+     * Creates the roadmap object.
+     * @param map the map to create roadmaps for
+     * @param controller the corresponding controller
+     */
+    public RoadmapPanel(Map map, MainController controller) {
         this.controller = controller;
         this.map = map;
-        
     }
     
-    private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex){
-        List<RoutePart> routeParts = new ArrayList<RoutePart>();
+    private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex) {
+        List<RoutePart> routeParts = new ArrayList<>();
         
         String routePartName = null;
         double distance = 0;
@@ -110,7 +114,11 @@ public class RoadmapPanel extends MapView {
         return routeParts;
     }
     
-    public void displayRoadmap(int deliveryManIndex){
+    /**
+     * Displays a delivery man's roadmap.
+     * @param deliveryManIndex index of delivery man
+     */
+    public void displayRoadmap(int deliveryManIndex) {
         try {
             this.removeAll();
             
@@ -171,13 +179,12 @@ public class RoadmapPanel extends MapView {
 
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
-        if(deliveryManIndex>=0) {
+        if (deliveryManIndex >= 0) {
             displayRoadmap(deliveryManIndex);
-        } else{
+        } else {
             removeAll();
             repaint();
         }
     }
-    
     
 }
