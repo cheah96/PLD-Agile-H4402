@@ -244,6 +244,8 @@ public class MapViewTextual extends MapView
      */
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
+        if (deliveryManIndex >= map.getDeliveryMen().size()) 
+            return;
         if (selDeliveryMan != deliveryManIndex) {
             selDeliveryMan = deliveryManIndex;
         }
@@ -310,7 +312,8 @@ public class MapViewTextual extends MapView
         selNode = null;
         selectNode(prevNode);
         selDeliveryMan = -1;
-        selectDeliveryMan(prevDeliveryMan);
+        if (prevDeliveryMan < map.getDeliveryMen().size())
+            selectDeliveryMan(prevDeliveryMan);
     }
     
     /**
