@@ -16,7 +16,6 @@ public class MainController implements PropertyChangeListener{
     protected final InitialState INITIAL_STATE = new InitialState(this);
     protected final MapLoadedState MAP_LOADED_STATE = new MapLoadedState(this);
     protected final DeliveriesLoadedState DELIVERIES_LOADED_STATE = new DeliveriesLoadedState(this);
-    protected final AddDeliveryState ADD_DELIVERY_STATE = new AddDeliveryState(this);
     protected final DeliveryMenComputingState DELIVERY_MEN_COMPUTING_STATE = new DeliveryMenComputingState(this);
     protected final DeliveryMenGeneratedState DELIVERY_MEN_GENERATED_STATE = new DeliveryMenGeneratedState(this);
     
