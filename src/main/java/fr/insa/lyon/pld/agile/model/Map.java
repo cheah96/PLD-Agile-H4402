@@ -85,6 +85,9 @@ public class Map {
     }
     
     public boolean addDelivery(Delivery delivery) {
+        if (delivery.getNode() == warehouse)
+            return false;
+        
         System.err.println(delivery);
         if (deliveries.containsKey(delivery.getNode().getId()))
             return false;
