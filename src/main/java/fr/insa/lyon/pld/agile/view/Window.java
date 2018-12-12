@@ -264,9 +264,10 @@ public class Window
         
         btnListRemove.addActionListener(e -> {
             Node selected = mapViewTextual.getSelectedNode();
-            if (selected!= null && map.getNodeDeliveryManIndex(selected) != -1) {
+            if (selected!= null) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());  
-                controller.deleteDelivery(delivery);
+                if (delivery != null)
+                    controller.deleteDelivery(delivery);
             }
         });
         
