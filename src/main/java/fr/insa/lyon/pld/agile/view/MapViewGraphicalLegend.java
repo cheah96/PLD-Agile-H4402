@@ -104,7 +104,7 @@ public class MapViewGraphicalLegend extends JPanel
             this.setPreferredSize(new Dimension(28,28));
             coords = new Point(14,14);
         }
-        
+
         @Override
         public void paintComponent(Graphics g) {
             if (g instanceof Graphics2D)

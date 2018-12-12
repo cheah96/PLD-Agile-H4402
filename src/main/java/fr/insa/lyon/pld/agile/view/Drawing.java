@@ -15,9 +15,9 @@ public class Drawing {
     
 
     /**
-     * Creates a copy of the image. //la description de function
-     * @param image the image to copy  //la description de parametre
-     * @return a copy of the original image //la description de retour
+     * Creates a copy of the image. 
+     * @param image the image to copy  
+     * @return a copy of the original image 
      */
     public static BufferedImage copyImage(BufferedImage image) {
         // https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage
