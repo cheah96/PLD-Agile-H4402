@@ -29,7 +29,7 @@ public class KMeans {
     
     
     //! init the kmeans algorithm to choose the best clusters centers among the points before executing the algorithms (refer to kmeans++)
-    private static void initKMeans(List<Node> nodes, int clustersNb, Point2D[] clustersCenters){
+    private static void initKMeans(List<Node> nodes, int clustersNb, Point2D[] clustersCenters){           
         //! Choose one center uniformly at random among the data points.
         int randomIndex = (int)(Math.random() * nodes.size());
         double lon = nodes.get(randomIndex).getLongitude(); // coord x
@@ -97,6 +97,9 @@ public class KMeans {
     
     //! implementation of the Same Size KMeans++ algorithm
     public static int[] kMeans(List<Node> nodes, int clustersNb, Node warehouse) {
+        if (nodes.isEmpty())
+            return new int[0];
+        
         Point2D[] clustersCenters = new Point2D[clustersNb];    // the centers of the clusters
         int[] clusters = new int[nodes.size()];   // the clusters to which the points belong
         int[] clustersNodesNumber = new int[clustersNb];    // the number of points in the clusters
