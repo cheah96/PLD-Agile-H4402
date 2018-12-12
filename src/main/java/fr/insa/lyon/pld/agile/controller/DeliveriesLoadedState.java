@@ -9,6 +9,10 @@ import fr.insa.lyon.pld.agile.view.Window;
  */
 public class DeliveriesLoadedState extends MapLoadedState { 
     
+	/**
+     * constructs the state of deliveries loaded 
+     *@param controller the main controller
+     */
     public DeliveriesLoadedState(MainController controller) {
         super(controller);
     }

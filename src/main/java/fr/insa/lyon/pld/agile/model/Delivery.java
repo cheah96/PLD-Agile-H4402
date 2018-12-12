@@ -55,7 +55,7 @@ public class Delivery {
     
     /**
      * assigns a delivery man for the delivery
-     * @param the delivery man
+     * @param deliveryMan the delivery man
      */
 
     void setDeliveryMan(DeliveryMan deliveryMan) {

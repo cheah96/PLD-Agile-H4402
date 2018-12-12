@@ -16,7 +16,11 @@ import java.io.File;
  * @author scheah
  */
 public class MapLoadedState extends InitialState {
-
+	
+	/**
+     * constructs the state for a loaded map 
+     *@param controller the main controller
+     */
     public MapLoadedState(MainController controller) {
         super(controller);
     }

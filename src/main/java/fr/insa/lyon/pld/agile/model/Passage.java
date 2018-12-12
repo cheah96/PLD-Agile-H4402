@@ -9,6 +9,7 @@ import java.time.LocalTime;
 public class Passage {
     private final Section section;
     private LocalTime arrivalTime;
+    
 
     /**
      * Constructs a passage
@@ -28,10 +29,12 @@ public class Passage {
         return section;
     }
 
+    
     /**
-     * Gets the passage's arrival time.
-     * @return the passage's arrival time
+     * gets the arrival time of a section
+     * @return the local time
      */
+    
     public LocalTime getArrivalTime() {
         return arrivalTime;
     }
@@ -40,6 +43,7 @@ public class Passage {
      * Sets the passage's arrival time.
      * @param arrivalTime the passage's arrival time
      */
+
     void setArrivalTime(LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
