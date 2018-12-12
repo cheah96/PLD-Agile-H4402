@@ -8,10 +8,14 @@ import fr.insa.lyon.pld.agile.model.Passage;
 import fr.insa.lyon.pld.agile.model.Route;
 import fr.insa.lyon.pld.agile.model.Section;
 import java.awt.BorderLayout;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.TransferHandler;
 
 /**
  *
@@ -56,6 +60,19 @@ public class RoadmapPanel extends MapView {
     private final Map map;
     JList<String> roadMapParts;
     
+    TransferHandler transferHandler = new TransferHandler() {
+        @Override
+        public int getSourceActions(JComponent c) {
+            return TransferHandler.COPY_OR_MOVE;
+        }
+
+        @Override
+        protected Transferable createTransferable(JComponent c) {
+            JList<String> list = (JList<String>) c;
+            return new StringSelection(String.join("\n",list.getSelectedValuesList()));
+        }
+    };
+        
     public RoadmapPanel(Map map, MainController controller){
         this.controller = controller;
         this.map = map;
@@ -107,6 +124,9 @@ public class RoadmapPanel extends MapView {
             
             DefaultListModel<String> model = new DefaultListModel<>(); 
             this.roadMapParts = new JList<>(model);
+            this.roadMapParts.setDragEnabled(true);
+            this.roadMapParts.setTransferHandler(transferHandler);
+
             DefaultListModel<String> reallist = (DefaultListModel<String>)this.roadMapParts.getModel();
 
             List<RoutePart> routeParts = buildRoadmap(this.map, deliveryManIndex);

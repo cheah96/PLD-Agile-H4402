@@ -52,8 +52,8 @@ public class MapViewTextual extends MapView
 
         @Override
         protected Transferable createTransferable(JComponent c) {
-            JList list = (JList) c;
-            return new StringSelection(Integer.toString(list.getSelectedIndex()));
+            JList<ListItem> list = (JList<ListItem>) c;
+            return new StringSelection(list.getSelectedValue().repr);
         }
 
         @Override
