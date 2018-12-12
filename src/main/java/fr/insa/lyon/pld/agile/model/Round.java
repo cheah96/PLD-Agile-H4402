@@ -60,7 +60,7 @@ public class Round {
         route.addPassages(Dijkstra.getPath(map.getNodes(), startingNode, node));
         itinerary.add(index, route);
         
-        route = new Route(route.getArrivalTime(), afterDelivering);
+        route = new Route(getNextDepartureTime(route, map), afterDelivering);
         route.addPassages(Dijkstra.getPath(map.getNodes(), node, destinationNode));
         itinerary.set(index+1, route); //The old route index became index+1 due to the add
         
