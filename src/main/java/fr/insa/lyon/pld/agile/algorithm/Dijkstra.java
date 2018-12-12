@@ -1,4 +1,4 @@
-package fr.insa.lyon.pld.agile.tsp;
+package fr.insa.lyon.pld.agile.algorithm;
 
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.Section;
@@ -15,11 +15,27 @@ import java.util.PriorityQueue;
  * @author challal
  */
 public class Dijkstra {
+    
     private static class NodeInfo {
+        /**
+         * the node
+         */
         public Node node;
+        /**
+         * the state of the node (UNVISITED=WHITE, IS_BEING_VISITEd=GRAY, VISITED=BLACK)
+         */
         public int state;
+        /**
+         * the distance from the origin to the node
+         */
         public double dist;
+        /**
+         * the id of the parent of the node
+         */
         public long parent;
+        /**
+         * the ID of the section to take to go from the parent to the actual node
+         */
         public int parentSection;
 
         public NodeInfo(Node node, int state, double dist, long parent, int parentSection) {
@@ -36,7 +52,12 @@ public class Dijkstra {
         
     }
     
-    //! the core of the algorithm
+    /**
+     * computes the distances to go from origin to all the other nodes
+     * 
+     * @param nodes a map which has the ID of the nodes as keys and the nodes as values
+     * @param origin the origin of the paths 
+     */
     private static Map<Long, NodeInfo> dijkstra(Map<Long, Node> nodes, Node origin){
         int WHITE = 0;
         int GRAY = 1;
@@ -80,7 +101,15 @@ public class Dijkstra {
         return nodeInfos;
     }
     
-    
+    /**
+     * build the list of sections to pass throw to go from origin to destination
+     * 
+     * @param nodes the list of nodes
+     * @param origin the origin
+     * @param destination the destination
+     * 
+     * @return the list of sections to pass throw
+     */
     public static List<Section> getPath(Map<Long, Node> nodes, Node origin, Node destination){
         Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
         
@@ -99,7 +128,9 @@ public class Dijkstra {
         return path;
     }
     
-    
+    /***
+     * compute the distances from origin to the other nodes
+     */
     public static Map<Long, Double> getDistances(Map<Long, Node> nodes, Node origin){
         Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);
         Map<Long, Double> distances = new HashMap<>();
@@ -111,7 +142,10 @@ public class Dijkstra {
         return distances;
     }
     
-    public static void test(){
+    /**
+     * a small function to test the Dijkstra
+     */
+    private static void test(){
         Map<Long, Node> nodes = new HashMap<>();
         Node n0 = new Node(0,1,1);
         Node n1 = new Node(1,1,1);

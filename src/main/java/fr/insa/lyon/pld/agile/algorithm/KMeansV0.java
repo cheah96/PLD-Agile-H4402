@@ -1,4 +1,4 @@
-package fr.insa.lyon.pld.agile.tsp;
+package fr.insa.lyon.pld.agile.algorithm;
 
 
 import fr.insa.lyon.pld.agile.model.*;
@@ -7,17 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// ideas : begin assigning randomly
-//          compute all the distances, and begin by the closest points
-// https://elki-project.github.io/tutorial/same-size_k_means
 
 
 /**
- *
+ * This is the first version of the KMeans, there's no kmeans++ initialization,
+ * and no sorting when assigning the nodes.
+ * This version is not used in the actual application.
+ * 
  * @author challal
  */
-// todo: solve the problem of 4,4,2
-public class KMeansV1 {
+public class KMeansV0 {
     
     public static List<Node> generateNodes(int nodesNb, int spaceHeight, int spaceWidth) {
         List<Node> nodes = new ArrayList<>();
@@ -30,8 +29,6 @@ public class KMeansV1 {
         return nodes;
     }
         
-    // todo : corriger le problème 10pts, 3clusters
-    // todo : initialiser correctement la 1ère assignation de cluster
     public static int[] kMeans(List<Node> nodes, int clustersNb) {
         Point2D[] clustersCenters = new Point2D[clustersNb];    // the centers of the clusters
         int[] clusters = new int[nodes.size()];   // the clusters to which the points belong
@@ -44,9 +41,7 @@ public class KMeansV1 {
             clustersCenters[i] = new Point2D.Double(lon, lat);
         }
         
-        // todo: replace the for by a while loop
-        for(int t=0; t<5000; ++t) {
-            
+        for(int t=0; t<5000; ++t) {    
             //! init the number of deliveries in each cluster
             for(int k=0; k<clustersNb; ++k) {
                 clustersNodesNumber[k] = 0;
@@ -97,7 +92,7 @@ public class KMeansV1 {
         return clusters;
     }
     
-    public static void test() {
+    private static void test() {
         List<Node> nodes = generateNodes(12, 40, 40);
         int[] clusters = kMeans(nodes, 5);
         for(int i=0; i<clusters.length; ++i) {

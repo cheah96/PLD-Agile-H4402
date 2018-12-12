@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import fr.insa.lyon.pld.agile.model.Node;
-import fr.insa.lyon.pld.agile.tsp.KMeans;
+import fr.insa.lyon.pld.agile.algorithm.KMeans;
 
 public class KmeansTest {
 

@@ -1,4 +1,4 @@
-package fr.insa.lyon.pld.agile.tsp;
+package fr.insa.lyon.pld.agile.algorithm;
 
 import java.util.Collection;
 import java.util.Iterator;

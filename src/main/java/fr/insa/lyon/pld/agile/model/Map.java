@@ -1,9 +1,9 @@
 package fr.insa.lyon.pld.agile.model;
 
-import fr.insa.lyon.pld.agile.tsp.Dijkstra;
-import fr.insa.lyon.pld.agile.tsp.KMeans;
-import fr.insa.lyon.pld.agile.tsp.TSPSolverFactory;
-import fr.insa.lyon.pld.agile.tsp.TSPSolverWorker;
+import fr.insa.lyon.pld.agile.algorithm.Dijkstra;
+import fr.insa.lyon.pld.agile.algorithm.KMeans;
+import fr.insa.lyon.pld.agile.algorithm.TSPSolverFactory;
+import fr.insa.lyon.pld.agile.algorithm.TSPSolverWorker;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

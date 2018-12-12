@@ -1,4 +1,4 @@
-package fr.insa.lyon.pld.agile.tsp;
+package fr.insa.lyon.pld.agile.algorithm;
 
 import fr.insa.lyon.pld.agile.model.*;
 import java.awt.geom.Point2D;
@@ -10,13 +10,23 @@ import java.util.List;
 
 
 /**
+ * An implementation of a same size kmeans++
+ * The clustering algorithm used in the app
  *
  * @author Mohamed CHALLAL
  */
 public class KMeans {
     
-    //! Node generator used mainely for testing the algorithm
-    //! choose <nodesNb> points in a rectangle with dimensions (<spaceHeight>, <spaceWidth) centered in (0,0)
+    /** 
+     * Node generator used mainely for testing the algorithm
+     * choose <nodesNb> points in a rectangle with dimensions (<spaceHeight>, <spaceWidth) centered in (0,0)
+     * 
+     * @param nodesNb the number of nodes to generate
+     * @param spaceHeight the height of the space where the nodes are generated
+     * @param spaceWidth the width of the space where the nodes are generated
+     * 
+     * @return the nodes
+     */
     private static List<Node> generateNodes(int nodesNb, int spaceHeight, int spaceWidth) {
         List<Node> nodes = new ArrayList<>();
         for(int i=0; i<nodesNb; ++i) {
@@ -27,9 +37,15 @@ public class KMeans {
         return nodes;
     }
     
-    
-    //! init the kmeans algorithm to choose the best clusters centers among the points before executing the algorithms (refer to kmeans++)
-    private static void initKMeans(List<Node> nodes, int clustersNb, Point2D[] clustersCenters){           
+    /**
+     * init the kmeans algorithm to choose the best clusters centers 
+     * among the points before executing the algorithms (refer to kmeans++)
+     * 
+     * @param nodes the nodes of the deliveries
+     * @param clustersNb the number of clusters
+     * @param clustersCenters the centers of the clusters
+     */
+    private static void initKMeans(List<Node> nodes, int clustersNb, Point2D[] clustersCenters){
         //! Choose one center uniformly at random among the data points.
         int randomIndex = (int)(Math.random() * nodes.size());
         double lon = nodes.get(randomIndex).getLongitude(); // coord x
@@ -68,8 +84,14 @@ public class KMeans {
     }
     
     
-    //! sort the nodes beginning by the farthest from the warehouse
-    //!   if no warehouse is provided, we take the centroid of all nodes
+    //! 
+    /**
+     * sort the nodes beginning by the farthest from the warehouse
+     * if no warehouse is provided, we take the centroid of all nodes
+     * 
+     * @param nodes the nodes of the deliveries
+     * @param warehouse 
+     */
     private static void sortNodes(List<Node> nodes, Node warehouse){
         Point2D centroid = new Point2D.Double();
         if(warehouse!=null){
@@ -95,7 +117,15 @@ public class KMeans {
     }
     
     
-    //! implementation of the Same Size KMeans++ algorithm
+    /**
+     * Implementation of the Same Size KMeans++ algorithm
+     * 
+     * @param nodes the nodes of the deliveries. They are sorted after the call to the function
+     * @param clustersNb the number of clusters
+     * @param warehouse
+     * 
+     * @return an array with a length equal to the number of nodes. the value of each case is the index of its cluster [0; clustersNb[
+     */
     public static int[] kMeans(List<Node> nodes, int clustersNb, Node warehouse) {
         if (nodes.isEmpty())
             return new int[0];
@@ -188,7 +218,10 @@ public class KMeans {
         return clusters;
     }
     
-    public static void test() {
+    /**
+     * A small function to test the algorithm. The result is used to display the points in a colored graph.
+     */
+    private static void test() {
         List<Node> nodes = generateNodes(1000, 100, 100);
         int[] clusters = kMeans(nodes, 13, null);
         for(int i=0; i<clusters.length; ++i) {

@@ -7,9 +7,9 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import fr.insa.lyon.pld.agile.tsp.TSPSolver;
-import fr.insa.lyon.pld.agile.tsp.TSPSolverImplementation1;
-import fr.insa.lyon.pld.agile.tsp.TSPSolverImplementation2;
+import fr.insa.lyon.pld.agile.algorithm.TSPSolver;
+import fr.insa.lyon.pld.agile.algorithm.TSPSolverImplementation1;
+import fr.insa.lyon.pld.agile.algorithm.TSPSolverImplementation2;
 
 public class TSPTest {
     private static TSPSolver tsp;

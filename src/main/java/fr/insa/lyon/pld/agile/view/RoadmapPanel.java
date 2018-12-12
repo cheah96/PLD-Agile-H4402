@@ -18,19 +18,35 @@ import javax.swing.JList;
 import javax.swing.TransferHandler;
 
 /**
+ * The part of the main window which displays the roadmap
  *
- * @author momoh, paul
+ * @author challal
  */
 public class RoadmapPanel extends MapView {
     
+    /**
+     * A routePart is a part of the roadmap
+     */
     private class RoutePart {
+        /**
+         * the name of the section (street)
+         */
         String sectionName;
+        /**
+         * the first passage of the street
+         */
         Passage firstPassage;
-        long duration; // seconds
-        double distance; // meters
+        /**
+         * the time in seconds needed to run through the street
+         */
+        long duration;
+        /**
+         * the length of the street
+         */
+        double distance;
         Delivery delivery;
         
-        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery) {
+        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery){
             this.sectionName = sectionName;
             if (sectionName == null || sectionName.isEmpty())
                 this.sectionName = "Rue anonyme";
@@ -48,8 +64,17 @@ public class RoadmapPanel extends MapView {
     }
     
     
+    /**
+     * the main controller of the app
+     */
     private final MainController controller;
+    /**
+     * the map
+     */
     private final Map map;
+    /**
+     * the component where the roadMapParts are displayed
+     */
     JList<String> roadMapParts;
     
     TransferHandler transferHandler = new TransferHandler() {
@@ -57,25 +82,34 @@ public class RoadmapPanel extends MapView {
         public int getSourceActions(JComponent c) {
             return TransferHandler.COPY_OR_MOVE;
         }
-        
+
         @Override
         protected Transferable createTransferable(JComponent c) {
             JList<String> list = (JList<String>) c;
             return new StringSelection(String.join("\n",list.getSelectedValuesList()));
         }
     };
-    
+        
     /**
      * Creates the roadmap object.
      * @param map the map to create roadmaps for
      * @param controller the corresponding controller
      */
-    public RoadmapPanel(Map map, MainController controller) {
+    public RoadmapPanel(Map map, MainController controller){
         this.controller = controller;
         this.map = map;
+        
     }
     
-    private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex) {
+    /**
+     * build the roadmap of a deliveryman 
+     * 
+     * @param map the map
+     * @param deliveryManIndex the index of the deliveryman
+     * 
+     * @return the parts of the roadmap
+     */
+    private List<RoutePart> buildRoadmap(Map map, int deliveryManIndex){
         List<RoutePart> routeParts = new ArrayList<>();
         
         String routePartName = null;
@@ -90,8 +124,8 @@ public class RoadmapPanel extends MapView {
                     routePartName = currentSection.getName();
                     firstPassage = location;
                 }
-                
-                if(currentSection.getName().equals(routePartName)) {
+
+                if(currentSection.getName().equals(routePartName)){
                     distance += currentSection.getLength();
                     duration += currentSection.getDuration();
                 } else {
@@ -106,9 +140,8 @@ public class RoadmapPanel extends MapView {
             if (route.isDelivering()) {
                 Delivery delivery = map.getDeliveries().get(route.getDestination().getId());
                 routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, delivery));
-            } else {
+            } else
                 routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, null));
-            }
         }
         
         return routeParts;
@@ -116,9 +149,9 @@ public class RoadmapPanel extends MapView {
     
     /**
      * Displays a delivery man's roadmap.
-     * @param deliveryManIndex index of delivery man
+     * @param deliveryManIndex index of the delivery man
      */
-    public void displayRoadmap(int deliveryManIndex) {
+    public void displayRoadmap(int deliveryManIndex){
         try {
             this.removeAll();
             
@@ -148,43 +181,44 @@ public class RoadmapPanel extends MapView {
             ex.printStackTrace();
         }
     }
-    
+
     @Override
     public void updateNodes() {
     }
-    
+
     @Override
     public void updateDeliveries() {
     }
-    
+
     @Override
     public void updateDeliveryMen() {
     }
-    
+
     @Override
     public void updateDeliveryMan() {
     }
-    
+
     @Override
     public void updateStartingHour() {
     }
-    
+
     @Override
     public void updateWarehouse() {
     }
-    
+
     @Override
     public void selectNode(Node node) {
     }
-    
+
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
-        if (deliveryManIndex >= 0) {
+        if(deliveryManIndex>=0) {
             displayRoadmap(deliveryManIndex);
-        } else {
+        } else{
             removeAll();
             repaint();
         }
     }
+    
     
 }

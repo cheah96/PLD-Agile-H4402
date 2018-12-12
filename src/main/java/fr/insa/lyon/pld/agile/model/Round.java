@@ -1,6 +1,6 @@
 package fr.insa.lyon.pld.agile.model;
 
-import fr.insa.lyon.pld.agile.tsp.Dijkstra;
+import fr.insa.lyon.pld.agile.algorithm.Dijkstra;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
