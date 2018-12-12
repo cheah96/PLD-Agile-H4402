@@ -98,11 +98,11 @@ public class MainController implements PropertyChangeListener{
         currentState.mapClick(event, mapview);
     }
     
-    public void loadMap() throws Exception {
+    public void loadMap() {
         currentState.loadMap();
     }
     
-    public void loadDeliveriesFile() throws Exception {
+    public void loadDeliveriesFile() {
         currentState.loadDeliveriesFile();
     }
     

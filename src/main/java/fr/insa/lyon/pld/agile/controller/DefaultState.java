@@ -27,10 +27,10 @@ public abstract class DefaultState implements State {
     }
 
     @Override
-    public void loadMap() throws Exception { }
+    public void loadMap() { }
 
     @Override
-    public void loadDeliveriesFile() throws Exception { }
+    public void loadDeliveriesFile() { }
     
     @Override
     public void addDelivery(Node node, DeliveryMan deliveryMan, int index) {}

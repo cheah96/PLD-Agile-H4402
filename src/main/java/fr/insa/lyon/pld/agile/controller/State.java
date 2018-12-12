@@ -13,9 +13,9 @@ public interface State {
     
     public void enterState();
     
-    public void loadMap() throws Exception;
+    public void loadMap();
     
-    public void loadDeliveriesFile() throws Exception;
+    public void loadDeliveriesFile();
     
     public void addDelivery(Node node, DeliveryMan deliveryMan, int index);
     

@@ -223,41 +223,12 @@ public class Window
         });
         
         btnOpenMap.addActionListener(e -> {
-            try {
-                controller.loadMap();
-            } catch (XMLAttributeFormatException ex) {
-                popupError("Attribut " + ex.getAttributeName() + " de valeur non conforme (" + ex.getAttributeValue() + ")");
-            } catch (XMLMissingAttributeException ex) {
-                popupError("Attribut manquant : " + ex.getMissingAttributeName());
-            } catch (XMLDuplicateNodeException ex) {
-                popupError("Définitions multiples d'un même élément : " + ex.getNodeId());
-            } catch (XMLUndefinedNodeReferenceException ex) {
-                popupError("Référence à un élément non défini : " + ex.getNodeId());
-            } catch (XMLUnexpectedElementException ex) {
-                popupError("Elément inattendu trouvé : " + ex.getElementName());
-            } catch (Exception ex) {
-                popupError("Fichier non conforme.");
-            }
+            controller.loadMap();
         });
         
         btnOpenLoc.addActionListener(e -> {
-            try {
-                controller.loadDeliveriesFile();
-            } catch (XMLAttributeFormatException ex) {
-                popupError("Attribut " + ex.getAttributeName() + " de valeur non conforme (" + ex.getAttributeValue() + ")");
-            } catch (XMLMissingAttributeException ex) {
-                popupError("Attribut manquant : " + ex.getMissingAttributeName());
-            } catch (XMLMultipleDefinitionOfWarehouseException ex) {
-                popupError("Définitions multiples de l'entrepôt");
-            } catch (XMLUndefinedNodeReferenceException ex) {
-                popupError("Référence à un élément non défini : " + ex.getNodeId());
-            } catch (XMLUnexpectedElementException ex) {
-                popupError("Élément inattendu trouvé : " + ex.getElementName());
-            } catch (UnreachableDeliveryException ex) {
-                popupError("Point de livraison " + ex.getDelivery().getNode().getId() + " inaccessible en aller-retour depuis l'entrepôt");
-            } catch (Exception ex) {
-                popupError("Fichier non conforme.");
-            }
+            controller.loadDeliveriesFile();
+
         });
         
         btnGenerate.addActionListener(e -> {
