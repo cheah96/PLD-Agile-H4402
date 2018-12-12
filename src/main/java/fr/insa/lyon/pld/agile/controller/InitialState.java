@@ -28,7 +28,7 @@ public class InitialState extends DefaultState {
 
     @Override
     public void loadMap() {
-        File selectedFile = controller.getWindow().promptFile("Chargement d'un plan");
+        File selectedFile = controller.getWindow().promptFile("Chargement d'un plan", "plans");
         if (selectedFile == null) return;
         controller.resetCmdList();
         controller.getMap().clear();

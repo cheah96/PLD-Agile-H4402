@@ -369,11 +369,12 @@ public class Window
     /**
      * prompts the user to load a file into the program
      * @param title the title of the file
+     * @param type the type of the file (plans or livraisons)
      * @return the file selected
      */
-    public File promptFile(String title){
+    public File promptFile(String title, String type){
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File("res/xml"));
+        fileChooser.setCurrentDirectory(new File("res/xml/"+type));
         fileChooser.setDialogTitle(title);
         int result = fileChooser.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {

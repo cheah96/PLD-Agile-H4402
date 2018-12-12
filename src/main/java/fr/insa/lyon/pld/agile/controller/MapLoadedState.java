@@ -30,7 +30,7 @@ public class MapLoadedState extends InitialState {
 
     @Override
     public void loadDeliveriesFile() {
-        File selectedFile = controller.getWindow().promptFile("Chargement de demandes de livraison");
+        File selectedFile = controller.getWindow().promptFile("Chargement de demandes de livraison", "livraisons");
         if (selectedFile == null) return;
         controller.resetCmdList();
         
