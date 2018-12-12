@@ -37,7 +37,7 @@ public class MapViewGraphical extends MapView
     private double longitudeMax;
     
     private Dimension preferred = null;
-
+    
     private Point2D lastMousePosition = new Point2D.Double();
     
     private boolean hasData = false;
@@ -114,12 +114,12 @@ public class MapViewGraphical extends MapView
         public void mousePressed(MouseEvent event) {
             lastMousePosition.setLocation(event.getX(), event.getY());
         }
-    
+        
         @Override
         public void mouseDragged(MouseEvent event) {
             if ((event.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) //Return if not left button
                 return;
-
+            
             Point2D actualMousePosition = new Point2D.Double(event.getX(), event.getY());
             offsetX -= (actualMousePosition.getX()-lastMousePosition.getX())/ratio;
             offsetY += (actualMousePosition.getY()-lastMousePosition.getY())/ratio;
@@ -129,13 +129,13 @@ public class MapViewGraphical extends MapView
             imageMap = null;
             MapViewGraphical.this.repaint();
         }
-    
+        
         @Override
         public void mouseReleased(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1) //Left button
                 setCursor(Cursor.getDefaultCursor());
         }
-
+        
         @Override
         public void mouseWheelMoved(MouseWheelEvent event) {
             lastMousePosition.setLocation(event.getX(), event.getY());
@@ -188,7 +188,7 @@ public class MapViewGraphical extends MapView
         rightClickUnassignedDeliveryMenu = new JPopupMenu();
         rightClickUnassignedDeliveryMenu.add(assignDeliveryJMenu2);
         rightClickUnassignedDeliveryMenu.add(deleteDeliveryMenuItem2);
-
+        
         rightClickNodeMenu = new JPopupMenu();
         addDeliveryJMenu = new JMenu("Ajouter une livraison à ...");
         rightClickNodeMenu.add(addDeliveryJMenu);
@@ -214,7 +214,7 @@ public class MapViewGraphical extends MapView
             latitudeMin = Collections.min(latitudes);
             latitudeMax = Collections.max(latitudes);
             longitudeMax = Collections.max(longitudes);
-        
+            
             updateRatioMinMax();
             ratio = ratioMin;
             
@@ -319,7 +319,7 @@ public class MapViewGraphical extends MapView
             this.repaint();
         }
     }
-
+    
     /**
      * finds the closest node to the selected coordinates
      * @param coord the coordinates chosen
@@ -344,7 +344,7 @@ public class MapViewGraphical extends MapView
         return closest;
     }
     
-
+    
     /**
      * displays the pop up node
      * @param p given point p
@@ -371,7 +371,7 @@ public class MapViewGraphical extends MapView
         updatePopupMenu();
         rightClickDeliveryMenu.show(this, p.x, p.y);
     }
-
+    
     /**
      *updates the pop up menu
      */
@@ -380,13 +380,14 @@ public class MapViewGraphical extends MapView
         assignDeliveryJMenu.removeAll();
         assignDeliveryJMenu2.removeAll();
         int indexMan = 0;
-        for( DeliveryMan d : map.getDeliveryMen()) {
+        for (DeliveryMan d : map.getDeliveryMen()) {
             indexMan++;
             if(selNode != null && indexMan == map.getNodeDeliveryManIndex(selNode)+1) {
                 System.err.println(selNode);
                 System.err.println(indexMan);
                 continue;
             }
+            
             JMenuItem itemAdd = new JMenuItem("Livreur " + indexMan);
             itemAdd.putClientProperty("deliveryManIndex", indexMan);
             itemAdd.addActionListener(addDeliveryListener);
@@ -439,7 +440,7 @@ public class MapViewGraphical extends MapView
         } else {
             offsetY = latitudeMin - (getHeight()/ratio-(latitudeMax - latitudeMin))/2.;
         }
-            
+        
         imageMap = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = imageMap.createGraphics();
         Drawing.enableAntialiasing(g);
@@ -482,20 +483,19 @@ public class MapViewGraphical extends MapView
                 int indexMan = 0;
                 for (DeliveryMan deliveryMan : deliveryMen) {
                     g.setColor(Drawing.getColor(indexMan, deliveryMen.size()));
-
+                    
                     Point coordsn1 = getCoordsToPixel(n1);
-
+                    
                     if (selDeliveryMan < 0 || selDeliveryMan == indexMan) {
                         double position = 0.;
-                        for (Route route : deliveryMan.getRound().getItinerary())
-                        {
+                        for (Route route : deliveryMan.getRound().getItinerary()) {
                             for (Passage p : route.getPassages()) {
                                 Node n2 = p.getSection().getDestination();
                                 Point coordsn2 = getCoordsToPixel(n2);
-
+                                
                                 Drawing.drawLineThick(g, coordsn1, coordsn2);
                                 if (isDirection) position = Drawing.drawLineArrows(g, coordsn1, coordsn2, position);
-
+                                
                                 coordsn1 = coordsn2;
                             }
                         }
@@ -571,7 +571,7 @@ public class MapViewGraphical extends MapView
     public Point getCoordsToPixel(Node n) {
         return getCoordsToPixel(n.getLongitude(), n.getLatitude());
     }
-
+    
     /**
      * converts a selected coordinate to pixels coordinates
      * @param longitude the longitude of the node

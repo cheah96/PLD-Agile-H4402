@@ -43,27 +43,27 @@ public abstract class MapView extends JPanel implements PropertyChangeListener
      * updates the nodes
      */
     public abstract void updateNodes();
-
+    
     /**
      * updates the deliveries
      */
     public abstract void updateDeliveries();
-
+    
     /**
      * updates delivery men
      */
     public abstract void updateDeliveryMen();
-
+    
     /**
      * updates delivery man
      */
     public abstract void updateDeliveryMan();
-
+    
     /**
      * updates the starting hour
      */
     public abstract void updateStartingHour();
-
+    
     /**
      * updates the warehouse
      */
@@ -74,7 +74,7 @@ public abstract class MapView extends JPanel implements PropertyChangeListener
      * @param node write node to select
      */
     public abstract void selectNode(Node node);
-
+    
     /**
      *select the delivery man
      * @param deliveryManIndex gets the associated number of the delivery man

@@ -205,12 +205,12 @@ public class Window
         JPanel panMain = new JPanel(new BorderLayout());
         panMain.add(panStatus, BorderLayout.SOUTH);
         panMain.add(mapViewGraphical,BorderLayout.CENTER);
-
+        
         JSplitPane rightPanSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panMain, scrollPanRoadmap);
         JSplitPane leftPanSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panTools, rightPanSplit);
         
         scrollPanRoadmap.setPreferredSize(panStatus.getPreferredSize());
-
+        
         frame.add(tlbTop, BorderLayout.NORTH);
         frame.add(leftPanSplit, BorderLayout.CENTER);
         
@@ -233,7 +233,6 @@ public class Window
         
         btnOpenLoc.addActionListener(e -> {
             controller.loadDeliveriesFile();
-
         });
         
         btnGenerate.addActionListener(e -> {
@@ -249,7 +248,7 @@ public class Window
             Node selected = mapViewTextual.getSelectedNode();
             if (selected != null && map.getNodeDeliveryManIndex(selected) != -1) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());
-                int index = delivery.getDeliveryMan().getDeliveries().indexOf(delivery) -1;
+                int index = delivery.getDeliveryMan().getDeliveries().indexOf(delivery) - 1;
                 if (index >= 0) {
                     controller.assignDelivery(delivery, delivery.getDeliveryMan(), index);
                 }
@@ -261,7 +260,7 @@ public class Window
             if (selected != null && map.getNodeDeliveryManIndex(selected) != -1) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());
                 int index = delivery.getDeliveryMan().getDeliveries().indexOf(delivery) +1;
-                if(index <= delivery.getDeliveryMan().getDeliveries().size() -1) {
+                if (index <= delivery.getDeliveryMan().getDeliveries().size() - 1) {
                     controller.assignDelivery(delivery, delivery.getDeliveryMan(), index);
                 }
             }

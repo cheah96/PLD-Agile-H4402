@@ -44,24 +44,23 @@ public class MapViewTextual extends MapView
         public boolean canImport(TransferHandler.TransferSupport ts) {
             return true;
         }
-
+        
         @Override
         public int getSourceActions(JComponent c) {
             return TransferHandler.COPY_OR_MOVE;
         }
-
+        
         @Override
         protected Transferable createTransferable(JComponent c) {
             JList<ListItem> list = (JList<ListItem>) c;
             return new StringSelection(list.getSelectedValue().repr);
         }
-
+        
         @Override
         public boolean importData(TransferHandler.TransferSupport info) {
-            if (!info.isDrop()) {
+            if (!info.isDrop())
                 return false;
-            }
-
+            
             JList<ListItem> list = (JList<ListItem>)info.getComponent();
             DefaultListModel<ListItem> model = (DefaultListModel<ListItem>) list.getModel();
             JList.DropLocation dl = (JList.DropLocation)info.getDropLocation();
@@ -72,10 +71,10 @@ public class MapViewTextual extends MapView
                 return false;
             
             boolean insert = dl.isInsert();
-
+            
             if (insert) {
                 ListItem selected = (ListItem) list.getSelectedValue();
-
+                
                 Delivery delivery = map.getDeliveries().get(selected.node.getId());
                 if (delivery == null)
                     return false;
@@ -110,7 +109,7 @@ public class MapViewTextual extends MapView
             }
         }
     };
-        
+    
     /**
      * creates a new map view textual
      * @param map the map view textual's map
@@ -175,14 +174,14 @@ public class MapViewTextual extends MapView
     @Override
     public void updateStartingHour() {
     }
-
+    
     /**
      * updates the warehouse
      */
     @Override
     public void updateWarehouse() {
     }
-
+    
     public Node getSelectedNode() {
         return selNode;
     }

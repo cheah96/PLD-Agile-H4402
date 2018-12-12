@@ -57,7 +57,7 @@ public class RoadmapPanel extends MapView {
         public int getSourceActions(JComponent c) {
             return TransferHandler.COPY_OR_MOVE;
         }
-
+        
         @Override
         protected Transferable createTransferable(JComponent c) {
             JList<String> list = (JList<String>) c;
@@ -90,12 +90,11 @@ public class RoadmapPanel extends MapView {
                     routePartName = currentSection.getName();
                     firstPassage = location;
                 }
-
-                if(currentSection.getName().equals(routePartName)){
+                
+                if(currentSection.getName().equals(routePartName)) {
                     distance += currentSection.getLength();
                     duration += currentSection.getDuration();
-                }
-                else {
+                } else {
                     routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, null));
                     firstPassage = location;
                     routePartName = currentSection.getName();
@@ -107,8 +106,9 @@ public class RoadmapPanel extends MapView {
             if (route.isDelivering()) {
                 Delivery delivery = map.getDeliveries().get(route.getDestination().getId());
                 routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, delivery));
-            } else
+            } else {
                 routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, null));
+            }
         }
         
         return routeParts;
@@ -148,35 +148,35 @@ public class RoadmapPanel extends MapView {
             ex.printStackTrace();
         }
     }
-
+    
     @Override
     public void updateNodes() {
     }
-
+    
     @Override
     public void updateDeliveries() {
     }
-
+    
     @Override
     public void updateDeliveryMen() {
     }
-
+    
     @Override
     public void updateDeliveryMan() {
     }
-
+    
     @Override
     public void updateStartingHour() {
     }
-
+    
     @Override
     public void updateWarehouse() {
     }
-
+    
     @Override
     public void selectNode(Node node) {
     }
-
+    
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
         if (deliveryManIndex >= 0) {

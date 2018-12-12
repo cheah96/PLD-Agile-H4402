@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
  */
 public class Drawing {
     
-
     /**
      * Creates a copy of the image. 
      * @param image the image to copy  
@@ -140,7 +139,7 @@ public class Drawing {
         int vx = p2.x - p1.x, vy = p2.y - p1.y;
         return getVectorLength(vx, vy);
     }
-
+    
     /**
      * gets the length of the vector between two vectors
      * @param vx the first vector

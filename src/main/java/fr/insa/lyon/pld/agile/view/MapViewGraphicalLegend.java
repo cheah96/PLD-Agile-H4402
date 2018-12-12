@@ -85,6 +85,7 @@ public class MapViewGraphicalLegend extends JPanel
          * @param coords coordinates of the middle of the component
          */
         public void draw(Graphics g, Point coords);
+        
     }
     
     /**
@@ -104,7 +105,7 @@ public class MapViewGraphicalLegend extends JPanel
             this.setPreferredSize(new Dimension(28,28));
             coords = new Point(14,14);
         }
-
+        
         @Override
         public void paintComponent(Graphics g) {
             if (g instanceof Graphics2D)
@@ -114,7 +115,6 @@ public class MapViewGraphicalLegend extends JPanel
         }
         
     }
-    
     
     /**
      * Makes a component draggable.
