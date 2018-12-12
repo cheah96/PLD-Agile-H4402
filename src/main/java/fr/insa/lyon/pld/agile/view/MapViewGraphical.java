@@ -89,7 +89,7 @@ public class MapViewGraphical extends MapView
             JMenuItem item = (JMenuItem)e.getSource();
             int index = (Integer)item.getClientProperty("deliveryManIndex");
             DeliveryMan deliveryMan = map.getDeliveryMen().get(index-1);
-            controller.addDelivery(selNode, deliveryMan, deliveryMan.getDeliveries().size());
+            controller.addDelivery(selNode, deliveryMan, map.getClosestDeliveryIndex(selNode, deliveryMan));
         }
     };
     
@@ -99,7 +99,7 @@ public class MapViewGraphical extends MapView
             JMenuItem item = (JMenuItem)e.getSource();
             int index = (Integer)item.getClientProperty("deliveryManIndex");
             DeliveryMan deliveryMan = map.getDeliveryMen().get(index-1);
-            controller.assignDelivery(map.getDeliveries().get(selNode.getId()), deliveryMan, deliveryMan.getDeliveries().size());
+            controller.assignDelivery(map.getDeliveries().get(selNode.getId()), deliveryMan, map.getClosestDeliveryIndex(selNode, deliveryMan));
         }
     };
     

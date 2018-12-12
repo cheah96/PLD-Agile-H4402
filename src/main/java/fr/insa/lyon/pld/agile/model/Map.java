@@ -362,6 +362,29 @@ public class Map {
         this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
     }
     
+    public int getClosestDeliveryIndex(Node node, DeliveryMan deliveryMan) {
+        int indexMin = 0;
+        double distanceMin = Double.MAX_VALUE;
+        
+        int index = 0;
+        for (Delivery existing : deliveryMan.getDeliveries()) {
+            java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, existing.getNode());
+            
+            double distance = distances.get(node.getId());
+            if (distance < 0)
+                continue;
+            
+            if (distance < distanceMin) {
+                indexMin = index;
+                distanceMin = distance;
+            }
+            
+            index++;
+        }
+        
+        return indexMin;
+    }
+    
     /**
      * Unassigns a delivery of a delivery man.
      * @param index index of the delivery to unassign
