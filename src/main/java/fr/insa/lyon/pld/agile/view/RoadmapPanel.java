@@ -32,23 +32,15 @@ public class RoadmapPanel extends MapView {
         
         public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery){
             this.sectionName = sectionName;
+            if (sectionName == null || sectionName.isEmpty())
+                this.sectionName = "Rue anonyme";
+            
             this.firstPassage = firstPassage;
             this.duration = duration;
             this.distance = distance;
             this.delivery = delivery;
         }
-        public void setDuration(int duration){
-            this.duration = duration;
-        }
-        public void setDistance(double distance){
-            this.distance = distance;
-        }
-        public long getDuration(){
-            return this.duration;
-        }
-        public double getDistance(){
-            return this.distance;
-        }
+        
         @Override
         public String toString(){
             return this.firstPassage.getArrivalTime().toString().substring(0, 5) + " - " + this.sectionName + " (" + Long.toString(Math.round(this.distance)) + " m)";

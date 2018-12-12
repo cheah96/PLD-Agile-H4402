@@ -391,7 +391,14 @@ public class MapViewTextual extends MapView
             node = route.getDestination();
             List<Passage> passages = route.getPassages();
             repr = TimeToText(route.getArrivalTime());
-            if (!passages.isEmpty()) repr += " - " + passages.get(passages.size()-1).getSection().getName();
+            if (!passages.isEmpty()) {
+                repr += " - " ;
+                String sectionName = passages.get(passages.size()-1).getSection().getName();
+                if (sectionName == null || sectionName.isEmpty())
+                    repr += "Rue anonyme";
+                else
+                    repr += sectionName;
+            }
         }
         
         /**
