@@ -152,6 +152,11 @@ public class MapViewGraphical extends MapView
         }
     };
     
+    /**
+     * displays the graphical view of the map
+     * @param map the map file imported
+     * @param controller the controller that manages the other functionalities
+     */
     public MapViewGraphical(Map map, MainController controller)
     {
         this.map = map;
@@ -189,6 +194,9 @@ public class MapViewGraphical extends MapView
         rightClickNodeMenu.add(addDeliveryJMenu);
     }
     
+    /**
+     * updates the nodes
+     */
     @Override
     public void updateNodes()
     {
@@ -222,12 +230,18 @@ public class MapViewGraphical extends MapView
         this.repaint();
     }
     
+    /**
+     * updates the deliveries
+     */
     @Override
     public void updateDeliveries() {
         imageDeliveries = null;
         this.repaint();
     }
     
+    /**
+     * updates the delivery men
+     */
     @Override
     public void updateDeliveryMen() {
         selDeliveryMan = -1;
@@ -235,20 +249,33 @@ public class MapViewGraphical extends MapView
         updateDeliveries();
     }
     
+    /**
+     * updates the delivery man
+     */
     @Override
     public void updateDeliveryMan() {
         updateDeliveries();
     }
     
+    /**
+     * update the starting hour
+     */
     @Override
     public void updateStartingHour() {
     }
     
+    /**
+     * updates the warehouse
+     */
     @Override
     public void updateWarehouse() {
         updateNodes();
     }
     
+    /**
+     * selects the nodes
+     * @param node the nodes
+     */
     @Override
     public void selectNode(Node node) {
         if (selNode != node) {
@@ -258,6 +285,10 @@ public class MapViewGraphical extends MapView
         }
     }
     
+    /**
+     * selects a delivery man
+     * @param deliveryManIndex the number in which each delivery men has been assigned 
+     */
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
         if (selDeliveryMan != deliveryManIndex) {
@@ -267,6 +298,10 @@ public class MapViewGraphical extends MapView
         }
     }
     
+    /**
+     * shows the map legend 
+     * @param visibility if check-box is selected we display the map legend 
+     */
     public void showLegend(boolean visibility) {
         if (isLegend != visibility) {
             isLegend = visibility;
@@ -275,6 +310,10 @@ public class MapViewGraphical extends MapView
         }
     }
     
+    /**
+     * add the arrows to the directions of the delivery men
+     * @param visibility if check-box is selected (true) the direction is shown
+     */
     public void showDirection(boolean visibility) {
         if (isDirection != visibility) {
             isDirection = visibility;
@@ -283,6 +322,11 @@ public class MapViewGraphical extends MapView
         }
     }
 
+    /**
+     * finds the closest node to the selected coordinates
+     * @param coord the coordinates chosen
+     * @return the closest node
+     */
     public Node findClosestNode(Point2D coord) {
         double closestdistance = -1;
         Node closest = null;
@@ -302,21 +346,37 @@ public class MapViewGraphical extends MapView
         return closest;
     }
     
+
+    /**
+     * displays the pop up node
+     * @param p given point p
+     */
     public void showPopupNode(Point p) {
         updatePopupMenu();
         rightClickNodeMenu.show(this, p.x, p.y);
     }
     
+    /**
+     * pop-up display for an unassigned delivery
+     * @param p a point chosen on the map
+     */
     public void showPopupUnassignedDelivery(Point p) {
         updatePopupMenu();
         rightClickUnassignedDeliveryMenu.show(this, p.x, p.y);
     }
     
+    /**
+     * pop-up display for a delivery
+     * @param p a point selected on the map
+     */
     public void showPopupDelivery(Point p) {
         updatePopupMenu();
         rightClickDeliveryMenu.show(this, p.x, p.y);
     }
-    
+
+    /**
+     *updates the pop up menu
+     */
     private void updatePopupMenu() {
         addDeliveryJMenu.removeAll();
         assignDeliveryJMenu.removeAll();
@@ -471,6 +531,12 @@ public class MapViewGraphical extends MapView
         g.dispose();
     }
     
+    /**
+     * draws a node on the map
+     * @param g the object to be drawn
+     * @param n the selected node 
+     * @param diameter the diameter of the point
+     */
     protected void drawNode(Graphics g, Node n, int diameter) {
         Drawing.drawDot(g, getCoordsToPixel(n), diameter);
     }
@@ -481,15 +547,33 @@ public class MapViewGraphical extends MapView
         return Drawing.getColor(deliveryManIndex, map.getDeliveryMen().size());
     }
     
+    /**
+     *gets the distance between two nodes
+     * @param n1 first node
+     * @param n2 second node
+     * @return the distance
+     */
     protected static double getNodesDistance(Node n1, Node n2) {
         double distlong = n1.getLongitude() - n2.getLongitude();
         double distlat = n1.getLatitude() - n2.getLatitude();
         return Math.sqrt((distlong*distlong) + (distlat*distlat));
     }
     
+    /**
+     *converts a selected coordinate to pixels coordinates
+     * @param n node n
+     * @return the point
+     */
     public Point getCoordsToPixel(Node n) {
         return getCoordsToPixel(n.getLongitude(), n.getLatitude());
     }
+
+    /**
+     * converts a selected coordinate to pixels coordinates
+     * @param longitude the longitude of the node
+     * @param latitude the latitude of the node
+     * @return the corresponding pixels
+     */
     public Point getCoordsToPixel(double longitude, double latitude) {
         return new Point(
             (int) ((longitude - offsetX) * ratio),
@@ -497,6 +581,12 @@ public class MapViewGraphical extends MapView
         );
     }
     
+    /**
+     * gets the corresponding pixels for a point
+     * @param x first number determining the point
+     * @param y second number determining the point
+     * @return a 2D point
+     */
     public Point2D getPixelToPoint (double x, double y) {
         return new Point2D.Double(
             x / ratio + offsetX,
@@ -504,6 +594,9 @@ public class MapViewGraphical extends MapView
         );
     }
     
+    /**
+     * calculates the preferred size of the screen resolution
+     */
     protected void calcPreferredSize() {
         preferred = null;
         

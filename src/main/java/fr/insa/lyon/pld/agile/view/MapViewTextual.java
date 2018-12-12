@@ -37,6 +37,11 @@ public class MapViewTextual extends MapView
     
     Boolean raiseevents = true;
     
+    /**
+     * creates a new map view textual
+     * @param map the map view textual's map
+     * @param controller the controller managing the view
+     */
     public MapViewTextual(Map map, MainController controller) {
         this.map = map;
         this.controller = controller;
@@ -58,30 +63,48 @@ public class MapViewTextual extends MapView
         });
     }
     
+    /**
+     * updates the nodes
+     */
     @Override
     public void updateNodes() {
     }
     
+    /**
+     * updates the deliveries
+     */
     @Override
     public void updateDeliveries() {
         recreate();
     }
     
+    /**
+     * updates the delivery men
+     */
     @Override
     public void updateDeliveryMen() {
         selDeliveryMan = -1;
         recreate();
     }
     
+    /**
+     * updates the delivery man
+     */
     @Override
     public void updateDeliveryMan() {
         recreate();
     }
     
+    /**
+     * updates the starting hour
+     */
     @Override
     public void updateStartingHour() {
     }
 
+    /**
+     * updates the warehouse
+     */
     @Override
     public void updateWarehouse() {
     }
@@ -90,6 +113,10 @@ public class MapViewTextual extends MapView
         return selNode;
     }
     
+    /**
+     * selects a specific node
+     * @param node a node selected
+     */
     @Override
     public void selectNode(Node node) {
         if (selNode != node) {
@@ -132,6 +159,10 @@ public class MapViewTextual extends MapView
         }
     }
     
+    /**
+     * selects the corresponding number of a delivery man
+     * @param deliveryManIndex
+     */
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
         if (selDeliveryMan != deliveryManIndex) {
@@ -142,6 +173,9 @@ public class MapViewTextual extends MapView
         }
     }
     
+    /**
+     * recreates a new itinerary 
+     */
     protected final void recreate() {
         jlists = new ArrayList<>();
         lists = new ArrayList<>();
@@ -200,6 +234,12 @@ public class MapViewTextual extends MapView
         selectDeliveryMan(prevDeliveryMan);
     }
     
+    /**
+     * constructs a new table on the left hand side of the display screen
+     * @param tabName the name of said tab
+     * @param tabList a list containing all the tabs
+     * @param infos the info to be put in the tabs
+     */
     protected void newTab(String tabName, DefaultListModel<ListItem> tabList, String infos) {
         int tabIndex = jlists.size();
         
@@ -246,16 +286,28 @@ public class MapViewTextual extends MapView
         // }
     }
     
+    /**
+     * converts the time to readable text
+     * @param time the local time
+     * @return the text displaying the local time
+     */
     public static String TimeToText(LocalTime time) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
         return time.format(dtf);
     }
     
+    /**
+     * Lists the items
+     */
     public class ListItem
     {
         Node node;
         String repr;
         
+        /**
+         * list the items
+         * @param route a specified route 
+         */
         public ListItem(Route route) {
             node = route.getDestination();
             List<Passage> passages = route.getPassages();
@@ -263,6 +315,11 @@ public class MapViewTextual extends MapView
             if (!passages.isEmpty()) repr += " - " + passages.get(passages.size()-1).getSection().getName();
         }
         
+        /**
+         * lists the items
+         * @param node the node 
+         * @param repr an attribute of the list of items
+         */
         public ListItem(Node node, String repr) {
             this.node = node;
             this.repr = repr;
@@ -273,6 +330,10 @@ public class MapViewTextual extends MapView
             return repr;
         }
         
+        /**
+         * gets the node
+         * @return the node 
+         */
         public Node getNode() {
             return node;
         }
