@@ -14,6 +14,13 @@ public class CmdRemoveDelivery implements Command {
     private final DeliveryMan deliveryMan;
     private final int index;
     
+    /**
+     * Remove a delivery request from the map using the design pattern Command. 
+     * The delivery request is unassigned from its delivery man before it is removed.
+     * 
+     * @param map the map instance of the application
+     * @param delivery the delivery request to be removed
+     */
     public CmdRemoveDelivery(Map map, Delivery delivery){
         this.map = map;
         this.delivery = delivery;

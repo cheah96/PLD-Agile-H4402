@@ -14,6 +14,13 @@ public class CmdAddDelivery implements Command {
     private final DeliveryMan deliveryMan;
     private final int index;
     
+    /**
+     * Add a new delivery request into the existing map and assign it to a delivery man using the design pattern Command
+     * 
+     * @param map number of nodes in the TSP graph
+     * @param delivery edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
+     * @param nodesCost nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     */
     public CmdAddDelivery(Map map, Delivery delivery, DeliveryMan deliveryMan, int index) {
         this.map = map;
         this.delivery = delivery;

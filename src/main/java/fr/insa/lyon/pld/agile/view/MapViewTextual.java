@@ -85,6 +85,10 @@ public class MapViewTextual extends MapView
     @Override
     public void updateWarehouse() {
     }
+
+    public Node getSelectedNode() {
+        return selNode;
+    }
     
     @Override
     public void selectNode(Node node) {

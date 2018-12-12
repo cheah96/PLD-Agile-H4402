@@ -10,12 +10,20 @@ import java.util.List;
 public class CommandList {
     private final List<Command> commandList; 
     private int currentIndex;
-    
+    /**
+     * Create a new empty commandList to store the list of actions performed to
+     * implement the design pattern Command.
+     */
     public CommandList() {
         commandList = new LinkedList<>();
         currentIndex = -1;
     }
     
+    /**
+     * Add a new command into the commandList, increment the current index and 
+     * perform the action
+     * @param cmd the command to be added
+     */
     public void addCommand(Command cmd) {
         int i = currentIndex + 1;
         while (i < commandList.size()) {
@@ -26,6 +34,10 @@ public class CommandList {
         cmd.doCmd();
     }
     
+    /**
+     * Decrement the current index and revert the action, the command is not
+     * removed from the command list to allow redoing
+     */
     public void undo() {
         if(canUndo()) {
             Command cmd = commandList.get(currentIndex);
@@ -34,6 +46,10 @@ public class CommandList {
         }
     }
     
+    /**
+     * Decrement the current index and revert the action, the command is not
+     * removed from the command list to allow redoing
+     */
     public void redo() {
         if(canRedo()) {
             currentIndex++;
