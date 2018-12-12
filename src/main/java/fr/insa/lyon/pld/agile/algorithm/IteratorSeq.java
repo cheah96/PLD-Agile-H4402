@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class IteratorSeq implements Iterator<Integer> {
 
-    private Integer[] nodes;
+    private final Integer[] nodes;
     private int numberOfNodes;
 
     /**

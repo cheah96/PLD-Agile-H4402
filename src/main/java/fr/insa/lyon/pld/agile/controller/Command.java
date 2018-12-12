@@ -1,9 +1,5 @@
 package fr.insa.lyon.pld.agile.controller;
 
-/**
- *
- * @author scheah
- */
 public interface Command {
     /**
      * Perform an action using the design pattern Command.

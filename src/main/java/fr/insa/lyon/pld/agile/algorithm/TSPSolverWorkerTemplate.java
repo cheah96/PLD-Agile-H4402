@@ -170,7 +170,9 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * @param unexploredNodesCount number of unexplored nodes in the current state of the computation
      */
     protected void updateProgress(int exploredNodesCount, int unexploredNodesCount) {
-        if (exploredNodesCount <= 0) return;
+        if (exploredNodesCount <= 0) {
+            return;
+        }
         
         long statesCount = 1;
         for(int k = 0; k < exploredNodesCount; k++) {

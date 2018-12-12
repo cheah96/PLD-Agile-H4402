@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class IteratorNearestNode implements Iterator<Integer> {
 
-    private Integer[] nodes;
+    private final Integer[] nodes;
     private Integer numberOfNodes;
 
     /**
@@ -38,7 +38,7 @@ public class IteratorNearestNode implements Iterator<Integer> {
             // Update the current path and the set of unexplored nodes
             currentNode = nextNode;
             nodes[numberOfNodes++] = nextNode;
-            candidateNodes.remove((Integer)nextNode);
+            candidateNodes.remove(nextNode);
         }
     }
 

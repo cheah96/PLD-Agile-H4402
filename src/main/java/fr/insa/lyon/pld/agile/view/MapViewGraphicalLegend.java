@@ -9,16 +9,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
 
-/**
- *
- * @author nmesnard
- */
 public class MapViewGraphicalLegend extends JPanel
 {
     EmptyBorder spacer = new EmptyBorder(4, 4, 4, 4);
@@ -108,8 +103,9 @@ public class MapViewGraphicalLegend extends JPanel
         
         @Override
         public void paintComponent(Graphics g) {
-            if (g instanceof Graphics2D)
+            if (g instanceof Graphics2D) {
                 Drawing.enableAntialiasing((Graphics2D) g);
+            }
             g.setColor(Color.gray);
             drawer.draw(g, coords);
         }

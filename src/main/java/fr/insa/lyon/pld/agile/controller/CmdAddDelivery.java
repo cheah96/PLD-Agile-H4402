@@ -4,10 +4,6 @@ import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.model.DeliveryMan;
 import fr.insa.lyon.pld.agile.model.Map;
 
-/**
- *
- * @author scheah
- */
 public class CmdAddDelivery implements Command {
     private final Map map;
     private final Delivery delivery;

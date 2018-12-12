@@ -2,10 +2,6 @@ package fr.insa.lyon.pld.agile.model;
 
 import java.time.LocalTime;
 
-/**
- *
- * @author scheah
- */
 public class Passage {
     private final Section section;
     private LocalTime arrivalTime;

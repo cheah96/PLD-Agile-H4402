@@ -1,7 +1,7 @@
 package fr.insa.lyon.pld.agile.xml;
 
 public class XMLDuplicateNodeException extends RuntimeException {
-    private long nodeId;
+    private final long nodeId;
     
     public XMLDuplicateNodeException(long id) {
         nodeId = id;

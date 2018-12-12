@@ -1,9 +1,5 @@
 package fr.insa.lyon.pld.agile.model;
 
-/**
- *
- * @author scheah
- */
 public class Delivery {
     private final Node node;
     private final int duration;

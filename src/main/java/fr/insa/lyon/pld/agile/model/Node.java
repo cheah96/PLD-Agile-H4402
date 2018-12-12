@@ -5,11 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-/**
- *
- * @author scheah
- */
-
 public class Node {
     private final long id;
     private final double latitude;

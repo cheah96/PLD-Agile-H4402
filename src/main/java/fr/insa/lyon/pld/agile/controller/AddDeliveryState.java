@@ -6,10 +6,6 @@ import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.view.Window;
 
-/**
- *
- * @author scheah
- */
 public class AddDeliveryState extends DefaultState {
     private Node node;
     private int duration; 

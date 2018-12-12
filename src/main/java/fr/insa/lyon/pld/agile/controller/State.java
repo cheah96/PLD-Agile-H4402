@@ -1,14 +1,9 @@
 package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.model.*;
-
 import fr.insa.lyon.pld.agile.view.MapViewGraphical;
 import java.awt.event.MouseEvent;
 
-/**
- *
- * @author scheah, nmesnard
- */
 public interface State {
     
     /**

@@ -12,8 +12,6 @@ import java.util.List;
 /**
  * An implementation of a same size kmeans++
  * The clustering algorithm used in the app
- *
- * @author Mohamed CHALLAL
  */
 public class KMeans {
     
@@ -127,8 +125,9 @@ public class KMeans {
      * @return an array with a length equal to the number of nodes. the value of each case is the index of its cluster [0; clustersNb[
      */
     public static int[] kMeans(List<Node> nodes, int clustersNb, Node warehouse) {
-        if (nodes.isEmpty())
+        if (nodes.isEmpty()) {
             return new int[0];
+        }
         
         Point2D[] clustersCenters = new Point2D[clustersNb];    // the centers of the clusters
         int[] clusters = new int[nodes.size()];   // the clusters to which the points belong

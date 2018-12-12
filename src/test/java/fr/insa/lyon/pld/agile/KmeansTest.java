@@ -1,13 +1,11 @@
 package fr.insa.lyon.pld.agile;
 
-import static org.junit.Assert.assertTrue;
-
+import fr.insa.lyon.pld.agile.algorithm.KMeans;
+import fr.insa.lyon.pld.agile.model.Node;
 import java.util.ArrayList;
 import java.util.List;
+import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.Test;
-
-import fr.insa.lyon.pld.agile.model.Node;
-import fr.insa.lyon.pld.agile.algorithm.KMeans;
 
 public class KmeansTest {
 

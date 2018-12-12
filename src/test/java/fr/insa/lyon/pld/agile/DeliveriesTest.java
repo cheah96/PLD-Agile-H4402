@@ -1,21 +1,17 @@
 package fr.insa.lyon.pld.agile;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import fr.insa.lyon.pld.agile.model.Delivery;
+import fr.insa.lyon.pld.agile.model.Map;
+import fr.insa.lyon.pld.agile.xml.XMLParser;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
-import fr.insa.lyon.pld.agile.model.Delivery;
-import fr.insa.lyon.pld.agile.model.Map;
-import fr.insa.lyon.pld.agile.xml.XMLParser;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
 public class DeliveriesTest {
 

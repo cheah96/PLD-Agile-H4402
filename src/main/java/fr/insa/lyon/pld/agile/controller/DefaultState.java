@@ -8,10 +8,6 @@ import fr.insa.lyon.pld.agile.view.Window;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
-/**
- *
- * @author scheah
- */
 public abstract class DefaultState implements State {
     
     public final MainController controller;

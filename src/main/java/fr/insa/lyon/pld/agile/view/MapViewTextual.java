@@ -2,28 +2,21 @@ package fr.insa.lyon.pld.agile.view;
 
 import fr.insa.lyon.pld.agile.controller.MainController;
 import fr.insa.lyon.pld.agile.model.*;
-
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.util.List;
-import java.util.ArrayList;
-
-/**
- *
- * @author nmesnard
- */
 public class MapViewTextual extends MapView
 {
     private final MainController controller;
@@ -58,8 +51,9 @@ public class MapViewTextual extends MapView
         
         @Override
         public boolean importData(TransferHandler.TransferSupport info) {
-            if (!info.isDrop())
+            if (!info.isDrop()) {
                 return false;
+            }
             
             JList<ListItem> list = (JList<ListItem>)info.getComponent();
             DefaultListModel<ListItem> model = (DefaultListModel<ListItem>) list.getModel();
@@ -67,17 +61,19 @@ public class MapViewTextual extends MapView
             int oldIndex = list.getSelectedIndex();
             int newIndex = dl.getIndex();
             
-            if (newIndex < 0 || oldIndex == newIndex || oldIndex+1 == newIndex)
+            if (newIndex < 0 || oldIndex == newIndex || oldIndex+1 == newIndex) {
                 return false;
+            }
             
             boolean insert = dl.isInsert();
             
             if (insert) {
-                ListItem selected = (ListItem) list.getSelectedValue();
+                ListItem selected = list.getSelectedValue();
                 
                 Delivery delivery = map.getDeliveries().get(selected.node.getId());
-                if (delivery == null)
+                if (delivery == null) {
                     return false;
+                }
                 
                 int offset = 0;
                 Node targetNode = model.get(newIndex).node;
@@ -93,14 +89,17 @@ public class MapViewTextual extends MapView
                 DeliveryMan targetDeliveryMan = map.getDeliveryMen().get(map.getNodeDeliveryManIndex(targetDelivery.getNode()));
                 
                 int targetIndex = targetDeliveryMan.getDeliveries().indexOf(targetDelivery);
-                if (targetIndex < 0)
+                if (targetIndex < 0) {
                     return false;
+                }
                 
-                if (deliveryMan == targetDeliveryMan && oldIndex < newIndex)
+                if (deliveryMan == targetDeliveryMan && oldIndex < newIndex) {
                     offset--;
+                }
                 
-                if (targetIndex+offset < 0 || targetIndex+offset > targetDeliveryMan.getDeliveries().size())
+                if (targetIndex+offset < 0 || targetIndex+offset > targetDeliveryMan.getDeliveries().size()) {
                     return false;
+                }
                 
                 controller.assignDelivery(delivery, targetDeliveryMan, targetIndex+offset);
                 return true;
@@ -243,8 +242,9 @@ public class MapViewTextual extends MapView
      */
     @Override
     public void selectDeliveryMan(int deliveryManIndex) {
-        if (deliveryManIndex >= map.getDeliveryMen().size()) 
+        if (deliveryManIndex >= map.getDeliveryMen().size()) {
             return;
+        }
         if (selDeliveryMan != deliveryManIndex) {
             selDeliveryMan = deliveryManIndex;
         }
@@ -311,8 +311,9 @@ public class MapViewTextual extends MapView
         selNode = null;
         selectNode(prevNode);
         selDeliveryMan = -1;
-        if (prevDeliveryMan < map.getDeliveryMen().size())
+        if (prevDeliveryMan < map.getDeliveryMen().size()) {
             selectDeliveryMan(prevDeliveryMan);
+        }
     }
     
     /**
@@ -330,7 +331,9 @@ public class MapViewTextual extends MapView
         lists.add(tabList);
         
         lstList.addListSelectionListener((ListSelectionEvent e) -> {
-            if (!raiseevents) return;
+            if (!raiseevents) {
+                return;
+            }
             int index = lstList.getSelectedIndex();
             Node node = (index == -1 ? null : tabList.get(index).getNode());
             if (selNode != node) {
@@ -396,10 +399,11 @@ public class MapViewTextual extends MapView
             if (!passages.isEmpty()) {
                 repr += " - " ;
                 String sectionName = passages.get(passages.size()-1).getSection().getName();
-                if (sectionName == null || sectionName.isEmpty())
+                if (sectionName == null || sectionName.isEmpty()) {
                     repr += "Rue anonyme";
-                else
+                } else {
                     repr += sectionName;
+                }
             }
         }
         
@@ -432,7 +436,9 @@ public class MapViewTextual extends MapView
         public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
             Component c = super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
             Color color = getNodeColor(((ListItem) value).getNode(), Color.gray);
-            if (!isSelected) color = Drawing.getColorBrighter(Drawing.getColorBrighter(color));
+            if (!isSelected) {
+                color = Drawing.getColorBrighter(Drawing.getColorBrighter(color));
+            }
             c.setBackground(Drawing.getColorBrighter(color));
             return c;
         }
@@ -440,8 +446,12 @@ public class MapViewTextual extends MapView
     
     private Color getNodeColor(Node n, Color normal) {
         int deliveryManIndex = -1;
-        if (n != null) deliveryManIndex = map.getNodeDeliveryManIndex(n);
-        if (deliveryManIndex < 0) return normal;
+        if (n != null) {
+            deliveryManIndex = map.getNodeDeliveryManIndex(n);
+        }
+        if (deliveryManIndex < 0) {
+            return normal;
+        }
         return Drawing.getColor(deliveryManIndex, map.getDeliveryMen().size());
     }
     

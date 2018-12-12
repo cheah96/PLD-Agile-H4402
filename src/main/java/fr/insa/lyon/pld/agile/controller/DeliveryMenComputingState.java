@@ -2,10 +2,6 @@ package fr.insa.lyon.pld.agile.controller;
 
 import fr.insa.lyon.pld.agile.view.Window;
 
-/**
- *
- * @author scheah
- */
 public class DeliveryMenComputingState extends DefaultState {
 
     public DeliveryMenComputingState(MainController controller) {
@@ -36,7 +32,7 @@ public class DeliveryMenComputingState extends DefaultState {
     public void handleExternalEvent(String eventName, Object value) {
         switch (eventName) {
             case "shortenDeliveriesProgress":
-                controller.getWindow().setStatusMessage("Génération des tournées en cours... " + (Integer) value + " %");
+                controller.getWindow().setStatusMessage("Génération des tournées en cours... " + value + " %");
                 break;
             case "shortenDeliveriesFinished":
                 generationFinished();

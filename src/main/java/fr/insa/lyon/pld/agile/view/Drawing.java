@@ -7,10 +7,6 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-/**
- *
- * @author nmesnard
- */
 public class Drawing {
     
     /**
@@ -99,7 +95,9 @@ public class Drawing {
         double x = p1.x;
         double y = p1.y;
         
-        if ((vy == 0) && (vx == 0)) return position;
+        if ((vy == 0) && (vx == 0)) {
+            return position;
+        }
         
         double vlen = getVectorLength(vx,vy);
         
@@ -107,12 +105,16 @@ public class Drawing {
         double total;
         double remaining = getPointsDistance(p1, p2);
         for (; (total = position+remaining) >= step;) {
-            if (safety++ > 1000) return position;
+            if (safety++ > 1000) {
+                return position;
+            }
             
             x += ((step-position)*vx)/vlen;
             y += ((step-position)*vy)/vlen;
             
-            if ((vx*(p2.x-x) + vy*(p2.y-y)) < 0) return position;
+            if ((vx*(p2.x-x) + vy*(p2.y-y)) < 0) {
+                return position;
+            }
             
             drawLineThick(g,
                 new Point((int)(x+(-vy-vx)*8./vlen), (int)(y+(vx-vy)*8./vlen)),
@@ -147,7 +149,7 @@ public class Drawing {
      * @return the vector
      */
     protected static double getVectorLength(int vx, int vy) {
-        return Math.sqrt((double) ((vx*vx)+(vy*vy)));
+        return Math.sqrt(((vx*vx)+(vy*vy)));
     }
     
     /**

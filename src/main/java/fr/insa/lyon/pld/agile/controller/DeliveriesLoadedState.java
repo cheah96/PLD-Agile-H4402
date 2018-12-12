@@ -3,10 +3,6 @@ package fr.insa.lyon.pld.agile.controller;
 import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.view.Window;
 
-/**
- *
- * @author scheah
- */
 public class DeliveriesLoadedState extends MapLoadedState { 
     
 	/**

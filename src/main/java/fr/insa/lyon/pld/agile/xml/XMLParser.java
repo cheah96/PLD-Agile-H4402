@@ -42,17 +42,23 @@ public class XMLParser {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException, XMLMissingAttributeException, XMLDuplicateNodeException {
-            if(!expectedElements.contains(qName))
+            if(!expectedElements.contains(qName)) {
                 throw new XMLUnexpectedElementException(qName);
+            }
             
-            if(!"noeud".equals(qName)) return;
+            if(!"noeud".equals(qName)) {
+                return;
+            }
             
-            if(attributes.getValue("id") == null)
+            if(attributes.getValue("id") == null) {
                 throw new XMLMissingAttributeException("id");
-            if(attributes.getValue("latitude") == null)
+            }
+            if(attributes.getValue("latitude") == null) {
                 throw new XMLMissingAttributeException("latitude");
-            if(attributes.getValue("longitude") == null)
+            }
+            if(attributes.getValue("longitude") == null) {
                 throw new XMLMissingAttributeException("longitude");
+            }
             
             long id = 0;
             try {
@@ -75,8 +81,9 @@ public class XMLParser {
                 throw new XMLAttributeFormatException("longitude", attributes.getValue("longitude"));
             }
 
-            if (!map.addNode(new Node(id, latitude, longitude)))
+            if (!map.addNode(new Node(id, latitude, longitude))) {
                 throw new XMLDuplicateNodeException(id);
+            }
         }
     }
     
@@ -94,19 +101,26 @@ public class XMLParser {
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            if(!expectedElements.contains(qName))
+            if(!expectedElements.contains(qName)) {
                 throw new XMLUnexpectedElementException(qName);
+            }
             
-            if(!"troncon".equals(qName)) return;
+            if(!"troncon".equals(qName)) {
+                return;
+            }
             
-            if(attributes.getValue("origine") == null)
+            if(attributes.getValue("origine") == null) {
                 throw new XMLMissingAttributeException("origine");
-            if(attributes.getValue("destination") == null)
+            }
+            if(attributes.getValue("destination") == null) {
                 throw new XMLMissingAttributeException("destination");
-            if(attributes.getValue("longueur") == null)
+            }
+            if(attributes.getValue("longueur") == null) {
                 throw new XMLMissingAttributeException("longueur");
-            if(attributes.getValue("nomRue") == null)
+            }
+            if(attributes.getValue("nomRue") == null) {
                 throw new XMLMissingAttributeException("nomRue");
+            }
             
             long originId = 0;
             try {
@@ -137,11 +151,13 @@ public class XMLParser {
                 if (destination != null) {
                     Section section = new Section(name, length, destination);
                     origin.addOutgoingSection(section);
-                } else
+                } else {
                     throw new XMLUndefinedNodeReferenceException(destinationId);
+                }
             }
-            else
+            else {
                 throw new XMLUndefinedNodeReferenceException(originId);
+            }
         }
     }
     
@@ -164,16 +180,19 @@ public class XMLParser {
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            if(!expectedElements.contains(qName))
+            if(!expectedElements.contains(qName)) {
                 throw new XMLUnexpectedElementException(qName);
+            }
             
             switch (qName) {
                 case "entrepot":
-                    if (map.getWarehouse() != null)
+                    if (map.getWarehouse() != null) {
                         throw new XMLMultipleDefinitionOfWarehouseException();
+            }
                     
-                    if(attributes.getValue("adresse") == null)
+                    if(attributes.getValue("adresse") == null) {
                         throw new XMLMissingAttributeException("adresse");
+            }
                     
                     long warehouseId = 0;
                     try {
@@ -182,17 +201,20 @@ public class XMLParser {
                         throw new XMLAttributeFormatException("adresse", attributes.getValue("adresse"));
                     }
                     
-                    if (!map.setWarehouse(warehouseId))
+                    if (!map.setWarehouse(warehouseId)) {
                         throw new XMLUndefinedNodeReferenceException(warehouseId);
+            }
                     
                     String startingHourString = attributes.getValue("heureDepart");
                     map.setStartingHour(LocalTime.parse(startingHourString, DateTimeFormatter.ofPattern("H:m:s")));
                     break;
                 case "livraison":
-                    if(attributes.getValue("adresse") == null)
+                    if(attributes.getValue("adresse") == null) {
                         throw new XMLMissingAttributeException("adresse");
-                    if(attributes.getValue("duree") == null)
+            }
+                    if(attributes.getValue("duree") == null) {
                         throw new XMLMissingAttributeException("duree");
+            }
                     
                     long addressId = 0;
                     try {
@@ -209,8 +231,9 @@ public class XMLParser {
                     }
                     
                     Node address = map.getNode(addressId);
-                    if (address == null)
+                    if (address == null) {
                         throw new XMLUndefinedNodeReferenceException(addressId);
+            }
                     
                     map.addDelivery(new Delivery(address, duration));
                     break;

@@ -13,8 +13,6 @@ import java.util.List;
  * This is the first version of the KMeans, there's no kmeans++ initialization,
  * and no sorting when assigning the nodes.
  * This version is not used in the actual application.
- * 
- * @author challal
  */
 public class KMeansV0 {
     

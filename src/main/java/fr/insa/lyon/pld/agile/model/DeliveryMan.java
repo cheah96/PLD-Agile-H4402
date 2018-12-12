@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author scheah
- */
 public class DeliveryMan {
     private final int id;
     private final Round round;
@@ -57,8 +53,9 @@ public class DeliveryMan {
      */
     
     void addDelivery(int index, Delivery delivery, Map map) {
-        if (deliveries.contains(delivery))
+        if (deliveries.contains(delivery)) {
             throw new RuntimeException("DeliveryMan already deliver there"); //TODO : Better error handling
+        }
         
         round.addNode(index, delivery.getNode(), true, map);
         deliveries.add(index, delivery);
@@ -85,8 +82,9 @@ public class DeliveryMan {
         
         int routeIndex = 0;
         for (Route route : round.getItinerary()) {
-            if (route.getDestination() == node)
+            if (route.getDestination() == node) {
                 break;
+            }
             
             routeIndex++;
         }
@@ -103,8 +101,9 @@ public class DeliveryMan {
     
     void removeDelivery(Delivery delivery, Map map) {
         int index = deliveries.indexOf(delivery);
-        if (index == -1)
+        if (index == -1) {
             throw new RuntimeException("Delivery not found");
+        }
         removeDelivery(index, map);
     }
     

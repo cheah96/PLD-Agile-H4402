@@ -5,16 +5,11 @@ import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.UnreachableDeliveryException;
 import fr.insa.lyon.pld.agile.xml.XMLParser;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author paul
- */
 public class GenerateDeliveries {
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -35,11 +30,13 @@ public class GenerateDeliveries {
         List<Delivery> deliveries = new ArrayList<>();
         
         for (Node node : nodes) {
-            if (node == warehouse)
+            if (node == warehouse) {
                 continue;
+            }
             
-            if (deliveries.size() >= nb)
+            if (deliveries.size() >= nb) {
                 break;
+            }
             
             try {
                 Delivery delivery = new Delivery(node, (int) (Math.random()*360+1));

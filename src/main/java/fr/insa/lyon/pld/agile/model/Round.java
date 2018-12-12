@@ -7,10 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-/**
- *
- * @author scheah
- */
 public class Round {
     private final List<Route> itinerary;
 
@@ -26,11 +22,13 @@ public class Round {
         Route before = null;
         Route after = null;
         if (!itinerary.isEmpty()) {
-            if (itinerary.size() == 1) //Consistency check : Should never happen
+            if (itinerary.size() == 1) { //Consistency check : Should never happen
                 throw new RuntimeException("Round has only one route");
+            }
             
-            if (index-1 >= 0)
+            if (index-1 >= 0) {
                 before = itinerary.get(index-1);
+            }
             after = itinerary.get(index);
         }
         
@@ -68,12 +66,14 @@ public class Round {
     }
     
     void removeNode(int index, Map map) {
-        if (index == itinerary.size()-1)
+        if (index == itinerary.size()-1) {
             throw new RuntimeException("Cannot remove the last route to the warehouse");
+        }
         
         Route before = null;
-        if (index-1 >= 0)
+        if (index-1 >= 0) {
             before = itinerary.get(index-1);
+        }
         Route after = itinerary.get(index+1);
         
         Route route;
@@ -105,8 +105,9 @@ public class Round {
     }
     
     void updateStartingHour(Map map) {
-        if (itinerary.isEmpty())
+        if (itinerary.isEmpty()) {
             return;
+        }
         
         itinerary.get(0).setDepartureTime(map.getStartingHour());
         updateDepartureTimes(0, map);

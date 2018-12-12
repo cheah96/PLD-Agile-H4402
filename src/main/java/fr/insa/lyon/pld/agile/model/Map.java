@@ -18,10 +18,6 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.swing.SwingWorker;
 
-/**
- *
- * @author scheah
- */
 public class Map {
     private final java.util.Map<Long, Node> nodes;
     private Node warehouse;
@@ -126,7 +122,9 @@ public class Map {
     public boolean addNode(Node node) {
         // putIfAbsent returns null if the key was absent
         boolean added = nodes.putIfAbsent(node.getId(), node) == null;
-        if (added) this.pcs.firePropertyChange("nodes", null, nodes);
+        if (added) {
+            this.pcs.firePropertyChange("nodes", null, nodes);
+        }
         return added;
     }
     
@@ -136,12 +134,14 @@ public class Map {
      * @return true if added, false if already present
      */
     public boolean addDelivery(Delivery delivery) {
-        if (delivery.getNode() == warehouse)
+        if (delivery.getNode() == warehouse) {
             return false;
+        }
         
         System.err.println(delivery);
-        if (deliveries.containsKey(delivery.getNode().getId()))
+        if (deliveries.containsKey(delivery.getNode().getId())) {
             return false;
+        }
         
         if (Dijkstra.getPath(nodes, warehouse, delivery.getNode()) == null || Dijkstra.getPath(nodes, delivery.getNode(), warehouse) == null) {
             throw new UnreachableDeliveryException(delivery);
@@ -158,8 +158,9 @@ public class Map {
      */
     public void removeDelivery(Delivery delivery) {
         unassignDelivery(delivery);
-        if (deliveries.remove(delivery.getNode().getId()) != null)
+        if (deliveries.remove(delivery.getNode().getId()) != null) {
             this.pcs.firePropertyChange("deliveries", null, deliveries);
+        }
     }
     
     /**
@@ -228,8 +229,9 @@ public class Map {
             assignDelivery(deliveries.get(deliveryNode.getId()), deliveryMen.get(clusters[i]));
         }
         
-        for (DeliveryMan deliveryMan : deliveryMen)
+        for (DeliveryMan deliveryMan : deliveryMen) {
             this.pcs.firePropertyChange("deliveryMan", null, deliveryMan);
+        }
     }
     
     /**
@@ -305,10 +307,11 @@ public class Map {
                     for (Integer index : bestIds) {
                         if (index != 0) {
                             Delivery delivery = deliveries.get(deliveryNodes.get(index).getId());
-                            if (delivery != null)
+                            if (delivery != null) {
                                 deliveryMan.addDelivery(delivery, Map.this);
-                            else
+                            } else {
                                 throw new RuntimeException("Delivery not found");
+                            }
                         }
                     }
 
@@ -333,8 +336,9 @@ public class Map {
      * Interrupts the roadmaps optimization process.
      */
     public void stopShorteningDeliveries() {
-        for (TSPSolverWorker solver : new ArrayList<>(pendingSolvers))
+        for (TSPSolverWorker solver : new ArrayList<>(pendingSolvers)) {
             solver.cancel(false);
+        }
     }
     
     /**
@@ -371,8 +375,9 @@ public class Map {
             java.util.Map<Long, Double> distances = Dijkstra.getDistances(nodes, existing.getNode());
             
             double distance = distances.get(node.getId());
-            if (distance < 0)
+            if (distance < 0) {
                 continue;
+            }
             
             if (distance < distanceMin) {
                 indexMin = index+1;
@@ -404,8 +409,9 @@ public class Map {
      */
     public void unassignDelivery(Delivery delivery) {
         DeliveryMan deliveryMan = delivery.getDeliveryMan();
-        if (deliveryMan == null)
+        if (deliveryMan == null) {
             return;
+        }
         
         deliveryMan.removeDelivery(delivery, this);
         delivery.setDeliveryMan(null);

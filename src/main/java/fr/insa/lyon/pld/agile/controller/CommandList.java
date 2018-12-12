@@ -4,10 +4,6 @@ import fr.insa.lyon.pld.agile.model.UnreachableDeliveryException;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- *
- * @author scheah
- */
 public class CommandList {
     private final MainController controller;
     private final List<Command> commandList; 

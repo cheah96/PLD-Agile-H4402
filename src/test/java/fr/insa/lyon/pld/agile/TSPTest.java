@@ -1,15 +1,12 @@
 package fr.insa.lyon.pld.agile;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Random;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import fr.insa.lyon.pld.agile.algorithm.TSPSolver;
 import fr.insa.lyon.pld.agile.algorithm.TSPSolverImplementation1;
 import fr.insa.lyon.pld.agile.algorithm.TSPSolverImplementation2;
+import java.util.Random;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TSPTest {
     private static TSPSolver tsp;

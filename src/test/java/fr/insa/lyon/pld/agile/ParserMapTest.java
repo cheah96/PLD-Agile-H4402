@@ -1,20 +1,16 @@
 package fr.insa.lyon.pld.agile;
 
+import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.xml.XMLParser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
-import fr.insa.lyon.pld.agile.model.Map;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
 public class ParserMapTest {
     @Test
