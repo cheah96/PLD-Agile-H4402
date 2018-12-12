@@ -61,34 +61,49 @@ public class MapViewTextual extends MapView
             if (!info.isDrop()) {
                 return false;
             }
-            
-            if (selDeliveryMan < 0)
-                return false;
 
-            JList list = (JList)info.getComponent();
+            JList<ListItem> list = (JList<ListItem>)info.getComponent();
+            DefaultListModel<ListItem> model = (DefaultListModel<ListItem>) list.getModel();
             JList.DropLocation dl = (JList.DropLocation)info.getDropLocation();
             int oldIndex = list.getSelectedIndex();
             int newIndex = dl.getIndex();
-            if (newIndex > oldIndex)
-                newIndex--;
             
-            if (newIndex < 0)
+            if (newIndex < 0 || oldIndex == newIndex || oldIndex+1 == newIndex)
                 return false;
             
             boolean insert = dl.isInsert();
 
             if (insert) {
                 ListItem selected = (ListItem) list.getSelectedValue();
+
                 Delivery delivery = map.getDeliveries().get(selected.node.getId());
                 if (delivery == null)
                     return false;
                 
-                DeliveryMan deliveryMan = map.getDeliveryMen().get(selDeliveryMan);
+                int offset = 0;
+                Node targetNode = model.get(newIndex).node;
+                if (targetNode == map.getWarehouse()) {
+                    newIndex--;
+                    targetNode = model.get(newIndex).node;
+                    offset = 1;
+                }
                 
-                if (newIndex >= deliveryMan.getDeliveries().size())
+                Delivery targetDelivery = map.getDeliveries().get(targetNode.getId());
+                
+                DeliveryMan deliveryMan = map.getDeliveryMen().get(map.getNodeDeliveryManIndex(selected.getNode()));
+                DeliveryMan targetDeliveryMan = map.getDeliveryMen().get(map.getNodeDeliveryManIndex(targetDelivery.getNode()));
+                
+                int targetIndex = targetDeliveryMan.getDeliveries().indexOf(targetDelivery);
+                if (targetIndex < 0)
                     return false;
                 
-                controller.assignDelivery(delivery, deliveryMan, newIndex);
+                if (deliveryMan == targetDeliveryMan && oldIndex < newIndex)
+                    offset--;
+                
+                if (targetIndex+offset < 0 || targetIndex+offset > targetDeliveryMan.getDeliveries().size())
+                    return false;
+                
+                controller.assignDelivery(delivery, targetDeliveryMan, targetIndex+offset);
                 return true;
             } else {
                 return false;
