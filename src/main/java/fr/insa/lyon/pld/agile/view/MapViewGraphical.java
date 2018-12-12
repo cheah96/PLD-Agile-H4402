@@ -392,16 +392,20 @@ public class MapViewGraphical extends MapView
             JMenuItem itemAdd = new JMenuItem("Livreur " + indexMan);
             itemAdd.putClientProperty("deliveryManIndex", indexMan);
             itemAdd.addActionListener(addDeliveryListener);
+            Color color = Drawing.getColorBrighter(Drawing.getColor(indexMan -1, map.getDeliveryMen().size()));
+            itemAdd.setBackground(color);
             addDeliveryJMenu.add(itemAdd);
             
             JMenuItem itemAssign = new JMenuItem("Livreur " + indexMan);
             itemAssign.putClientProperty("deliveryManIndex", indexMan);
             itemAssign.addActionListener(assignDeliveryListener);
+            itemAssign.setBackground(color);
             assignDeliveryJMenu.add(itemAssign);
             
             JMenuItem itemAssign2 = new JMenuItem("Livreur " + indexMan);
             itemAssign2.putClientProperty("deliveryManIndex", indexMan);
             itemAssign2.addActionListener(assignDeliveryListener);
+            itemAssign2.setBackground(color);
             assignDeliveryJMenu2.add(itemAssign2);
         }
     }
