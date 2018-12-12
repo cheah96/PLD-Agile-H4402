@@ -11,6 +11,8 @@ import java.awt.GridBagLayout;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.GridBagConstraints;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -37,6 +39,63 @@ public class MapViewTextual extends MapView
     
     Boolean raiseevents = true;
     
+    TransferHandler transferHandler = new TransferHandler() {
+        @Override
+        public boolean canImport(TransferHandler.TransferSupport ts) {
+            return true;
+        }
+
+        @Override
+        public int getSourceActions(JComponent c) {
+            return TransferHandler.COPY_OR_MOVE;
+        }
+
+        @Override
+        protected Transferable createTransferable(JComponent c) {
+            JList list = (JList) c;
+            return new StringSelection(Integer.toString(list.getSelectedIndex()));
+        }
+
+        @Override
+        public boolean importData(TransferHandler.TransferSupport info) {
+            if (!info.isDrop()) {
+                return false;
+            }
+            
+            if (selDeliveryMan < 0)
+                return false;
+
+            JList list = (JList)info.getComponent();
+            JList.DropLocation dl = (JList.DropLocation)info.getDropLocation();
+            int oldIndex = list.getSelectedIndex();
+            int newIndex = dl.getIndex();
+            if (newIndex > oldIndex)
+                newIndex--;
+            
+            if (newIndex < 0)
+                return false;
+            
+            boolean insert = dl.isInsert();
+
+            if (insert) {
+                ListItem selected = (ListItem) list.getSelectedValue();
+                Delivery delivery = map.getDeliveries().get(selected.node.getId());
+                if (delivery == null)
+                    return false;
+                
+                DeliveryMan deliveryMan = map.getDeliveryMen().get(selDeliveryMan);
+                
+                if (newIndex >= deliveryMan.getDeliveries().size())
+                    return false;
+                
+                controller.assignDelivery(delivery, deliveryMan, newIndex);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
+        
     /**
      * creates a new map view textual
      * @param map the map view textual's map
@@ -134,6 +193,11 @@ public class MapViewTextual extends MapView
             raiseevents = false;
             for (int il = 0; il < lists.size(); il++) {
                 JList jl = jlists.get(il);
+                
+                jl.setDragEnabled(true);
+                jl.setTransferHandler(transferHandler);
+                jl.setDropMode(DropMode.INSERT);
+                
                 DefaultListModel<ListItem> l = lists.get(il);
                 int indexList;
                 
