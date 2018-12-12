@@ -1,6 +1,7 @@
 package fr.insa.lyon.pld.agile.view;
 
 import fr.insa.lyon.pld.agile.controller.MainController;
+import fr.insa.lyon.pld.agile.model.Delivery;
 import fr.insa.lyon.pld.agile.model.Map;
 import fr.insa.lyon.pld.agile.model.Node;
 import fr.insa.lyon.pld.agile.model.Passage;
@@ -23,11 +24,14 @@ public class RoadmapPanel extends MapView {
         Passage firstPassage;
         long duration; // seconds
         double distance; // meters
-        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration){
+        Delivery delivery;
+        
+        public RoutePart(String sectionName, Passage firstPassage, double distance, long duration, Delivery delivery){
             this.sectionName = sectionName;
             this.firstPassage = firstPassage;
             this.duration = duration;
             this.distance = distance;
+            this.delivery = delivery;
         }
         public void setDuration(int duration){
             this.duration = duration;
@@ -65,30 +69,34 @@ public class RoadmapPanel extends MapView {
         double distance = 0;
         long duration = 0;
         Passage firstPassage = null;
-
+        
         for (Route route : map.getDeliveryMen().get(deliveryManIndex).getRound().getItinerary()){
             for (Passage location : route.getPassages()) {
                 Section currentSection = location.getSection();
-                if(routePartName==null && firstPassage==null ){
-                    routePartName= currentSection.getName();
+                if (routePartName == null && firstPassage == null){
+                    routePartName = currentSection.getName();
                     firstPassage = location;
                 }
-                
+
                 if(currentSection.getName().equals(routePartName)){
                     distance += currentSection.getLength();
                     duration += currentSection.getDuration();
                 }
                 else {
-                    routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration));
+                    routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, null));
                     firstPassage = location;
                     routePartName = currentSection.getName();
                     distance = currentSection.getLength();
-                    duration = currentSection.getDuration();                    
+                    duration = currentSection.getDuration();
                 }
-                
             }
+            
+            if (route.isDelivering()) {
+                Delivery delivery = map.getDeliveries().get(route.getDestination().getId());
+                routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, delivery));
+            } else
+                routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration, null));
         }
-        routeParts.add(new RoutePart(routePartName, firstPassage, distance, duration));
         
         return routeParts;
     }
@@ -99,14 +107,18 @@ public class RoadmapPanel extends MapView {
             
             DefaultListModel<String> model = new DefaultListModel<>(); 
             this.roadMapParts = new JList<>(model);
+            DefaultListModel<String> reallist = (DefaultListModel<String>)this.roadMapParts.getModel();
 
             List<RoutePart> routeParts = buildRoadmap(this.map, deliveryManIndex);
             
-            ((DefaultListModel<String>)this.roadMapParts.getModel()).addElement("*** Feuille de route du livreur "+Integer.toString(deliveryManIndex+1) + " ***");
+            reallist.addElement("*** Feuille de route du livreur "+Integer.toString(deliveryManIndex+1) + " ***");
             
             for(RoutePart part : routeParts){
-                ((DefaultListModel<String>)this.roadMapParts.getModel()).addElement(part.toString());
+                reallist.addElement(part.toString());
+                if (part.delivery != null) reallist.addElement("Livraison (" + part.delivery.getDuration() + " s)");
             }
+            
+            reallist.addElement("***");
             
             this.setLayout(new BorderLayout());
             this.add(this.roadMapParts, BorderLayout.CENTER);
