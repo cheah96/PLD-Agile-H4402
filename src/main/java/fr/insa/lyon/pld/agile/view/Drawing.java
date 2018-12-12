@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 /**
@@ -25,6 +26,15 @@ public class Drawing {
         g.drawImage(image, 0, 0, null);
         g.dispose();
         return copy;
+    }
+    
+    /**
+     * Enables antialiasing on a graphics object.
+     * @param g graphics object to enable antialiasing on
+     */
+    public static void enableAntialiasing(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
     
     /**

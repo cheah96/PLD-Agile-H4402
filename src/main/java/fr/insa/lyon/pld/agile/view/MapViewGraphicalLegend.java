@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -106,6 +107,8 @@ public class MapViewGraphicalLegend extends JPanel
         
         @Override
         public void paintComponent(Graphics g) {
+            if (g instanceof Graphics2D)
+                Drawing.enableAntialiasing((Graphics2D) g);
             g.setColor(Color.gray);
             drawer.draw(g, coords);
         }
