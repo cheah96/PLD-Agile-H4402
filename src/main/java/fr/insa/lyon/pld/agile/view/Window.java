@@ -40,6 +40,7 @@ public class Window
     private final JButton btnListUp;
     private final JButton btnListDown;
     private final JButton btnListMove;
+    private final JButton btnListUnassign;
     private final JButton btnListRemove;
     
     private final JLabel lblStatus;
@@ -125,6 +126,8 @@ public class Window
         btnListDown.setToolTipText("Retarder une livraison");
         btnListMove = new JButton(new ImageIcon(getClass().getResource("/icons/move.png")));
         btnListMove.setToolTipText("Déplacer une livraison");
+        btnListUnassign = new JButton(new ImageIcon(getClass().getResource("/icons/unassign.png")));
+        btnListUnassign.setToolTipText("Désaffecter une livraison");
         btnListRemove = new JButton(new ImageIcon(getClass().getResource("/icons/delete.png")));
         btnListRemove.setToolTipText("Supprimer une livraison");
         
@@ -172,7 +175,7 @@ public class Window
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 0;
-        c.gridwidth = 3;
+        c.gridwidth = 4;
         panLists.add(mapViewTextual, c);
         c.weighty = 0;
         c.gridwidth = 1;
@@ -182,6 +185,8 @@ public class Window
         c.gridx = 1;
         panLists.add(btnListDown, c);
         c.gridx = 2;
+        panLists.add(btnListUnassign, c);
+        c.gridx = 3;
         panLists.add(btnListRemove, c);
         
         // Left panel
@@ -242,7 +247,7 @@ public class Window
         
         btnListUp.addActionListener(e -> {
             Node selected = mapViewTextual.getSelectedNode();
-            if (selected!= null && map.getNodeDeliveryManIndex(selected) != -1) {
+            if (selected != null && map.getNodeDeliveryManIndex(selected) != -1) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());
                 int index = delivery.getDeliveryMan().getDeliveries().indexOf(delivery) -1;
                 if (index >= 0) {
@@ -253,7 +258,7 @@ public class Window
         
         btnListDown.addActionListener(e -> {
             Node selected = mapViewTextual.getSelectedNode();
-            if (selected!= null && map.getNodeDeliveryManIndex(selected) != -1) {
+            if (selected != null && map.getNodeDeliveryManIndex(selected) != -1) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());
                 int index = delivery.getDeliveryMan().getDeliveries().indexOf(delivery) +1;
                 if(index <= delivery.getDeliveryMan().getDeliveries().size() -1) {
@@ -262,9 +267,18 @@ public class Window
             }
         });
         
+        btnListUnassign.addActionListener(e -> {
+            Node selected = mapViewTextual.getSelectedNode();
+            if (selected != null) {
+                Delivery delivery = map.getDeliveries().get(selected.getId());  
+                if (delivery != null)
+                    controller.unassignDelivery(delivery);
+            }
+        });
+        
         btnListRemove.addActionListener(e -> {
             Node selected = mapViewTextual.getSelectedNode();
-            if (selected!= null) {
+            if (selected != null) {
                 Delivery delivery = map.getDeliveries().get(selected.getId());  
                 if (delivery != null)
                     controller.deleteDelivery(delivery);
@@ -333,6 +347,7 @@ public class Window
         btnListUp.setEnabled(canEditDeliveries);
         btnListDown.setEnabled(canEditDeliveries);
         btnListMove.setEnabled(canEditDeliveries);
+        btnListUnassign.setEnabled(canEditDeliveries);
         btnListRemove.setEnabled(canEditDeliveries);
     }
     
