@@ -27,7 +27,7 @@ public class DeliveryMenGeneratedState extends DeliveriesLoadedState {
     
     @Override
     public void addDelivery(Node node, DeliveryMan deliveryMan, int index) {
-        Delivery delivery = new Delivery(node, index, deliveryMan);
+        Delivery delivery = new Delivery(node, 360, deliveryMan);
         controller.doCmd(new CmdAddDelivery(controller.getMap(), delivery, deliveryMan, index));
         controller.setCurrentState(controller.DELIVERY_MEN_GENERATED_STATE);
     }

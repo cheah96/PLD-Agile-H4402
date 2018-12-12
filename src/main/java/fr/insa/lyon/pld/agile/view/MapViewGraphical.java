@@ -190,7 +190,7 @@ public class MapViewGraphical extends MapView
         rightClickUnassignedDeliveryMenu.add(deleteDeliveryMenuItem2);
 
         rightClickNodeMenu = new JPopupMenu();
-        addDeliveryJMenu = new JMenu("Ajouter une livraison ici à ...");
+        addDeliveryJMenu = new JMenu("Ajouter une livraison à ...");
         rightClickNodeMenu.add(addDeliveryJMenu);
     }
     
@@ -477,31 +477,33 @@ public class MapViewGraphical extends MapView
         Graphics2D g = imageDeliveries.createGraphics();
         Drawing.enableAntialiasing(g);
         
-        List<DeliveryMan> deliveryMen = map.getDeliveryMen();
-        if (!deliveryMen.isEmpty()) {
-            int indexMan = 0;
-            for (DeliveryMan deliveryMan : deliveryMen) {
-                g.setColor(Drawing.getColor(indexMan, deliveryMen.size()));
-                
-                Node n1 = map.getWarehouse();
-                Point coordsn1 = getCoordsToPixel(n1);
-                
-                if (selDeliveryMan < 0 || selDeliveryMan == indexMan) {
-                    double position = 0.;
-                    for (Route route : deliveryMan.getRound().getItinerary())
-                    {
-                        for (Passage p : route.getPassages()) {
-                            Node n2 = p.getSection().getDestination();
-                            Point coordsn2 = getCoordsToPixel(n2);
+        Node n1 = map.getWarehouse();
+        if (n1 != null) {  
+            List<DeliveryMan> deliveryMen = map.getDeliveryMen();
+            if (!deliveryMen.isEmpty()) {
+                int indexMan = 0;
+                for (DeliveryMan deliveryMan : deliveryMen) {
+                    g.setColor(Drawing.getColor(indexMan, deliveryMen.size()));
 
-                            Drawing.drawLineThick(g, coordsn1, coordsn2);
-                            if (isDirection) position = Drawing.drawLineArrows(g, coordsn1, coordsn2, position);
+                    Point coordsn1 = getCoordsToPixel(n1);
 
-                            coordsn1 = coordsn2;
+                    if (selDeliveryMan < 0 || selDeliveryMan == indexMan) {
+                        double position = 0.;
+                        for (Route route : deliveryMan.getRound().getItinerary())
+                        {
+                            for (Passage p : route.getPassages()) {
+                                Node n2 = p.getSection().getDestination();
+                                Point coordsn2 = getCoordsToPixel(n2);
+
+                                Drawing.drawLineThick(g, coordsn1, coordsn2);
+                                if (isDirection) position = Drawing.drawLineArrows(g, coordsn1, coordsn2, position);
+
+                                coordsn1 = coordsn2;
+                            }
                         }
                     }
+                    indexMan++;
                 }
-                indexMan++;
             }
         }
         
