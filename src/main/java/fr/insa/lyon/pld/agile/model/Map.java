@@ -375,7 +375,7 @@ public class Map {
                 continue;
             
             if (distance < distanceMin) {
-                indexMin = index;
+                indexMin = index+1;
                 distanceMin = distance;
             }
             
