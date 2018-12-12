@@ -222,8 +222,6 @@ public class MapViewGraphical extends MapView
             offsetY = latitudeMin - (getHeight()/ratio-(latitudeMax - latitudeMin))/2.;
         }
         
-        calcPreferredSize();
-        
         selNode = null;
         
         imageMap = null;
@@ -598,41 +596,6 @@ public class MapViewGraphical extends MapView
             x / ratio + offsetX,
             (getHeight() - y) / ratio + offsetY
         );
-    }
-    
-    /**
-     * calculates the preferred size of the screen resolution
-     */
-    protected void calcPreferredSize() {
-        preferred = null;
-        
-        if (!hasData) return;
-        
-        long sectionsCount = 0L;
-        double sectionsLength = 0.0;
-        
-        for (Node n : map.getNodes().values()) {
-            for (Section s : n.getOutgoingSections()) {
-                sectionsLength += getNodesDistance(n, s.getDestination());
-                sectionsCount++;
-            }
-        }
-        
-        if (sectionsCount == 0L || sectionsLength == 0.0) return;
-        
-        double avgSectionLength = sectionsLength / sectionsCount;
-        double preferredPixelLength = 15.0;
-        
-        preferred = new Dimension (
-            (int) (preferredPixelLength * (longitudeMax - offsetX) / avgSectionLength),
-            (int) (preferredPixelLength * (latitudeMax - offsetY) / avgSectionLength)
-        );
-        
-    }
-    
-    @Override
-    public Dimension getPreferredSize() {
-        return (preferred != null ? preferred : super.getPreferredSize());
     }
     
     private void updateRatioMinMax() {
