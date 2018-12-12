@@ -27,7 +27,7 @@ public class MainController implements PropertyChangeListener{
     public MainController(Map map) {
         this.map = map;
         this.view = new Window(map, this);
-        this.cmdList = new CommandList();
+        this.cmdList = new CommandList(this);
         setCurrentState(INITIAL_STATE);
         map.addPropertyChangeListener(this);
     }

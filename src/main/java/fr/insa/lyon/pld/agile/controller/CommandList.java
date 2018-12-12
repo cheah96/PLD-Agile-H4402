@@ -1,5 +1,6 @@
 package fr.insa.lyon.pld.agile.controller;
 
+import fr.insa.lyon.pld.agile.model.UnreachableDeliveryException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,15 +9,19 @@ import java.util.List;
  * @author scheah
  */
 public class CommandList {
+    private final MainController controller;
     private final List<Command> commandList; 
     private int currentIndex;
     /**
      * Create a new empty commandList to store the list of actions performed to
      * implement the design pattern Command.
+     * 
+     * @param controller Controller associated with the command list
      */
-    public CommandList() {
-        commandList = new LinkedList<>();
-        currentIndex = -1;
+    public CommandList(MainController controller) {
+        this.controller = controller;
+        this.commandList = new LinkedList<>();
+        this.currentIndex = -1;
     }
     
     /**
@@ -31,7 +36,14 @@ public class CommandList {
         }
         currentIndex++;
         commandList.add(currentIndex, cmd);
-        cmd.doCmd();
+        
+        try {
+            cmd.doCmd();
+        } catch (UnreachableDeliveryException e) {
+            controller.getWindow().popupError("Nœud inaccessible depuis l'entrepôt pour un aller-retour !");
+            commandList.remove(currentIndex);
+            currentIndex--;
+        }
     }
     
     /**
