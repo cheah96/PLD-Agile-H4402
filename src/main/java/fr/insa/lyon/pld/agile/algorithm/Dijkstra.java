@@ -126,6 +126,9 @@ public class Dijkstra {
     
     /***
      * compute the distances from origin to the other nodes
+     * @param nodes a map which has the ID of the nodes as keys and the nodes as values
+     * @param origin the origin of the paths
+     * @return the distances of every node from the origin, associated to their ID
      */
     public static Map<Long, Double> getDistances(Map<Long, Node> nodes, Node origin){
         Map<Long, NodeInfo> nodeInfos = dijkstra(nodes, origin);

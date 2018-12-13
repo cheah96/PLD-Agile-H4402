@@ -20,8 +20,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * Constructor
      * 
      * @param nodes the number of nodes to process
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      */
     public TSPSolverWorkerTemplate(int nodes, int[][] edgesCosts, int[] nodesCosts) {
         super(nodes, edgesCosts, nodesCosts);
@@ -71,8 +71,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * 
      * @param currentNode the last explored node
      * @param unexploredNodes the list of the nodes that have not been explored so far
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      * @return a lower bound for the cost of valid permutations of unexploredNodes starting with currentNode and ending with node 0
      */
     protected abstract int bound(Integer currentNode, ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts);
@@ -81,8 +81,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * This method computes a lower bound of branch costs to allow early branch cutting before the exploration.
      * 
      * @param unexploredNodes the list of the nodes that have not been explored so far
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      * */
     protected abstract int startBound(ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts);
     
@@ -91,8 +91,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * 
      * @param currentNode the last explored node
      * @param unexploredNodes the list of the nodes that have not been explored so far
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      * @return an iterator over the unexplored nodes
      */
     protected abstract Iterator<Integer> iterator(Integer currentNode, ArrayList<Integer> unexploredNodes, int[][] edgesCosts, int[] nodesCosts);
@@ -104,8 +104,8 @@ public abstract class TSPSolverWorkerTemplate extends TSPSolverWorker {
      * @param unexploredNodes the list of the nodes that have not been explored so far
      * @param exploredNodes the list of the nodes that have already been explored (including currentNode)
      * @param currentCost the total cost of the explored nodes and edges so far
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      */
     private final void branchAndBound(int currentNode,
             ArrayList<Integer> unexploredNodes, ArrayList<Integer> exploredNodes,

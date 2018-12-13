@@ -11,9 +11,8 @@ public class DeliveryMan {
     
     /**
      * constructs a new delivery man 
-     * @param an id number 
+     * @param id an id number 
      */
-
     public DeliveryMan(int id) {
         this.id = id;
         this.round = new Round();

@@ -15,8 +15,11 @@ public class IteratorNearestNode implements Iterator<Integer> {
      * The nodes will be iterated over in an order such that the cost between two consecutive nodes is locally minimized.
      * 
      * @param unexploredNodes the set of unexplored nodes
+     * @param currentNode the last node that was explored
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      */
-    public IteratorNearestNode(Collection<Integer> unexploredNodes, int currentNode, int[][] edgesCosts, int[] nodesCost) {
+    public IteratorNearestNode(Collection<Integer> unexploredNodes, int currentNode, int[][] edgesCosts, int[] nodesCosts) {
         nodes = new Integer[unexploredNodes.size()];
         numberOfNodes = 0;
         

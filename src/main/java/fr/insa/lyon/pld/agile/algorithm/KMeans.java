@@ -120,7 +120,7 @@ public class KMeans {
      * 
      * @param nodes the nodes of the deliveries. They are sorted after the call to the function
      * @param clustersNb the number of clusters
-     * @param warehouse
+     * @param warehouse the warehouse node
      * 
      * @return an array with a length equal to the number of nodes. the value of each case is the index of its cluster [0; clustersNb[
      */

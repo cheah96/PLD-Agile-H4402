@@ -46,10 +46,9 @@ public class MainController implements PropertyChangeListener{
     public Window getWindow() { return view; }
     
     /**
-     * gets the outgoing sections 
-     * @return the list of sections
+     * sets a new state for the controller
+     * @param state the new state
      */
-    
     protected final void setCurrentState(State state) {
         currentState = state;
         view.clearStatus();

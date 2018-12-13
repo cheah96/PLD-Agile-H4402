@@ -19,8 +19,8 @@ public abstract class TSPSolverWorker extends SwingWorker<ArrayList<Integer>, Ar
      * Constructor
      * 
      * @param nodes number of nodes in the TSP graph
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      */
     public TSPSolverWorker(int nodes, int[][] edgesCosts, int[] nodesCosts) {
         this.nodes = nodes;
@@ -67,8 +67,8 @@ public abstract class TSPSolverWorker extends SwingWorker<ArrayList<Integer>, Ar
      * This method solves a TSP.
      * 
      * @param nodes number of nodes in the TSP graph
-     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 <= i < nodes and 0 <= j < nodes
-     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 <= i < nodes
+     * @param edgesCosts edgesCosts[i][j] is the time spent to travel from Node i to Node j, such that 0 &le; i &lt; nodes and 0 &le; j &lt; nodes
+     * @param nodesCosts nodesCosts[i] is the time spent visiting node i, such that 0 &le; i &lt; nodes
      * @return the best path for this TSP
      */
     @Override

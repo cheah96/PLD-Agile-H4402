@@ -80,7 +80,7 @@ public class HAC {
     
     /** 
      * Node generator used mainely for testing the algorithm
-     * choose <nodesNb> points in a rectangle with dimensions (<spaceHeight>, <spaceWidth) centered in (0,0)
+     * choose nodesNb points in a rectangle with dimensions (spaceHeight, spaceWidth) centered in (0,0)
      * 
      * @param nodesNb the number of nodes to generate
      * @param spaceHeight the height of the space where the nodes are generated

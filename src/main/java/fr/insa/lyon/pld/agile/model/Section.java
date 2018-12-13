@@ -11,7 +11,7 @@ public class Section {
      * constructs a new section 
      * @param name the name of the section
      * @param length the length in meters of the section
-     * @param the final destination of the section
+     * @param destination the final destination of the section
      */
 
     public Section(String name, double length, Node destination) {
